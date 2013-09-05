@@ -183,6 +183,24 @@ Weather *SavedWeathersModel::get(int locationId)
     }
 }
 
+Q_INVOKABLE void SavedWeathersModel::updateCurrent()
+{
+    QSqlQuery query("select * from locations", m_database);
+    int isCurrentIndex = query.record().indexOf("isCurrent");
+    int index = 0;
+    while (query.next()) {
+        if (query.value(isCurrentIndex).toBool()) {
+            if (m_currentIndex != index) {
+                m_currentIndex = index;
+                emit currentLocationIdChanged();
+                emit currentWeatherChanged();
+            }
+            break;
+        }
+        index++;
+    }
+}
+
 int SavedWeathersModel::currentLocationId() const
 {
     if (m_currentIndex >= 0) {

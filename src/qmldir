@@ -6,3 +6,4 @@ WeathersModel 1.0 WeathersModel.qml
 LocationsModel 1.0 LocationsModel.qml
 WeatherItem 1.0 WeatherItem.qml
 PlaceholderItem 1.0 PlaceholderItem.qml
+WeatherBanner 1.0 WeatherBanner.qml

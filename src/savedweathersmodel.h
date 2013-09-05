@@ -39,6 +39,7 @@ public:
     Q_INVOKABLE void update(const QVariantMap &weatherMap);
     Q_INVOKABLE void remove(int locationId);
     Q_INVOKABLE Weather *get(int locationId);
+    Q_INVOKABLE void updateCurrent();
 
     int count() const;
 
