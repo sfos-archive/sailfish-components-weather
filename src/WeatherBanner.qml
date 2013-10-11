@@ -12,7 +12,7 @@ BackgroundItem {
     visible: enabled
     height: enabled ? Theme.itemSizeMedium : 0
     enabled: weather && weather.status == Weather.Ready
-    onClicked: pageStack.push(weatherPageComponent, { "weather": weather })
+    onClicked: pageStack.push("WeatherPage.qml", { "weather": weather })
 
     Label {
         id: temperatureLabel
@@ -58,8 +58,4 @@ BackgroundItem {
                                                           : ""
     }
     SavedWeathersModel { id: savedWeathersModel }
-    Component {
-        id: weatherPageComponent
-        WeatherPage {}
-    }
 }

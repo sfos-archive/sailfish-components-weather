@@ -4,6 +4,7 @@
 #include <QDir>
 #include <qqmlinfo.h>
 #include <QSqlError>
+#include <QStandardPaths>
 
 SavedWeathersModel::SavedWeathersModel(QObject *parent)
     : QAbstractListModel(parent), m_currentIndex(-1)
@@ -298,12 +299,16 @@ int SavedWeathersModel::getWeatherIndex(int locationId)
 void SavedWeathersModel::createConnectionToDatabase()
 {
     m_database = QSqlDatabase::addDatabase("QSQLITE");
+    QDir databaseDir = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation)
+        + QStringLiteral("/system/privileged/Weather");
 
-    m_database.setDatabaseName(QDir::home().filePath("sailfish-weather.db.sqlite"));
-    // TODO switch to this when it works
-    //    QString path = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation)
-    //        + QStringLiteral("/system/privileged/location/sailfish-weather.db.sqlite");
-    //    db.setDatabaseName(path);
+    if (!QDir::root().mkpath(databaseDir.path())) {
+        qmlInfo(this) << "Could not create database directory!";
+        return;
+    }
+
+    QString path = databaseDir.filePath(QStringLiteral("sailfish-weather.db.sqlite"));
+    m_database.setDatabaseName(path);
 
     if (!m_database.open()) {
         qmlInfo(this) << "Failed to open database!";

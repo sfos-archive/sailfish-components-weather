@@ -104,7 +104,6 @@ Page {
                     color: highlighted ? Theme.highlightColor : Theme.secondaryColor
                 }
                 Image {
-                    smooth: true // TODO: provide correct-sized icons
                     sourceSize.width: width
                     sourceSize.height: height
                     width: Theme.iconSizeMedium

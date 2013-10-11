@@ -14,7 +14,7 @@ Item {
             + (status == Weather.Error ? button.height : busyIndicator.height)
     opacity: enabled ? 1.0 : 0.0
     Behavior on opacity { FadeAnimation {} }
-    Text {
+    Label {
         id: mainLabel
 
         wrapMode: Text.Wrap

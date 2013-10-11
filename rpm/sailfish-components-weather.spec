@@ -13,8 +13,6 @@ BuildRequires:  pkgconfig(Qt5Quick)
 BuildRequires:  pkgconfig(Qt5Sql)
 BuildRequires:  qt5-qttools
 BuildRequires:  qt5-qttools-linguist
-BuildRequires:  tzdata
-BuildRequires:  python
 
 Requires:  sailfishsilica-qt5
 
@@ -36,24 +34,18 @@ Translation source for sailfish-weather
 
 %qmake5
 
-make %{?jobs:-j%jobs}
+make %{_smp_mflags}
 
 %install
 rm -rf %{buildroot}
 
 %qmake5_install
 
-#
-# Jolla Components internal files
-#
 %files
 %defattr(-,root,root,-)
 %{_libdir}/qt5/qml/Sailfish/Weather/*
 %{_datadir}/translations/sailfish_components_weather_qt5_eng_en.qm
 
-#
-# Jolla Components internal translation files
-#
 %files ts-devel
 %defattr(-,root,root,-)
 %{_datadir}/translations/source/sailfish_components_weather_qt5.ts
