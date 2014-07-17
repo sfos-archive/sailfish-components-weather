@@ -10,7 +10,6 @@ Page {
 
     WeatherModel {
         id: weatherModel
-        //forecast: true
         locationId: weather ? weather.locationId : ""
     }
     SilicaFlickable {
@@ -32,7 +31,7 @@ Page {
                     id: secondaryLabel
                     font.pixelSize: Theme.fontSizeSmall
                     color: Theme.secondaryHighlightColor
-                    text: weather ? weather.state + "," + weather.country : ""
+                    text: weather ? weather.state + ", " + weather.country : ""
                     horizontalAlignment: Text.AlignRight
                     anchors {
                         left: parent.left
@@ -88,13 +87,18 @@ Page {
         height: 2*Theme.itemSizeLarge
         anchors.bottom: parent.bottom
         delegate: BackgroundItem {
-            width: root.width/5
+            width: root.width/5.5
             height: weatherForecastList.height
             highlighted: down || root.currentIndex == model.index
             onClicked: root.currentIndex = model.index
             Column {
                 anchors.centerIn: parent
                 Label {
+                    property bool truncate: implicitWidth > parent.width - Theme.paddingSmall
+
+                    x: truncate ? Theme.paddingSmall : parent.width/2 - width/2
+                    width: truncate ? parent.width - Theme.paddingSmall : implicitWidth
+                    truncationMode: truncate ? TruncationMode.Fade : TruncationMode.None
                     text: Qt.formatDateTime(model.timestamp, "MMM")
                     anchors.horizontalCenter: parent.horizontalCenter
                     color: highlighted ? Theme.highlightColor : Theme.secondaryColor

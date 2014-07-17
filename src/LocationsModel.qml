@@ -10,7 +10,7 @@ XmlListModel {
     // For example <loc id="102643743" name="London" adm1="England" country="United Kingdom" tz="Europe/London" lon="-0.125532746" lat="51.508415222">
     XmlRole {
         name: "locationId"
-        query: "@id/number()"
+        query: "@id/string()"
     }
     XmlRole {
         name: "city"
