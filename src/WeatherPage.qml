@@ -21,6 +21,7 @@ Page {
         clip: true
         width: parent.width
         contentHeight: column.height
+        VerticalScrollDecorator {}
         Column {
             id: column
             width: parent.width
