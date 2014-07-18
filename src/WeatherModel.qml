@@ -7,8 +7,6 @@ ListModel {
 
     property int locationId
     property int status: Weather.Loading
-    property bool forecast
-    property XmlListModel xmlListModel
 
     signal loaded
     signal error
@@ -19,8 +17,6 @@ ListModel {
     }
 
     function handleStatusChanged() {
-        if (!xmlListModel)
-            return
         var model = xmlListModel
         if (model.status == XmlListModel.Loading) {
         } else if (model.status == XmlListModel.Ready) {
@@ -30,22 +26,11 @@ ListModel {
                 var timestamp = new Date()
                 timestamp.setDate(timestamp.getDate() - i);
 
-                if (forecast) {
-                    weatherData[i] = {
-                        "description": weather.description,
-                        "weatherType": weatherType(weather.code),
-                        "high": weather.high,
-                        "low": weather.low,
-                        "timestamp": timestamp
-                    }
-
-                } else {
-                    weatherData[i] = {
-                        "temperature": weather.temperature,
-                        "description": weather.description,
-                        "weatherType": weatherType(weather.code),
-                        "timestamp": timestamp
-                    }
+                weatherData[i] = {
+                    "description": weather.description,
+                    "weatherType": weatherType(weather.code),
+                    "temperature": weather.high,
+                    "timestamp": timestamp
                 }
             }
             while (count > weatherData.length) {
@@ -71,75 +56,43 @@ ListModel {
         }
     }
     function weatherType(code) {
-        var group = "unknown";
-        switch(code) {
+
+        var cloudiness = parseInt(code.charAt(1))
+        var precipirationRate = parseInt(code.charAt(2))
+        var precipirationType = parseInt(code.charAt(3))
+
+        var group
+        switch(precipirationRate) {
         case 0:
+            switch (cloudiness) {
+            case 0:
+            case 1:
+                group = "sun"
+                break
+            case 2:
+            case 3:
+            case 4:
+                group = "cloud"
+                break
+            default:
+                break
+            }
+            break
         case 1:
-        case 2:
-        case 3:
-        case 4:
-        case 37:
-        case 38:
-        case 45:
-        case 47:
-            group = "thunder";
-            break;
-        case 10:
-        case 11:
-        case 12:
-        case 40:
-        case 42:
-        case 35:
-        case 8:
-        case 9:
-        case 5:
-        case 6:
-        case 7:
-            group = "rain";
-            break;
-        case 13:
-        case 14:
-        case 15:
-        case 16:
-        case 17:
-        case 18:
-        case 41:
-        case 43:
-        case 46:
             group = "fog";
             break;
-        case 20:
-        case 21:
-        case 22:
-        case 26:
-        case 27:
-        case 28:
-        case 29:
-        case 30:
-        case 44:
-            group = "cloud";
+        case 2:
+        case 3:
+            group = "rain";
             break;
-        case 31:
-        case 32:
-        case 33:
-        case 34:
-        case 36:
-        case 23:
-        case 24:
-        case 25:
-        case 19:
+        case 4:
+            group = "thunder";
+            break;
         default:
-            group = "sun";
-            break;
+            group = "sun"
+            break
         }
-        return group;
-    }
-    Component.onCompleted: {
-        if (forecast) {
-            xmlListModel = forecastWeatherModel.createObject(this)
-        } else {
-            xmlListModel = currentWeatherModel.createObject(this)
-        }
+        return group
     }
 
     property var container: Item {
@@ -147,56 +100,30 @@ ListModel {
             target: Qt.application
             onActiveChanged: if (Qt.application.active) root.reload()
         }
-        Component {
-            id: currentWeatherModel
-            XmlListModel {
-                onStatusChanged: root.handleStatusChanged()
+        XmlListModel {
+            id: xmlListModel
+            onStatusChanged: root.handleStatusChanged()
 
-                // see http://developer.yahoo.com/weather for more info
-                query: "/rss/channel/item"
-                source: root.locationId > 0 ? "http://weather.yahooapis.com/forecastrss?w=" + root.locationId + "&u=c" : ""
-                namespaceDeclarations: "declare namespace yweather=\"http://xml.weather.yahoo.com/ns/rss/1.0\";"
-                XmlRole {
-                    name: "description"
-                    query: "yweather:condition/@text/string()"
-                }
-                XmlRole {
-                    name: "code"
-                    query: "yweather:condition/@code/number()"
-                }
-                XmlRole {
-                    name: "temperature"
-                    query: "yweather:condition/@temp/number()"
-                }
+            // see http://developer.yahoo.com/weather for more info
+            query: "/xml/weather/fc"
+            source: root.locationId > 0 ? "http://feed.foreca.com/jolla-jan14fi/data.php?l=" + root.locationId + "&products=cc,daily" : ""
+
+            XmlRole {
+                name: "description"
+                query: "@sT/string()"
             }
-        }
-        Component {
-            id: forecastWeatherModel
-            XmlListModel {
-                onStatusChanged: root.handleStatusChanged()
-
-                // see http://developer.yahoo.com/weather for more info
-                query: "/rss/channel/item"
-                source: root.locationId > 0 ? "http://weather.yahooapis.com/forecastrss?w=" + root.locationId + "&u=c" : ""
-                namespaceDeclarations: "declare namespace yweather=\"http://xml.weather.yahoo.com/ns/rss/1.0\";"
-                XmlRole {
-                    name: "description"
-                    query: "yweather:forecast/@text/string()"
-                }
-                XmlRole {
-                    name: "code"
-                    query: "yweather:forecast/@code/number()"
-                }
-                XmlRole {
-                    name: "high"
-                    query: "yweather:forecast/@high/number()"
-                }
-                XmlRole {
-                    name: "low"
-                    query: "yweather:forecast/@low/number()"
-                }
+            XmlRole {
+                name: "code"
+                query: "@s/string()"
+            }
+            XmlRole {
+                name: "high"
+                query: "@tx/number()"
+            }
+            XmlRole {
+                name: "low"
+                query: "@tn/number()"
             }
         }
     }
 }
-
