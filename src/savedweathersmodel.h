@@ -15,7 +15,6 @@ class SavedWeathersModel: public QAbstractListModel
     Q_PROPERTY(Weather *currentWeather READ currentWeather NOTIFY currentWeatherChanged)
 
 public:
-
     enum Roles {
         LocationId = Qt::UserRole,
         Status,
@@ -35,11 +34,11 @@ public:
     virtual QVariant data(const QModelIndex &index, int role) const;
 
     Q_INVOKABLE void reportError(int locationId);
-    Q_INVOKABLE void save(const QVariantMap &locationMap);
+    Q_INVOKABLE void addLocation(const QVariantMap &locationMap);
     Q_INVOKABLE void update(const QVariantMap &weatherMap);
     Q_INVOKABLE void remove(int locationId);
     Q_INVOKABLE Weather *get(int locationId);
-    Q_INVOKABLE void updateCurrent();
+    Q_INVOKABLE void loadWeather();
 
     int count() const;
 
@@ -51,17 +50,16 @@ signals:
     void countChanged();
     void currentWeatherChanged();
     void currentLocationIdChanged();
+
 protected:
     QHash<int, QByteArray> roleNames() const;
 
 private:
-    void createConnectionToDatabase();
-    void saveToSql(Weather *weather, bool newWeather);
-    int getWeatherIndex(int locationId);
-private:
     int m_currentIndex;
     QList <Weather *> m_savedWeathers;
-    QSqlDatabase m_database;
+
+    int getWeatherIndex(int locationId);
+    void saveWeather();
 };
 
 QML_DECLARE_TYPE(SavedWeathersModel)

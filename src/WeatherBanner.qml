@@ -6,7 +6,7 @@ BackgroundItem {
     property var weather: savedWeathersModel.currentWeather
 
     function update() {
-        savedWeathersModel.updateCurrent()
+        savedWeathersModel.loadWeather()
     }
 
     visible: enabled
