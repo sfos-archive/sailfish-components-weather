@@ -56,44 +56,56 @@ ListModel {
         }
     }
     function weatherType(code) {
-        var cloudiness = parseInt(code.charAt(1))
-        var precipirationRate = parseInt(code.charAt(2))
-        var precipirationType = parseInt(code.charAt(3))
+        var dayTime = code.charAt(0) === "d" ? "day" : "night"
+        var cloudiness = code.charAt(1)
+        var precipirationRate = code.charAt(2)
+        var precipirationType = code.charAt(3)
 
-        var group
+        var type
         switch(precipirationRate) {
-        case 0:
+        case '0':
             switch (cloudiness) {
-            case 0:
-            case 1:
-                group = "sun"
+            case '0':
+            case '1':
+            case '2':
+                type = "cloud-" + dayTime + "-" + cloudiness
                 break
-            case 2:
-            case 3:
-            case 4:
-                group = "cloud"
+            case '3':
+                type = "cloud-3"
+                break
+            case '4':
+                type = "cloud-4"
                 break
             default:
                 console.log("WeatherModel warning: invalid cloudiness code", cloudiness)
                 break
             }
             break
-        case 1:
-            group = "fog";
-            break;
-        case 2:
-        case 3:
-            group = "rain";
-            break;
-        case 4:
-            group = "thunder";
-            break;
+        case '1':
+        case '2':
+        case '3':
+        case '4':
+            switch (precipirationType) {
+            case '0':
+                type = "rain-water-" + precipirationRate
+                break
+            case '1':
+                type = "rain-sleet-" + precipirationRate
+                break
+            case '2':
+                type = "rain-snow-" + precipirationRate
+                break
+            default:
+                console.log("WeatherModel warning: invalid precipiration type code", precipirationType)
+                break
+            }
+            break
         default:
-            group = "sun"
+            type = "cloud-day-0"
             console.log("WeatherModel warning: invalid precipiration rate code", precipirationRate)
             break
         }
-        return group
+        return type
     }
 
 
