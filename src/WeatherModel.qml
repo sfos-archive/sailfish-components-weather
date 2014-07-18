@@ -74,6 +74,7 @@ ListModel {
                 group = "cloud"
                 break
             default:
+                console.log("WeatherModel warning: invalid cloudiness code", cloudiness)
                 break
             }
             break
@@ -89,6 +90,7 @@ ListModel {
             break;
         default:
             group = "sun"
+            console.log("WeatherModel warning: invalid precipiration rate code", precipirationRate)
             break
         }
         return group
