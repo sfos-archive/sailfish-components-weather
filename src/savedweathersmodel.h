@@ -6,6 +6,8 @@
 
 #include "weather.h"
 
+class QFileSystemWatcher;
+
 class SavedWeathersModel: public QAbstractListModel
 {
     Q_OBJECT
@@ -13,6 +15,7 @@ class SavedWeathersModel: public QAbstractListModel
     Q_PROPERTY(int count READ count NOTIFY countChanged)
     Q_PROPERTY(int currentLocationId READ currentLocationId WRITE setCurrentLocationId NOTIFY currentLocationIdChanged)
     Q_PROPERTY(Weather *currentWeather READ currentWeather NOTIFY currentWeatherChanged)
+    Q_PROPERTY(bool autoRefresh READ autoRefresh WRITE setAutoRefresh NOTIFY autoRefreshChanged)
 
 public:
     enum Roles {
@@ -38,7 +41,6 @@ public:
     Q_INVOKABLE void update(const QVariantMap &weatherMap);
     Q_INVOKABLE void remove(int locationId);
     Q_INVOKABLE Weather *get(int locationId);
-    Q_INVOKABLE void loadWeather();
 
     int count() const;
 
@@ -46,10 +48,19 @@ public:
     int currentLocationId() const;
     void setCurrentLocationId(int locationId);
 
+    // Automatically reload cached data when it is changed by another model
+    // Default false
+    bool autoRefresh() const;
+    void setAutoRefresh(bool enabled);
+
+public slots:
+    void loadWeather();
+
 signals:
     void countChanged();
     void currentWeatherChanged();
     void currentLocationIdChanged();
+    void autoRefreshChanged();
 
 protected:
     QHash<int, QByteArray> roleNames() const;
@@ -57,6 +68,8 @@ protected:
 private:
     int m_currentIndex;
     QList <Weather *> m_savedWeathers;
+    bool m_autoRefresh;
+    QFileSystemWatcher *m_fileWatcher;
 
     int getWeatherIndex(int locationId);
     void saveWeather();

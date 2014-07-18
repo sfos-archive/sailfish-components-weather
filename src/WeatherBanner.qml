@@ -4,6 +4,7 @@ import Sailfish.Weather 1.0
 
 BackgroundItem {
     property var weather: savedWeathersModel.currentWeather
+    property alias autoRefresh: savedWeathersModel.autoRefresh
 
     function update() {
         savedWeathersModel.loadWeather()

@@ -2,6 +2,7 @@
 #include <QDir>
 #include <qqmlinfo.h>
 #include <QStandardPaths>
+#include <QFileSystemWatcher>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
@@ -13,7 +14,8 @@ static QString weatherStoragePath()
 }
 
 SavedWeathersModel::SavedWeathersModel(QObject *parent)
-    : QAbstractListModel(parent), m_currentIndex(-1)
+    : QAbstractListModel(parent), m_currentIndex(-1), m_autoRefresh(false),
+      m_fileWatcher(0)
 {
     loadWeather();
 }
@@ -305,5 +307,35 @@ int SavedWeathersModel::getWeatherIndex(int locationId)
         }
     }
     return -1;
+}
+
+bool SavedWeathersModel::autoRefresh() const
+{
+    return m_autoRefresh;
+}
+
+void SavedWeathersModel::setAutoRefresh(bool enabled)
+{
+    if (m_autoRefresh == enabled)
+        return;
+
+    m_autoRefresh = enabled;
+
+    if (m_autoRefresh) {
+        QString filePath = weatherStoragePath() + QStringLiteral("weather.json");
+        if (!QFile::exists(filePath)) {
+            // QFileSystemWatcher needs the file to exist, so write out an
+            // empty file
+            saveWeather();
+        }
+
+        m_fileWatcher = new QFileSystemWatcher(this);
+        connect(m_fileWatcher, &QFileSystemWatcher::fileChanged,
+                this, &SavedWeathersModel::loadWeather);
+        m_fileWatcher->addPath(filePath);
+    } else {
+        delete m_fileWatcher;
+        m_fileWatcher = 0;
+    }
 }
 
