@@ -6,12 +6,9 @@ Page {
     id: root
 
     property var weather
+    property var weatherModel
     property int currentIndex
 
-    WeatherModel {
-        id: weatherModel
-        locationId: weather ? weather.locationId : ""
-    }
     SilicaFlickable {
         anchors {
             top: parent.top

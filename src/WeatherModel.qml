@@ -5,6 +5,7 @@ import Sailfish.Weather 1.0
 ListModel {
     id: root
 
+    property bool active: true
     property int locationId
     property int status: Weather.Loading
 
@@ -12,8 +13,10 @@ ListModel {
     signal error
 
     function reload() {
-        status =  Weather.Loading
-        xmlListModel.reload()
+        if (active) {
+            status =  Weather.Loading
+            xmlListModel.reload()
+        }
     }
 
     function handleStatusChanged() {
@@ -173,35 +176,30 @@ ListModel {
 
         return localizations[code.substr(1,3)]
     }
-    property var container: Item {
-        Connections {
-            target: Qt.application
-            onActiveChanged: if (Qt.application.active) root.reload()
+    property var container: XmlListModel {
+        id: xmlListModel
+        onStatusChanged: root.handleStatusChanged()
+
+        // see http://developer.yahoo.com/weather for more info
+        query: "/xml/weather/fc"
+        source: root.active && root.locationId > 0 ? "http://feed.foreca.com/jolla-jan14fi/data.php?l=" + root.locationId + "&products=cc,daily" : ""
+
+        XmlRole {
+            name: "description"
+            query: "@sT/string()"
         }
-        XmlListModel {
-            id: xmlListModel
-            onStatusChanged: root.handleStatusChanged()
-
-            // see http://developer.yahoo.com/weather for more info
-            query: "/xml/weather/fc"
-            source: root.locationId > 0 ? "http://feed.foreca.com/jolla-jan14fi/data.php?l=" + root.locationId + "&products=cc,daily" : ""
-
-            XmlRole {
-                name: "description"
-                query: "@sT/string()"
-            }
-            XmlRole {
-                name: "code"
-                query: "@s/string()"
-            }
-            XmlRole {
-                name: "high"
-                query: "@tx/number()"
-            }
-            XmlRole {
-                name: "low"
-                query: "@tn/number()"
-            }
+        XmlRole {
+            name: "code"
+            query: "@s/string()"
+        }
+        XmlRole {
+            name: "high"
+            query: "@tx/number()"
+        }
+        XmlRole {
+            name: "low"
+            query: "@tn/number()"
         }
     }
+
 }
