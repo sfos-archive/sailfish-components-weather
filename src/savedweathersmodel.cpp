@@ -60,6 +60,7 @@ void SavedWeathersModel::loadWeather()
             weather->setStatus(Weather::Status(forecast["status"].toInt()));
             if (weather->status() == Weather::Ready) {
                 weather->setTemperature(forecast["temperature"].toInt());
+                weather->setTemperatureFeel(forecast["temperatureFeel"].toInt());
                 weather->setWeatherType(forecast["weatherType"].toString());
                 weather->setDescription(forecast["description"].toString());
                 weather->setTimestamp(QDateTime::fromString(forecast["timestamp"].toString()));
@@ -110,6 +111,7 @@ void SavedWeathersModel::saveWeather()
         QJsonObject forecast;
         forecast["status"] = weather->status();
         forecast["temperature"] = weather->temperature();
+        forecast["temperatureFeel"] = weather->temperatureFeel();
         forecast["weatherType"] = weather->weatherType();
         forecast["description"] = weather->description();
         forecast["timestamp"] = weather->timestamp().toUTC().toString(Qt::ISODate);
@@ -178,6 +180,7 @@ void SavedWeathersModel::update(const QVariantMap &weatherMap)
     }
     Weather *weather = m_savedWeathers[i];
     weather->setTemperature(weatherMap["temperature"].toInt());
+    weather->setTemperatureFeel(weatherMap["temperatureFeel"].toInt());
     weather->setWeatherType(weatherMap["weatherType"].toString());
     weather->setDescription(weatherMap["description"].toString());
     weather->setTimestamp(weatherMap["timestamp"].toDateTime());
@@ -272,6 +275,8 @@ QVariant SavedWeathersModel::data(const QModelIndex &index, int role) const
         return weather->country();
     case Temperature:
         return weather->temperature();
+    case TemperatureFeel:
+        return weather->temperatureFeel();
     case WeatherType:
         return weather->weatherType();
     case Description:
@@ -292,6 +297,7 @@ QHash<int, QByteArray> SavedWeathersModel::roleNames() const
     roles.insert(State, "state");
     roles.insert(Country, "country");
     roles.insert(Temperature, "temperature");
+    roles.insert(TemperatureFeel, "temperatureFeel");
     roles.insert(WeatherType, "weatherType");
     roles.insert(Description, "description");
     roles.insert(Timestamp, "timestamp");

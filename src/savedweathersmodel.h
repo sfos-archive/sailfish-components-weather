@@ -25,6 +25,7 @@ public:
         State,
         Country,
         Temperature,
+        TemperatureFeel,
         WeatherType,
         Description,
         Timestamp

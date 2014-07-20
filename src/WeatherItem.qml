@@ -17,16 +17,17 @@ MouseArea {
     WeatherImage {
         id: weatherImage
         x: Theme.paddingLarge
-        y: Theme.paddingLarge
+        y: 2*Theme.paddingLarge
         highlighted: root.highlighted
         weatherType: weather && weather.weatherType.length > 0 ? weather.weatherType : ""
     }
     PageHeader {
         id: pageHeader
         property int offset: _titleItem.y + _titleItem.height
-
         anchors {
             left: weatherImage.right
+            // weather graphics have some inline padding and rounded edges to give space for header
+            leftMargin: -Theme.itemSizeMedium
             right: parent.right
         }
         title: weather ? weather.city : ""
@@ -36,7 +37,7 @@ MouseArea {
         anchors {
             top: pageHeader.top
             topMargin: pageHeader.offset
-            left: weatherImage.left
+            left: weatherImage.right
             right: parent.right
             rightMargin: Theme.paddingLarge
         }
@@ -50,25 +51,28 @@ MouseArea {
             wrapMode: Text.Wrap
             width: parent.width
         }
-        TemperatureLabel {
-            anchors.right: parent.right
-            text: weather ? weather.temperature : ""
-            color: highlighted ? Theme.highlightColor : Theme.primaryColor
+        Label {
+            id: timestampLabel
+            width: parent.width
+            wrapMode: Text.Wrap
+            horizontalAlignment: Text.AlignRight
+            color: highlighted ? Theme.secondaryHighlightColor : Theme.secondaryColor
+            text: Format.formatDate(timestamp, Format.TimeValue) + " " + Qt.formatDateTime(timestamp, "MMM d")
         }
     }
-    Label {
-        id: timestampLabel
+    TemperatureLabel {
         anchors {
-            top: column.bottom
-            topMargin: -Theme.paddingMedium
-            right: column.right
+            right: parent.right
+            rightMargin: Theme.paddingLarge
+            bottom: weatherImage.bottom
         }
-        color: highlighted ? Theme.secondaryHighlightColor : Theme.secondaryColor
-        text: Format.formatDate(timestamp, Format.TimeValue) + " " + Qt.formatDateTime(timestamp, "MMM d")
+        temperature: weather ? weather.temperature : ""
+        temperatureFeel: weather ? weather.temperatureFeel : ""
+        color: highlighted ? Theme.highlightColor : Theme.primaryColor
     }
     Label {
         color: highlighted ? Theme.secondaryHighlightColor : Theme.secondaryColor
-        y: Math.max(weatherImage.y + weatherImage.height, timestampLabel.y + timestampLabel.height)
+        anchors.top: weatherImage.bottom
         font {
             pixelSize: Theme.fontSizeExtraLarge
             family: Theme.fontFamilyHeading

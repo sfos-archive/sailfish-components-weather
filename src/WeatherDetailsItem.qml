@@ -2,84 +2,150 @@ import QtQuick 2.0
 import Sailfish.Silica 1.0
 import Sailfish.Weather 1.0
 
-MouseArea {
+Item {
     id: root
 
+    property var model
     property var weather
-    property bool highlighted: pressed && containsMouse
-    property date timestamp: weather ? weather.timestamp : new Date()
+    property bool today
 
-    enabled: weather && weather.status == Weather.Ready
     width: parent.width
     height: childrenRect.height
 
-    WeatherImage {
-        id: weatherImage
-        x: Theme.paddingLarge
-        y: Theme.paddingLarge
-        highlighted: root.highlighted
-        weatherType: weather && weather.weatherType.length > 0 ? weather.weatherType : ""
-    }
-    PageHeader {
-        id: pageHeader
-        property int offset: _titleItem.y + _titleItem.height
-
-        anchors {
-            left: weatherImage.right
-            right: parent.right
-        }
-        title: weather ? weather.city : ""
-    }
     Column {
-        id: column
-        anchors {
-            top: pageHeader.top
-            topMargin: pageHeader.offset
-            left: weatherImage.left
-            right: parent.right
-            rightMargin: Theme.paddingLarge
+        width: parent.width
+        PageHeader {
+            id: pageHeader
+            title: weather ? weather.city : ""
+            //% "Weather today"
+            description: today ? qsTrId("weather-la-weather_today")
+                                 //% "Weather forecast"
+                               : qsTrId("weather-la-weather_forecast")
         }
-        Label {
-            id: secondaryLabel
-            font.pixelSize: Theme.fontSizeSmall
-            color: Theme.secondaryHighlightColor
-            //% "Current location"
-            text: qsTrId("weather-la-current_location")
-            horizontalAlignment: Text.AlignRight
-            wrapMode: Text.Wrap
+        Item {
             width: parent.width
+            height: windDirectionIcon.height
+
+            Label {
+                id: temperatureHighLabel
+                x: Theme.paddingLarge
+                color: Theme.highlightColor
+                font.pixelSize: Theme.fontSizeHuge
+                text: model ? model.high + "\u00B0" : ""
+                anchors.verticalCenter: windDirectionIcon.verticalCenter
+            }
+            Label {
+                x: Theme.paddingLarge
+                color: Theme.secondaryHighlightColor
+                font.pixelSize: Theme.fontSizeExtraSmall
+                anchors {
+                    top: temperatureHighLabel.baseline
+                    topMargin: Theme.paddingSmall
+                }
+                //% "Low %1"
+                text: model ? qsTrId("weather-la-low").arg(model.low + "\u00B0") : ""
+            }
+            Image {
+                id: windDirectionIcon
+                source: "image://theme/graphic-weather-wind-direction?" + Theme.highlightColor
+                anchors.centerIn: parent
+                rotation: model ? model.windDirection : 0
+                Behavior on rotation { SmoothedAnimation { velocity: 600*Theme.pixelRatio } }
+            }
+            Label {
+                id: windSpeedLabel
+                color: Theme.highlightColor
+                font.pixelSize: Theme.fontSizeHuge
+                anchors.centerIn: windDirectionIcon
+                text: model ? model.windSpeed : ""
+            }
+            Label {
+                anchors {
+                    horizontalCenter: windSpeedLabel.horizontalCenter
+                    top: windSpeedLabel.baseline
+                    topMargin: Theme.paddingSmall
+                }
+
+                // TODO: localize
+                //: Meters per second, short form
+                //% "m/s"
+                text: qsTrId("weather-la-m_per_s")
+                color: Theme.secondaryHighlightColor
+                font.pixelSize: Theme.fontSizeExtraSmall
+            }
+            Label {
+                id: accumulatedPrecipitationLabel
+                anchors {
+                    right: parent.right
+                    rightMargin: Theme.paddingLarge
+                }
+                color: Theme.highlightColor
+                font.pixelSize: Theme.fontSizeHuge
+                text: model ? model.accumulatedPrecipitation : ""
+                anchors.verticalCenter: windDirectionIcon.verticalCenter
+            }
+            Label {
+                anchors {
+                    right: parent.right
+                    rightMargin: Theme.paddingLarge
+                    top: accumulatedPrecipitationLabel.baseline
+                    topMargin: Theme.paddingSmall
+                }
+                horizontalAlignment: Text.AlignRight
+                width: parent.width/3 - Theme.paddingLarge
+                wrapMode: Text.WordWrap
+                color: Theme.secondaryHighlightColor
+                font.pixelSize: Theme.fontSizeExtraSmall
+                //: Accumulated precipitation in millimeters
+                //% "Accumulated precipitation (mm)"
+                text: qsTrId("weather-la-accumulated_precipitation_mm")
+            }
         }
-        TemperatureLabel {
-            anchors.right: parent.right
-            text: weather ? weather.temperature : ""
-            color: highlighted ? Theme.highlightColor : Theme.primaryColor
+        Item { width: 1; height: Theme.paddingLarge }
+        Label {
+            color: Theme.highlightColor
+            anchors {
+                left: parent.left
+                right: parent.right
+                leftMargin: Theme.paddingLarge
+                rightMargin: Theme.paddingLarge
+            }
+            wrapMode: Text.Wrap
+            font.pixelSize: Theme.fontSizeLarge
+            horizontalAlignment: Text.AlignHCenter
+            text: model ? model.description : ""
         }
-    }
-    Label {
-        id: timestampLabel
-        anchors {
-            top: column.bottom
-            topMargin: -Theme.paddingMedium
-            right: column.right
+        Item { width: 1; height: Theme.paddingLarge }
+        Column {
+            width: parent.width
+            DetailItem {
+                //% "Weather station"
+                label: qsTrId("weather-la-weather_station")
+                value: weather ? weather.state + ", " + weather.country : ""
+            }
+            DetailItem {
+                //% "Date"
+                label: qsTrId("weather-la-weather_date")
+                value: {
+                    var dateString = Format.formatDate(model.timestamp, Format.DateLong)
+                    return dateString.charAt(0).toUpperCase() + dateString.substr(1)
+                }
+            }
+            DetailItem {
+                //% "Cloudiness"
+                label: qsTrId("weather-la-cloudiness")
+                value: model ? model.cloudiness : ""
+            }
+            DetailItem {
+                //% "Precipitation rate"
+                label: qsTrId("weather-la-precipitationRate")
+                value: model ? model.precipitationRate : ""
+            }
+            DetailItem {
+                //% "Precipitation type"
+                label: qsTrId("weather-la-precipitationType")
+                value: model ? model.precipitationType : ""
+            }
         }
-        color: highlighted ? Theme.secondaryHighlightColor : Theme.secondaryColor
-        text: Format.formatDate(timestamp, Format.TimeValue) + " " + Qt.formatDateTime(timestamp, "MMM d")
-    }
-    Label {
-        color: Theme.secondaryHighlightColor
-        y: Math.max(weatherImage.y + weatherImage.height, timestampLabel.y + timestampLabel.height)
-        font {
-            pixelSize: Theme.fontSizeExtraLarge
-            family: Theme.fontFamilyHeading
-        }
-        anchors {
-            left: parent.left
-            right: parent.right
-            leftMargin: Theme.paddingLarge
-            rightMargin: Theme.paddingLarge
-        }
-        wrapMode: Text.Wrap
-        horizontalAlignment: Text.AlignRight
-        text: weather ? weather.description : ""
     }
 }

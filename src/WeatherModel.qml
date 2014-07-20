@@ -5,6 +5,7 @@ import Sailfish.Weather 1.0
 ListModel {
     id: root
 
+    property var currentWeather
     property bool active: true
     property int locationId
     property int status: Weather.Loading
@@ -37,24 +38,119 @@ ListModel {
             timestamp.setSeconds(timeArray[2])
         }
 
-        return {
+        var precipirationRateCode = weather.code.charAt(2)
+        var precipirationRate = ""
+        switch (precipirationRateCode) {
+        case '0':
+            //% "No precipitation"
+            precipirationRate = qsTrId("weather-la-no_precipitation")
+            break
+        case '1':
+            //% "Slight precipitation"
+            precipirationRate = qsTrId("weather-la-slight_precipitation")
+            break
+        case '2':
+            //% "Showers"
+            precipirationRate = qsTrId("weather-la-showers")
+            break
+        case '3':
+            //% "Precipitation"
+            precipirationRate = qsTrId("weather-la-precipitation")
+            break
+        case '4':
+            //% "Thunder"
+            precipirationRate = qsTrId("weather-la-thunder")
+            break
+        default:
+            console.log("WeatherModel warning: invalid precipiration rate code", precipirationRateCode)
+            break
+        }
+
+        var precipirationType = ""
+        if (precipirationRateCode === '0') { // no rain
+            //% "None"
+            precipirationType = qsTrId("weather-la-none")
+        } else {
+            var precipirationTypeCode = weather.code.charAt(3)
+            switch (precipirationTypeCode) {
+            case '0':
+                //% "Rain"
+                precipirationType = qsTrId("weather-la-rain")
+                break
+            case '1':
+                //% "Sleet"
+                precipirationType = qsTrId("weather-la-sleet")
+                break
+            case '2':
+                //% "Snow"
+                precipirationType = qsTrId("weather-la-snow")
+                break
+            default:
+                console.log("WeatherModel warning: invalid precipiration type code", precipirationTypeCode)
+                break
+            }
+        }
+        var windDirection = 0
+        switch (weather.windDirection) {
+        case 'N':
+            windDirection = 0
+            break
+        case 'NW':
+            windDirection = 45
+            break
+        case 'W':
+            windDirection = 90
+            break
+        case 'SW':
+            windDirection = 135
+            break
+        case 'S':
+            windDirection = 180
+            break
+        case 'SE':
+            windDirection = 225
+            break
+        case 'E':
+            windDirection = 270
+            break
+        case 'NE':
+            windDirection = 315
+            break
+        }
+
+        var data = {
             "description": description(weather.code),
             "weatherType": weatherType(weather.code),
-            "temperature": forecast ? weather.high : weather.temperature,
-            "timestamp": timestamp
+            "timestamp": timestamp,
+            "cloudiness": (100*parseInt(weather.code.charAt(1))/4) + "%",
+            "precipitationRate": precipirationRate,
+            "precipitationType": precipirationType,
+            "windSpeed": Math.round(weather.windSpeed),
+            "windDirection": windDirection
         }
+
+        if (forecast) {
+            data.accumulatedPrecipitation = weather.accumulatedPrecipitation
+            data.high = weather.high
+            data.low = weather.low
+        } else {
+            data.temperature = weather.temperature
+            data.temperatureFeel = weather.temperatureFeel
+        }
+        return data
     }
 
     function handleStatusChanged() {
         if (currentDayModel.status == XmlListModel.Ready && forecastModel.status == XmlListModel.Ready) {
-            var weatherData = [getWeatherData(currentDayModel.get(0), false)]
+            currentWeather = getWeatherData(currentDayModel.get(0), false)
+            var currentDate = new Date(currentWeather.timestamp.getTime())
+            currentDate.setHours(0)
+            currentDate.setMinutes(0)
+            var weatherData = []
             for (var i = 0; i < forecastModel.count; i++) {
                 var weather = getWeatherData(forecastModel.get(i), true)
-                var tomorrow = new Date()
-                tomorrow.setDate(tomorrow.getDate())
-                tomorrow.setHours(23)
-                tomorrow.setMinutes(59)
-                if (weather.timestamp < tomorrow) {
+
+                if (weather.timestamp < currentDate) {
                     continue
                 }
                 weatherData[weatherData.length] = weather
@@ -74,10 +170,15 @@ ListModel {
                 loaded()
             }
         } else {
-            if (currentDayModel.status == XmlListModel.Error || forecastModel.status == XmlListModel.Error) {
+            var oldStatus = status
+            if (currentDayModel.status === XmlListModel.Error) {
                 status = Weather.Error
+            } else if (forecastModel.status === XmlListModel.Error) {
+                status = Weather.Error
+            }
+            if (status === Weather.Error && status != oldStatus) {
                 error()
-                console.log("WeatherModel - error obtaining weather data:", model.errorString())
+                console.log("WeatherModel - could not obtain forecast weather data")
             }
         }
     }
@@ -221,7 +322,23 @@ ListModel {
         }
         XmlRole {
             name: "temperature"
-            query: "@t/number()"
+            query: "@t/string()"
+        }
+        XmlRole {
+            name: "temperatureFeel"
+            query: "@t/string()"
+        }
+        XmlRole {
+            name: "windSpeed"
+            query: "@ws/number()"
+        }
+        XmlRole {
+            name: "windDirection"
+            query: "@wn/string()"
+        }
+        XmlRole {
+            name: "accumulatedPrecipitation"
+            query: "@pr/string()"
         }
     }
     property var forecast: XmlListModel {
@@ -246,11 +363,23 @@ ListModel {
         }
         XmlRole {
             name: "high"
-            query: "@tx/number()"
+            query: "@tx/string()"
         }
         XmlRole {
             name: "low"
-            query: "@tn/number()"
+            query: "@tn/string()"
+        }
+        XmlRole {
+            name: "windSpeed"
+            query: "@wsa/number()"
+        }
+        XmlRole {
+            name: "windDirection"
+            query: "@wn/string()"
+        }
+        XmlRole {
+            name: "accumulatedPrecipitation"
+            query: "@pr/string()"
         }
     }
 }

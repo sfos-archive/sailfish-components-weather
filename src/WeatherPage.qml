@@ -19,12 +19,13 @@ Page {
         contentHeight: weatherItem.height
         VerticalScrollDecorator {}
 
-        WeatherItem {
+        WeatherDetailsItem {
             id: weatherItem
 
-            enabled: false
+            today: root.currentIndex === 0
             opacity: weatherModel.status == Weather.Ready ? 1.0 : 0.0
-            weather: weatherModel.status == Weather.Ready ? weatherModel.get(currentIndex) : null
+            weather: root.weather
+            model: weatherModel.status == Weather.Ready ? weatherModel.get(currentIndex) : null
             Behavior on opacity { FadeAnimation {} }
         }
         PlaceholderItem {
@@ -73,14 +74,19 @@ Page {
                     x: truncate ? Theme.paddingSmall : parent.width/2 - width/2
                     width: truncate ? parent.width - Theme.paddingSmall : implicitWidth
                     truncationMode: truncate ? TruncationMode.Fade : TruncationMode.None
-                    text: Qt.formatDateTime(model.timestamp, "ddd")
+                    text: model.index === 0 ?
+                              //% "Today"
+                              qsTrId("weather-la-today")
+                            :
+                              Qt.formatDateTime(model.timestamp, "ddd")
                     anchors.horizontalCenter: parent.horizontalCenter
-                    color: highlighted ? Theme.highlightColor : Theme.secondaryColor
+                    color: highlighted ? Theme.secondaryHighlightColor : Theme.secondaryColor
+                    font.pixelSize: Theme.fontSizeSmall
                 }
                 Label {
-                    text: Qt.formatDateTime(model.timestamp, "d")
+                    text: model.high + "\u00B0"
                     anchors.horizontalCenter: parent.horizontalCenter
-                    color: highlighted ? Theme.highlightColor : Theme.secondaryColor
+                    color: highlighted ? Theme.highlightColor : Theme.primaryColor
                 }
                 Image {
                     sourceSize.width: width
@@ -93,18 +99,9 @@ Page {
                                                           : ""
                 }
                 Label {
-                    text: model.temperature
-                    font.pixelSize: Theme.fontSizeExtraSmall
+                    text: model.low + "\u00B0"
                     anchors.horizontalCenter: parent.horizontalCenter
-                    color: highlighted ? Theme.highlightColor : Theme.secondaryColor
-
-                    Label {
-                        // TODO: add support for Fahrenheit
-                        text: "\u00B0"
-                        anchors.left: parent.right
-                        font.pixelSize: Theme.fontSizeSmall
-                        color: highlighted ? Theme.highlightColor : Theme.secondaryColor
-                    }
+                    color: highlighted ? Theme.secondaryHighlightColor : Theme.secondaryColor
                 }
             }
         }
