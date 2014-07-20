@@ -14,27 +14,50 @@ ListModel {
 
     function reload() {
         if (active) {
-            status =  Weather.Loading
-            xmlListModel.reload()
+            forecastModel.reload()
+            currentDayModel.reload()
+        }
+    }
+
+    function getWeatherData(weather, forecast) {
+        var dateArray
+        if (forecast) {
+            dateArray = weather.timestamp.split("-")
+        } else {
+            dateArray = weather.timestamp.split(" ")[0].split("-")
+        }
+        var timestamp =  new Date(parseInt(dateArray[0]),
+                                  parseInt(dateArray[1] - 1),
+                                  parseInt(dateArray[2]))
+
+        if (!forecast) {
+            var timeArray = weather.timestamp.split(" ")[1].split(":")
+            timestamp.setHours(timeArray[0])
+            timestamp.setMinutes(timeArray[1])
+            timestamp.setSeconds(timeArray[2])
+        }
+
+        return {
+            "description": description(weather.code),
+            "weatherType": weatherType(weather.code),
+            "temperature": forecast ? weather.high : weather.temperature,
+            "timestamp": timestamp
         }
     }
 
     function handleStatusChanged() {
-        var model = xmlListModel
-        if (model.status == XmlListModel.Loading) {
-        } else if (model.status == XmlListModel.Ready) {
-            var weatherData = []
-            for (var i = 0; i < model.count; i++) {
-                var weather = model.get(i)
-                var timestamp = new Date()
-                timestamp.setDate(timestamp.getDate() - i);
-
-                weatherData[i] = {
-                    "description": description(weather.code),
-                    "weatherType": weatherType(weather.code),
-                    "temperature": weather.high,
-                    "timestamp": timestamp
+        if (currentDayModel.status == XmlListModel.Ready && forecastModel.status == XmlListModel.Ready) {
+            var weatherData = [getWeatherData(currentDayModel.get(0), false)]
+            for (var i = 0; i < forecastModel.count; i++) {
+                var weather = getWeatherData(forecastModel.get(i), true)
+                var tomorrow = new Date()
+                tomorrow.setDate(tomorrow.getDate())
+                tomorrow.setHours(23)
+                tomorrow.setMinutes(59)
+                if (weather.timestamp < tomorrow) {
+                    continue
                 }
+                weatherData[weatherData.length] = weather
             }
             while (count > weatherData.length) {
                 remove(weatherData.length)
@@ -51,7 +74,7 @@ ListModel {
                 loaded()
             }
         } else {
-            if (model.status == XmlListModel.Error) {
+            if (currentDayModel.status == XmlListModel.Error || forecastModel.status == XmlListModel.Error) {
                 status = Weather.Error
                 error()
                 console.log("WeatherModel - error obtaining weather data:", model.errorString())
@@ -176,8 +199,33 @@ ListModel {
 
         return localizations[code.substr(1,3)]
     }
-    property var container: XmlListModel {
-        id: xmlListModel
+    property var currentDay: XmlListModel {
+        id: currentDayModel
+        onStatusChanged: root.handleStatusChanged()
+
+        // see http://developer.yahoo.com/weather for more info
+        query: "/xml/weather/obs"
+        source: root.active && root.locationId > 0 ? "http://feed.foreca.com/jolla-jan14fi/data.php?l=" + root.locationId + "&products=cc,daily" : ""
+
+        XmlRole {
+            name: "description"
+            query: "@sT/string()"
+        }
+        XmlRole {
+            name: "code"
+            query: "@s/string()"
+        }
+        XmlRole {
+            name: "timestamp"
+            query: "@dt/string()"
+        }
+        XmlRole {
+            name: "temperature"
+            query: "@t/number()"
+        }
+    }
+    property var forecast: XmlListModel {
+        id: forecastModel
         onStatusChanged: root.handleStatusChanged()
 
         // see http://developer.yahoo.com/weather for more info
@@ -193,6 +241,10 @@ ListModel {
             query: "@s/string()"
         }
         XmlRole {
+            name: "timestamp"
+            query: "@dt/string()"
+        }
+        XmlRole {
             name: "high"
             query: "@tx/number()"
         }
@@ -201,5 +253,4 @@ ListModel {
             query: "@tn/number()"
         }
     }
-
 }
