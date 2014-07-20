@@ -16,50 +16,15 @@ Page {
         }
         clip: true
         width: parent.width
-        contentHeight: column.height
+        contentHeight: weatherItem.height
         VerticalScrollDecorator {}
-        Column {
-            id: column
-            width: parent.width
-            PageHeader {
-                id: pageHeader
-                title: weather ? weather.city : ""
-                Label {
-                    id: secondaryLabel
-                    font.pixelSize: Theme.fontSizeSmall
-                    color: Theme.secondaryHighlightColor
-                    text: weather ? weather.state + ", " + weather.country : ""
-                    horizontalAlignment: Text.AlignRight
-                    anchors {
-                        left: parent.left
-                        right: parent.right
-                        bottom: parent.bottom
-                        bottomMargin: -Theme.paddingSmall
-                        rightMargin: Theme.paddingLarge
-                    }
-                }
-                OpacityRampEffect {
-                    sourceItem: secondaryLabel
-                    direction: OpacityRamp.RightToLeft
-                    offset: 0.75
-                    slope: 4
-                }
-            }
-            Item {
-                width: parent.width
-                height: Theme.paddingLarge
-            }
-            WeatherItem {
-                enabled: false
-                displayTime: false
-                opacity: weatherModel.status == Weather.Ready ? 1.0 : 0.0
-                weather: weatherModel.status == Weather.Ready ? weatherModel.get(currentIndex) : null
-                Behavior on opacity { FadeAnimation {} }
-            }
-            Item {
-                width: parent.width
-                height: 2*Theme.paddingLarge
-            }
+
+        WeatherItem {
+            id: weatherItem
+            enabled: false
+            opacity: weatherModel.status == Weather.Ready ? 1.0 : 0.0
+            weather: weatherModel.status == Weather.Ready ? weatherModel.get(currentIndex) : null
+            Behavior on opacity { FadeAnimation {} }
         }
         PlaceholderItem {
             y: Theme.itemSizeSmall + Theme.itemSizeLarge*2

@@ -48,17 +48,23 @@ BackgroundItem {
         }
     }
 
-    Image {
-        id: image
-        opacity: 0.3
-        anchors {
-            verticalCenter: parent.verticalCenter
-            right: parent.right
-            rightMargin: -width/3
+    Item {
+        clip: true
+        width: parent.width
+        height: image.height
+        anchors.verticalCenter: parent.verticalCenter
+        Image {
+            id: image
+            opacity: 0.3
+            anchors {
+                verticalCenter: parent.verticalCenter
+                right: parent.right
+                rightMargin: -width/3
+            }
+            source: weather && weather.weatherType.length > 0 ? "image://theme/graphic-weather-" + weather.weatherType
+                                                                + (highlighted ? "?" + Theme.highlightColor : "")
+                                                              : ""
         }
-        source: weather && weather.weatherType.length > 0 ? "image://theme/graphic-weather-" + weather.weatherType
-                                                            + (highlighted ? "?" + Theme.highlightColor : "")
-                                                          : ""
     }
 
     SavedWeathersModel { id: savedWeathersModel }

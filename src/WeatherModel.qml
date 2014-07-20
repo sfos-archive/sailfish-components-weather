@@ -54,7 +54,7 @@ ListModel {
             if (model.status == XmlListModel.Error) {
                 status = Weather.Error
                 error()
-                console.log("WeatherModel - error obtaining weather data", model.errorString())
+                console.log("WeatherModel - error obtaining weather data:", model.errorString())
             }
         }
     }
@@ -138,12 +138,12 @@ ListModel {
             "420": qsTrId("weather-la-overcast_and_showers"),
             //% "Overcast and rain"
             "430": qsTrId("weather-la-overcast_and-rain"),
-            //% "Partly cloudy, possible thuderstorms with rain"
-            "240": qsTrId("weather-la-partly_cloudy_possible_thuderstorms_with_rain"),
-            //% "Cloudy, thuderstorms with rain"
-            "340": qsTrId("weather-la-cloudy_thuderstorms_with_rain"),
-            //% "Overcast, thuderstorms with rain"
-            "440": qsTrId("weather-la-overcast_thuderstorms_with_rain"),
+            //% "Partly cloudy, possible thunderstorms with rain"
+            "240": qsTrId("weather-la-partly_cloudy_possible_thunderstorms_with_rain"),
+            //% "Cloudy, thunderstorms with rain"
+            "340": qsTrId("weather-la-cloudy_thunderstorms_with_rain"),
+            //% "Overcast, thunderstorms with rain"
+            "440": qsTrId("weather-la-overcast_thunderstorms_with_rain"),
             //% "Partly cloudy and light wet snow"
             "211": qsTrId("weather-la-partly_cloudy_and_light_wet_snow"),
             //% "Cloudy and light wet snow"

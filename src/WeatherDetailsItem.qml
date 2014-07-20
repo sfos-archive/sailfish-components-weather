@@ -13,7 +13,6 @@ MouseArea {
     width: parent.width
     height: childrenRect.height
 
-    Behavior on height { NumberAnimation { duration: 200; easing.type: Easing.InOutQuad } }
     WeatherImage {
         id: weatherImage
         x: Theme.paddingLarge
@@ -67,7 +66,7 @@ MouseArea {
         text: Format.formatDate(timestamp, Format.TimeValue) + " " + Qt.formatDateTime(timestamp, "MMM d")
     }
     Label {
-        color: highlighted ? Theme.secondaryHighlightColor : Theme.secondaryColor
+        color: Theme.secondaryHighlightColor
         y: Math.max(weatherImage.y + weatherImage.height, timestampLabel.y + timestampLabel.height)
         font {
             pixelSize: Theme.fontSizeExtraLarge
