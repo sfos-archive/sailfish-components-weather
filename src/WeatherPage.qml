@@ -21,6 +21,7 @@ Page {
 
         WeatherItem {
             id: weatherItem
+
             enabled: false
             opacity: weatherModel.status == Weather.Ready ? 1.0 : 0.0
             weather: weatherModel.status == Weather.Ready ? weatherModel.get(currentIndex) : null
@@ -38,20 +39,31 @@ Page {
         opacity: weatherModel.status == Weather.Ready ? 1.0 : 0.0
         Behavior on opacity { FadeAnimation {} }
 
-        Image {
-            width: parent.width
-            source: "image://theme/graphic-gradient-edge"
-        }
-
         width: parent.width
         model: weatherModel
         orientation: ListView.Horizontal
         height: 2*Theme.itemSizeLarge
         anchors.bottom: parent.bottom
-        delegate: BackgroundItem {
+        delegate: MouseArea {
+            property bool highlighted: (pressed && containsMouse) || root.currentIndex == model.index
+
             width: root.width/5.5
             height: weatherForecastList.height
-            highlighted: down || root.currentIndex == model.index
+
+            Rectangle {
+                visible: highlighted
+                anchors.fill: parent
+                gradient: Gradient {
+                    GradientStop {
+                        position: 0.0
+                        color: "transparent"
+                    }
+                    GradientStop {
+                        position: 1.0
+                        color: Theme.rgba(Theme.highlightBackgroundColor, 0.3)
+                    }
+                }
+            }
             onClicked: root.currentIndex = model.index
             Column {
                 anchors.centerIn: parent
@@ -61,7 +73,7 @@ Page {
                     x: truncate ? Theme.paddingSmall : parent.width/2 - width/2
                     width: truncate ? parent.width - Theme.paddingSmall : implicitWidth
                     truncationMode: truncate ? TruncationMode.Fade : TruncationMode.None
-                    text: Qt.formatDateTime(model.timestamp, "MMM")
+                    text: Qt.formatDateTime(model.timestamp, "ddd")
                     anchors.horizontalCenter: parent.horizontalCenter
                     color: highlighted ? Theme.highlightColor : Theme.secondaryColor
                 }
@@ -95,6 +107,10 @@ Page {
                     }
                 }
             }
+        }
+        PanelBackground {
+            z: -1
+            anchors.fill: parent
         }
     }
 }
