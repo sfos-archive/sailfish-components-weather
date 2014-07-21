@@ -31,7 +31,7 @@ BackgroundItem {
         }
     }
     Label {
-        text: weather ? weather.city + ", " + weather.state + ", " + weather.country : ""
+        text: weather ? weather.city : ""
         color: Theme.secondaryHighlightColor
         font {
             pixelSize: Theme.fontSizeHuge
