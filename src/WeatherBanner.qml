@@ -7,7 +7,6 @@ BackgroundItem {
     property alias autoRefresh: savedWeathersModel.autoRefresh
 
     function update() {
-        savedWeathersModel.loadWeather()
         weatherModel.active = true
         weatherModel.reload()
     }
