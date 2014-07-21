@@ -55,8 +55,9 @@ MouseArea {
             id: timestampLabel
             width: parent.width
             wrapMode: Text.Wrap
+            font.pixelSize: Theme.fontSizeSmall
             horizontalAlignment: Text.AlignRight
-            color: highlighted ? Theme.secondaryHighlightColor : Theme.secondaryColor
+            color: Theme.secondaryHighlightColor
             text: Format.formatDate(timestamp, Format.TimeValue) + " " + Qt.formatDateTime(timestamp, "MMM d")
         }
     }

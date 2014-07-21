@@ -75,14 +75,26 @@ Item {
             }
             Label {
                 id: accumulatedPrecipitationLabel
+                color: Theme.highlightColor
+                font.pixelSize: Theme.fontSizeHuge
+                text: model ? model.accumulatedPrecipitation : ""
                 anchors {
+                    right: precipitationMetricLabel.left
+                    verticalCenter: windDirectionIcon.verticalCenter
+                }
+            }
+            Label {
+                id: precipitationMetricLabel
+                anchors {
+                    baseline: accumulatedPrecipitationLabel.baseline
                     right: parent.right
                     rightMargin: Theme.paddingLarge
                 }
                 color: Theme.highlightColor
-                font.pixelSize: Theme.fontSizeHuge
-                text: model ? model.accumulatedPrecipitation : ""
-                anchors.verticalCenter: windDirectionIcon.verticalCenter
+                //: Millimeters, short form
+                //% "mm"
+                text: qsTrId("weather-la-mm")
+                font.pixelSize: Theme.fontSizeExtraSmall
             }
             Label {
                 anchors {
@@ -96,9 +108,8 @@ Item {
                 wrapMode: Text.WordWrap
                 color: Theme.secondaryHighlightColor
                 font.pixelSize: Theme.fontSizeExtraSmall
-                //: Accumulated precipitation in millimeters
-                //% "Accumulated precipitation (mm)"
-                text: qsTrId("weather-la-accumulated_precipitation_mm")
+                //% "Precipitation"
+                text: qsTrId("weather-la-precipitation")
             }
         }
         Item { width: 1; height: Theme.paddingLarge }
@@ -121,7 +132,7 @@ Item {
             DetailItem {
                 //% "Weather station"
                 label: qsTrId("weather-la-weather_station")
-                value: weather ? weather.state + ", " + weather.country : ""
+                value: weather ? (weather.state.length > 0 ? weather.state + ", " : "") + weather.country : ""
             }
             DetailItem {
                 //% "Date"
