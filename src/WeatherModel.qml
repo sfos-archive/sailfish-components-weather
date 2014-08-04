@@ -306,7 +306,7 @@ ListModel {
 
         // see http://developer.yahoo.com/weather for more info
         query: "/xml/weather/obs"
-        source: root.active && root.locationId > 0 ? "http://feed.foreca.com/jolla-jan14fi/data.php?l=" + root.locationId + "&products=cc,daily" : ""
+        source: root.active && root.locationId > 0 ? "http://feed.foreca.com/jolla-jan14fi/data.php?l=" + root.locationId + "&products=cc" : ""
 
         XmlRole {
             name: "description"
@@ -347,7 +347,7 @@ ListModel {
 
         // see http://developer.yahoo.com/weather for more info
         query: "/xml/weather/fc"
-        source: root.active && root.locationId > 0 ? "http://feed.foreca.com/jolla-jan14fi/data.php?l=" + root.locationId + "&products=cc,daily" : ""
+        source: root.active && root.locationId > 0 ? "http://feed.foreca.com/jolla-jan14fi/data.php?l=" + root.locationId + "&products=daily" : ""
 
         XmlRole {
             name: "description"
