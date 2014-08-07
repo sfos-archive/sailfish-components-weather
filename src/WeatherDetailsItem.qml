@@ -1,4 +1,4 @@
-import QtQuick 2.0
+import QtQuick 2.2
 import Sailfish.Silica 1.0
 import Sailfish.Weather 1.0
 
@@ -50,7 +50,13 @@ Item {
                 source: "image://theme/graphic-weather-wind-direction?" + Theme.highlightColor
                 anchors.centerIn: parent
                 rotation: model ? model.windDirection : 0
-                Behavior on rotation { SmoothedAnimation { velocity: 600*Theme.pixelRatio } }
+                Behavior on rotation {
+                    RotationAnimator {
+                        duration: 200
+                        easing.type: Easing.InOutQuad
+                        direction: RotationAnimator.Shortest
+                    }
+                }
             }
             Label {
                 id: windSpeedLabel
