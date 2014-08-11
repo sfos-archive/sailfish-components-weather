@@ -74,16 +74,15 @@ BackgroundItem {
         locationId: savedWeathersModel.currentWeather.locationId
         onError: if (status == Weather.Loading) savedWeathersModel.reportError(locationId)
         onLoaded: {
-            if (count > 0) {                
-                var weather = get(0)
+            if (count > 0) {
                 savedWeathersModel.update({   "locationId": model.locationId,
                                               "city": model.city,
                                               "state": model.state,
                                               "country": model.country,
-                                              "temperature": weather.temperature,
-                                              "weatherType": weather.weatherType,
-                                              "description": weather.description,
-                                              "timestamp": weather.timestamp
+                                              "temperature": currentWeather.temperature,
+                                              "weatherType": currentWeather.weatherType,
+                                              "description": currentWeather.description,
+                                              "timestamp": currentWeather.timestamp
                                           })
             }
         }
