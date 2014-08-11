@@ -1,3 +1,4 @@
+module Sailfish.Weather
 plugin sailfishweatherplugin
 WeatherPage 1.0 WeatherPage.qml
 WeatherModel 1.0 WeatherModel.qml
