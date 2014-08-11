@@ -23,8 +23,13 @@ Page {
             visible: weatherModel.count > 0
             busy: weatherModel.status === Weather.Loading
             MenuItem {
+                //% "More information"
+                text: qsTrId("weather-me-more_information")
+                onClicked: Qt.openUrlExternally("http://foreca.mobi/spot.php?l=" + root.weather.locationId)
+            }
+            MenuItem {
                 //% "Check weather"
-                text: qsTrId("weather-me-weather")
+                text: qsTrId("weather-me-check_weather")
                 onClicked: weatherModel.reload()
             }
         }
