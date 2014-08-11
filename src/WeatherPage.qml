@@ -28,8 +28,8 @@ Page {
                 onClicked: Qt.openUrlExternally("http://foreca.mobi/spot.php?l=" + root.weather.locationId)
             }
             MenuItem {
-                //% "Check weather"
-                text: qsTrId("weather-me-check_weather")
+                //% "Update"
+                text: qsTrId("weather-me-update")
                 onClicked: weatherModel.reload()
             }
         }
@@ -100,7 +100,7 @@ Page {
                     font.pixelSize: Theme.fontSizeSmall
                 }
                 Label {
-                    text: model.high + "\u00B0"
+                    text: converter.format(model.high) + "\u00B0"
                     anchors.horizontalCenter: parent.horizontalCenter
                     color: highlighted ? Theme.highlightColor : Theme.primaryColor
                 }
@@ -115,7 +115,7 @@ Page {
                                                           : ""
                 }
                 Label {
-                    text: model.low + "\u00B0"
+                    text: converter.format(model.low) + "\u00B0"
                     anchors.horizontalCenter: parent.horizontalCenter
                     color: highlighted ? Theme.secondaryHighlightColor : Theme.secondaryColor
                 }
