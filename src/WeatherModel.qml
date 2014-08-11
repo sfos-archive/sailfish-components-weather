@@ -142,6 +142,13 @@ ListModel {
 
     function handleStatusChanged() {
         if (currentDayModel.status == XmlListModel.Ready && forecastModel.status == XmlListModel.Ready) {
+
+            if (currentDayModel.get(0).temperature === "") {
+                status = Weather.Error
+                error()
+                console.log("WeatherModel - could not obtain forecast weather data")
+                return
+            }
             currentWeather = getWeatherData(currentDayModel.get(0), false)
             var currentDate = new Date(currentWeather.timestamp.getTime())
             currentDate.setHours(0)
@@ -171,10 +178,10 @@ ListModel {
             }
         } else {
             var oldStatus = status
-            if (currentDayModel.status === XmlListModel.Error) {
+            if (currentDayModel.status === XmlListModel.Error || forecastModel.status === XmlListModel.Error) {
                 status = Weather.Error
-            } else if (forecastModel.status === XmlListModel.Error) {
-                status = Weather.Error
+            } else if (currentDayModel.status === XmlListModel.Loading || forecastModel.status === XmlListModel.Loading) {
+                status = Weather.Loading
             }
             if (status === Weather.Error && status != oldStatus) {
                 error()

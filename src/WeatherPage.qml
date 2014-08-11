@@ -19,25 +19,36 @@ Page {
         contentHeight: weatherItem.height
         VerticalScrollDecorator {}
 
+        PullDownMenu {
+            visible: weatherModel.count > 0
+            busy: weatherModel.status === Weather.Loading
+            MenuItem {
+                //% "Check weather"
+                text: qsTrId("weather-me-weather")
+                onClicked: weatherModel.reload()
+            }
+        }
         WeatherDetailsItem {
             id: weatherItem
 
             today: root.currentIndex === 0
-            opacity: weatherModel.status == Weather.Ready ? 1.0 : 0.0
+            opacity: weatherModel.count > 0 ? 1.0 : 0.0
             weather: root.weather
-            model: weatherModel.status == Weather.Ready ? weatherModel.get(currentIndex) : null
+            status: weatherModel.status
+            model: weatherModel.count > 0 ? weatherModel.get(currentIndex) : null
             Behavior on opacity { FadeAnimation {} }
         }
         PlaceholderItem {
             y: Theme.itemSizeSmall + Theme.itemSizeLarge*2
             status: weatherModel.status
+            enabled: weatherModel.count === 0
             onReload: weatherModel.reload()
         }
     }
     SilicaListView {
         id: weatherForecastList
 
-        opacity: weatherModel.status == Weather.Ready ? 1.0 : 0.0
+        opacity: weatherModel.count > 0 ? 1.0 : 0.0
         Behavior on opacity { FadeAnimation {} }
 
         width: parent.width

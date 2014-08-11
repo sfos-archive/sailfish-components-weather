@@ -8,6 +8,7 @@ Item {
     property var model
     property var weather
     property bool today
+    property int status
 
     width: parent.width
     height: childrenRect.height
@@ -17,11 +18,24 @@ Item {
         PageHeader {
             id: pageHeader
             title: weather ? weather.city : ""
-            //% "Weather today"
-            description: today ? qsTrId("weather-la-weather_today")
-                                 //% "Weather forecast"
-                               : qsTrId("weather-la-weather_forecast")
+            description: {
+                if (status === Weather.Error) {
+                    //% "Loading failed"
+                    return qsTrId("weather-la-weather_loading_failed")
+                } else if (status === Weather.Loading) {
+                    //% "Loading"
+                    return qsTrId("weather-la-weather_loading")
+                } else if (today) {
+                    //% "Weather today"
+                    return qsTrId("weather-la-weather_today")
+                } else {
+                    //% "Weather forecast"
+                    return qsTrId("weather-la-weather_forecast")
+                }
+            }
         }
+
+
         Item {
             width: parent.width
             height: windDirectionIcon.height
