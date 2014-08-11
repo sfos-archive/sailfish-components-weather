@@ -145,8 +145,9 @@ Item {
             font.pixelSize: Theme.fontSizeLarge
             horizontalAlignment: Text.AlignHCenter
             text: model ? model.description : ""
+            height: lineCount === 1 ? 2*implicitHeight : implicitHeight
         }
-        Item { width: 1; height: Theme.paddingLarge }
+        Item { width: 1; height: Theme.paddingMedium }
         Column {
             width: parent.width
             DetailItem {
