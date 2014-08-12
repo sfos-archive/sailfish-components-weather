@@ -31,7 +31,8 @@ Item {
     }
     Label {
         id: temperatureFeelLabel
-        color: Theme.secondaryColor
+        opacity: 0.6
+        color: parent.color
         text: temperatureFeel
         font.pixelSize: Theme.fontSizeLarge
         anchors {
