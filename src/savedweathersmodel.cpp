@@ -76,7 +76,7 @@ void SavedWeathersModel::loadWeather()
         }
     }
 
-    setCurrentLocationId(root.value("currentLocation").toInt(), false /* don't save */);
+    setCurrentLocationId(root.value("currentLocation").toInt(), true /* internal */);
     if (m_savedWeathers.count() != oldCount) {
         emit countChanged();
     }
@@ -246,14 +246,15 @@ int SavedWeathersModel::currentLocationId() const
     return -1;
 }
 
-void SavedWeathersModel::setCurrentLocationId(int locationId, bool saveImmediatelly)
+void SavedWeathersModel::setCurrentLocationId(int locationId, bool internal)
 {
     int index = getWeatherIndex(locationId);
-    if (index >= 0 && index != m_currentIndex) {
+    if ((index >= 0 || internal) && index != m_currentIndex) {
         m_currentIndex = index;
+
         emit currentLocationIdChanged();
         emit currentWeatherChanged();
-        if (saveImmediatelly) {
+        if (!internal) {
             save();
         }
     }

@@ -48,7 +48,7 @@ public:
 
     Weather *currentWeather() const;
     int currentLocationId() const;
-    void setCurrentLocationId(int locationId, bool saveImmediatelly = true);
+    void setCurrentLocationId(int locationId, bool internal = false);
 
     // Automatically reload cached data when it is changed by another model
     // Default false
