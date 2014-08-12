@@ -38,16 +38,17 @@ public:
     virtual QVariant data(const QModelIndex &index, int role) const;
 
     Q_INVOKABLE void reportError(int locationId);
-    Q_INVOKABLE void addLocation(const QVariantMap &locationMap);
-    Q_INVOKABLE void update(const QVariantMap &weatherMap);
+    Q_INVOKABLE void addLocation(const QVariantMap &locationMap, bool saveImmediatelly = true);
+    Q_INVOKABLE void update(const QVariantMap &weatherMap, Weather::Status status = Weather::Ready);
     Q_INVOKABLE void remove(int locationId);
     Q_INVOKABLE Weather *get(int locationId);
+    Q_INVOKABLE void save();
 
     int count() const;
 
     Weather *currentWeather() const;
     int currentLocationId() const;
-    void setCurrentLocationId(int locationId);
+    void setCurrentLocationId(int locationId, bool saveImmediatelly = true);
 
     // Automatically reload cached data when it is changed by another model
     // Default false
@@ -73,7 +74,6 @@ private:
     QFileSystemWatcher *m_fileWatcher;
 
     int getWeatherIndex(int locationId);
-    void saveWeather();
 };
 
 QML_DECLARE_TYPE(SavedWeathersModel)

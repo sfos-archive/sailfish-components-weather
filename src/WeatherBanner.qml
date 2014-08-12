@@ -3,12 +3,15 @@ import Sailfish.Silica 1.0
 import Sailfish.Weather 1.0
 
 BackgroundItem {
-    property var weather: savedWeathersModel.currentWeather
+    property alias weather: savedWeathersModel.currentWeather
     property alias autoRefresh: savedWeathersModel.autoRefresh
 
     function update() {
         weatherModel.active = true
         weatherModel.reload()
+    }
+    function save() {
+        savedWeathersModel.save()
     }
 
     visible: enabled
