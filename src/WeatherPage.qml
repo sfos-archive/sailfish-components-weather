@@ -8,6 +8,7 @@ Page {
     property var weather
     property var weatherModel
     property int currentIndex
+    property bool inEventsView
 
     SilicaFlickable {
         anchors {
@@ -22,6 +23,14 @@ Page {
         PullDownMenu {
             visible: weatherModel.count > 0
             busy: weatherModel.status === Weather.Loading
+
+            MenuItem {
+                visible: inEventsView
+                //% "Open app"
+                text: qsTrId("weather-me-open_app")
+                onClicked: launcher.launch()
+                WeatherLauncher { id: launcher }
+            }
             MenuItem {
                 //% "More information"
                 text: qsTrId("weather-me-more_information")

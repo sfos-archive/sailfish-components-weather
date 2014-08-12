@@ -13,6 +13,7 @@ BuildRequires:  pkgconfig(Qt5Quick)
 BuildRequires:  pkgconfig(Qt5Sql)
 BuildRequires:  qt5-qttools
 BuildRequires:  qt5-qttools-linguist
+BuildRequires:  pkgconfig(contentaction5)
 
 Requires:  sailfishsilica-qt5 >= 0.12.29
 Requires: jolla-theme >= 0.4.9

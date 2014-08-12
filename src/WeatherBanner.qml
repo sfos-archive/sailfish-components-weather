@@ -14,7 +14,7 @@ BackgroundItem {
     visible: enabled
     height: enabled ? Theme.itemSizeMedium : 0
     enabled: weather && weather.status == Weather.Ready
-    onClicked: pageStack.push("WeatherPage.qml", { "weather": weather, "weatherModel": weatherModel })
+    onClicked: pageStack.push("WeatherPage.qml", { "weather": weather, "weatherModel": weatherModel, "inEventsView": true })
 
     Label {
         id: temperatureLabel
@@ -41,7 +41,7 @@ BackgroundItem {
         anchors {
             verticalCenter: parent.verticalCenter
             left: temperatureLabel.right
-            leftMargin: Theme.paddingSmall
+            leftMargin: Theme.paddingLarge
             right: parent.right
         }
     }
@@ -69,21 +69,18 @@ BackgroundItem {
     WeatherModel {
         id: weatherModel
         active: false
-        // TODO: instead pass only one location object
         locationId: savedWeathersModel.currentWeather.locationId
         onError: if (status == Weather.Loading) savedWeathersModel.reportError(locationId)
         onLoaded: {
-            if (count > 0) {
-                savedWeathersModel.update({   "locationId": model.locationId,
-                                              "city": model.city,
-                                              "state": model.state,
-                                              "country": model.country,
-                                              "temperature": currentWeather.temperature,
-                                              "weatherType": currentWeather.weatherType,
-                                              "description": currentWeather.description,
-                                              "timestamp": currentWeather.timestamp
-                                          })
-            }
+            savedWeathersModel.update({   "locationId": savedWeathersModel.currentWeather.locationId,
+                                          "city": savedWeathersModel.currentWeather.city,
+                                          "state": savedWeathersModel.currentWeather.state,
+                                          "country": savedWeathersModel.currentWeather.country,
+                                          "temperature": currentWeather.temperature,
+                                          "weatherType": currentWeather.weatherType,
+                                          "description": currentWeather.description,
+                                          "timestamp": currentWeather.timestamp
+                                      })
         }
     }
     TemperatureConverter { id: converter }
