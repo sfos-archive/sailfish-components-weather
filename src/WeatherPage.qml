@@ -109,7 +109,7 @@ Page {
                     font.pixelSize: Theme.fontSizeSmall
                 }
                 Label {
-                    text: converter.format(model.high) + "\u00B0"
+                    text: TemperatureConverter.format(model.high) + "\u00B0"
                     anchors.horizontalCenter: parent.horizontalCenter
                     color: highlighted ? Theme.highlightColor : Theme.primaryColor
                 }
@@ -124,7 +124,7 @@ Page {
                                                           : ""
                 }
                 Label {
-                    text: converter.format(model.low) + "\u00B0"
+                    text: TemperatureConverter.format(model.low) + "\u00B0"
                     anchors.horizontalCenter: parent.horizontalCenter
                     color: highlighted ? Theme.secondaryHighlightColor : Theme.secondaryColor
                 }

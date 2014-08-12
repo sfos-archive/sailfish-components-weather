@@ -45,7 +45,7 @@ Item {
                 x: Theme.paddingLarge
                 color: Theme.highlightColor
                 font.pixelSize: Theme.fontSizeHuge
-                text: model ? converter.format(model.high) + "\u00B0" : ""
+                text: model ? TemperatureConverter.format(model.high) + "\u00B0" : ""
                 anchors.verticalCenter: windDirectionIcon.verticalCenter
             }
             Label {
@@ -57,7 +57,7 @@ Item {
                     topMargin: Theme.paddingSmall
                 }
                 //% "Low %1"
-                text: model ? qsTrId("weather-la-low").arg(converter.format(model.low) + "\u00B0") : ""
+                text: model ? qsTrId("weather-la-low").arg(TemperatureConverter.format(model.low) + "\u00B0") : ""
             }
             Image {
                 id: windDirectionIcon

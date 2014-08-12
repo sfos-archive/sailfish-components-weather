@@ -67,8 +67,8 @@ MouseArea {
             rightMargin: Theme.paddingLarge
             bottom: weatherImage.bottom
         }
-        temperature: weather ? converter.format(weather.temperature) : ""
-        temperatureFeel: weather ? converter.format(weather.temperatureFeel) : ""
+        temperature: weather ? TemperatureConverter.format(weather.temperature) : ""
+        temperatureFeel: weather ? TemperatureConverter.format(weather.temperatureFeel) : ""
         color: highlighted ? Theme.highlightColor : Theme.primaryColor
     }
     Label {
