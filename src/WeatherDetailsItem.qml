@@ -148,36 +148,34 @@ Item {
             height: lineCount === 1 ? 2*implicitHeight : implicitHeight
         }
         Item { width: 1; height: Theme.paddingMedium }
-        Column {
-            width: parent.width
-            DetailItem {
-                //% "Weather station"
-                label: qsTrId("weather-la-weather_station")
-                value: weather ? (weather.state.length > 0 ? weather.state + ", " : "") + weather.country : ""
-            }
-            DetailItem {
-                //% "Date"
-                label: qsTrId("weather-la-weather_date")
-                value: {
-                    var dateString = Format.formatDate(model.timestamp, Format.DateLong)
-                    return dateString.charAt(0).toUpperCase() + dateString.substr(1)
-                }
-            }
-            DetailItem {
-                //% "Cloudiness"
-                label: qsTrId("weather-la-cloudiness")
-                value: model ? model.cloudiness : ""
-            }
-            DetailItem {
-                //% "Precipitation rate"
-                label: qsTrId("weather-la-precipitationRate")
-                value: model ? model.precipitationRate : ""
-            }
-            DetailItem {
-                //% "Precipitation type"
-                label: qsTrId("weather-la-precipitationType")
-                value: model ? model.precipitationType : ""
+        DetailItem {
+            //% "Weather station"
+            label: qsTrId("weather-la-weather_station")
+            value: weather ? (weather.state.length > 0 ? weather.state + ", " : "") + weather.country : ""
+        }
+        DetailItem {
+            //% "Date"
+            label: qsTrId("weather-la-weather_date")
+            value: {
+                var dateString = Format.formatDate(model.timestamp, Format.DateLong)
+                return dateString.charAt(0).toUpperCase() + dateString.substr(1)
             }
         }
+        DetailItem {
+            //% "Cloudiness"
+            label: qsTrId("weather-la-cloudiness")
+            value: model ? model.cloudiness : ""
+        }
+        DetailItem {
+            //% "Precipitation rate"
+            label: qsTrId("weather-la-precipitationRate")
+            value: model ? model.precipitationRate : ""
+        }
+        DetailItem {
+            //% "Precipitation type"
+            label: qsTrId("weather-la-precipitationType")
+            value: model ? model.precipitationType : ""
+        }
+        ProviderDisclaimer {}
     }
 }

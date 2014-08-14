@@ -10,4 +10,5 @@ LocationsModel 1.0 LocationsModel.qml
 WeatherItem 1.0 WeatherItem.qml
 WeatherDetailsItem 1.0 WeatherDetailsItem.qml
 PlaceholderItem 1.0 PlaceholderItem.qml
+ProviderDisclaimer 1.0 ProviderDisclaimer.qml
 WeatherBanner 1.0 WeatherBanner.qml

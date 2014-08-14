@@ -15,8 +15,9 @@ BuildRequires:  qt5-qttools
 BuildRequires:  qt5-qttools-linguist
 BuildRequires:  pkgconfig(contentaction5)
 
-Requires:  sailfishsilica-qt5 >= 0.12.29
+Requires: sailfishsilica-qt5 >= 0.12.29
 Requires: jolla-theme >= 0.4.9
+Requires: ambient-icons-closed >= 0.3.2
 
 %description
 Sailfish weather UI components
