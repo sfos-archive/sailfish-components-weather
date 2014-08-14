@@ -70,19 +70,8 @@ BackgroundItem {
     SavedWeathersModel { id: savedWeathersModel }
     WeatherModel {
         id: weatherModel
+        weather: savedWeathersModel.currentWeather
+        savedWeathers: savedWeathersModel
         active: false
-        locationId: savedWeathersModel.currentWeather.locationId
-        onError: if (status == Weather.Loading) savedWeathersModel.reportError(locationId)
-        onLoaded: {
-            savedWeathersModel.update({   "locationId": savedWeathersModel.currentWeather.locationId,
-                                          "city": savedWeathersModel.currentWeather.city,
-                                          "state": savedWeathersModel.currentWeather.state,
-                                          "country": savedWeathersModel.currentWeather.country,
-                                          "temperature": currentWeather.temperature,
-                                          "weatherType": currentWeather.weatherType,
-                                          "description": currentWeather.description,
-                                          "timestamp": currentWeather.timestamp
-                                      })
-        }
     }
 }

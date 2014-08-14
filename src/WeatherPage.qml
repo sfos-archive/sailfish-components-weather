@@ -65,6 +65,7 @@ Page {
         opacity: weatherModel.count > 0 ? 1.0 : 0.0
         Behavior on opacity { FadeAnimation {} }
 
+        clip: true
         width: parent.width
         model: weatherModel
         orientation: ListView.Horizontal

@@ -5,7 +5,7 @@ XmlListModel {
     property string filter
 
     query: "/xml/searchresults/loc"
-    source: "http://feed.foreca.com/jolla-jan14fi/search.php?q=" + filter.toLowerCase()
+    source: filter.length > 0 ? "http://feed.foreca.com/jolla-jan14fi/search.php?q=" + filter.toLowerCase() : ""
 
     // For example <loc id="102643743" name="London" adm1="England" country="United Kingdom" tz="Europe/London" lon="-0.125532746" lat="51.508415222">
     XmlRole {

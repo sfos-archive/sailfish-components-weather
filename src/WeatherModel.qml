@@ -5,7 +5,9 @@ import Sailfish.Weather 1.0
 ListModel {
     id: root
 
-    property var currentWeather
+    property var weatherConditions
+    property var weather
+    property var savedWeathers
     property bool active: true
     property int locationId
     property int status: Weather.Loading
@@ -13,10 +15,24 @@ ListModel {
     signal loaded
     signal error
 
+    locationId: weather ? weather.locationId : "-1"
+    onError: if (status == Weather.Loading) savedWeathersModel.reportError(locationId)
+    onLoaded: {
+        savedWeathersModel.update(locationId,
+                                  {
+                                      "temperature": weatherConditions.temperature,
+                                      "temperatureFeel": weatherConditions.temperatureFeel,
+                                      "weatherType": weatherConditions.weatherType,
+                                      "description": weatherConditions.description,
+                                      "timestamp": weatherConditions.timestamp
+                                  })
+    }
+
+
     function reload() {
         if (active) {
             forecastModel.reload()
-            currentDayModel.reload()
+            weatherConditionsModel.reload()
         }
     }
 
@@ -141,16 +157,16 @@ ListModel {
     }
 
     function handleStatusChanged() {
-        if (currentDayModel.status == XmlListModel.Ready && forecastModel.status == XmlListModel.Ready) {
+        if (weatherConditionsModel.status == XmlListModel.Ready && forecastModel.status == XmlListModel.Ready) {
 
-            if (currentDayModel.get(0).temperature === "") {
+            if (weatherConditionsModel.get(0).temperature === "") {
                 status = Weather.Error
                 error()
                 console.log("WeatherModel - could not obtain forecast weather data")
                 return
             }
-            currentWeather = getWeatherData(currentDayModel.get(0), false)
-            var currentDate = new Date(currentWeather.timestamp.getTime())
+            weatherConditions = getWeatherData(weatherConditionsModel.get(0), false)
+            var currentDate = new Date(weatherConditions.timestamp.getTime())
             currentDate.setHours(0)
             currentDate.setMinutes(0)
             var weatherData = []
@@ -178,9 +194,9 @@ ListModel {
             }
         } else {
             var oldStatus = status
-            if (currentDayModel.status === XmlListModel.Error || forecastModel.status === XmlListModel.Error) {
+            if (weatherConditionsModel.status === XmlListModel.Error || forecastModel.status === XmlListModel.Error) {
                 status = Weather.Error
-            } else if (currentDayModel.status === XmlListModel.Loading || forecastModel.status === XmlListModel.Loading) {
+            } else if (weatherConditionsModel.status === XmlListModel.Loading || forecastModel.status === XmlListModel.Loading) {
                 status = Weather.Loading
             }
             if (status === Weather.Error && status != oldStatus) {
@@ -308,7 +324,7 @@ ListModel {
         return localizations[code.substr(1,3)]
     }
     property var currentDay: XmlListModel {
-        id: currentDayModel
+        id: weatherConditionsModel
         onStatusChanged: root.handleStatusChanged()
 
         // see http://developer.yahoo.com/weather for more info

@@ -157,8 +157,11 @@ Item {
             //% "Date"
             label: qsTrId("weather-la-weather_date")
             value: {
-                var dateString = Format.formatDate(model.timestamp, Format.DateLong)
-                return dateString.charAt(0).toUpperCase() + dateString.substr(1)
+                if (model) {
+                    var dateString = Format.formatDate(model.timestamp, Format.DateLong)
+                    return dateString.charAt(0).toUpperCase() + dateString.substr(1)
+                }
+                return ""
             }
         }
         DetailItem {

@@ -13,7 +13,6 @@ class SavedWeathersModel: public QAbstractListModel
     Q_OBJECT
 
     Q_PROPERTY(int count READ count NOTIFY countChanged)
-    Q_PROPERTY(int currentLocationId READ currentLocationId WRITE setCurrentLocationId NOTIFY currentLocationIdChanged)
     Q_PROPERTY(Weather *currentWeather READ currentWeather NOTIFY currentWeatherChanged)
     Q_PROPERTY(bool autoRefresh READ autoRefresh WRITE setAutoRefresh NOTIFY autoRefreshChanged)
 
@@ -38,8 +37,8 @@ public:
     virtual QVariant data(const QModelIndex &index, int role) const;
 
     Q_INVOKABLE void reportError(int locationId);
-    Q_INVOKABLE void addLocation(const QVariantMap &locationMap, bool saveImmediatelly = true);
-    Q_INVOKABLE void update(const QVariantMap &weatherMap, Weather::Status status = Weather::Ready);
+    Q_INVOKABLE void addLocation(const QVariantMap &locationMap);
+    Q_INVOKABLE void update(int locationId, const QVariantMap &weatherMap, Weather::Status status = Weather::Ready);
     Q_INVOKABLE void remove(int locationId);
     Q_INVOKABLE Weather *get(int locationId);
     Q_INVOKABLE void moveToTop(int index);
@@ -48,8 +47,7 @@ public:
     int count() const;
 
     Weather *currentWeather() const;
-    int currentLocationId() const;
-    void setCurrentLocationId(int locationId, bool internal = false);
+    Q_INVOKABLE void setCurrentWeather(const QVariantMap &locationMap, bool internal = false);
 
     // Automatically reload cached data when it is changed by another model
     // Default false
@@ -62,14 +60,13 @@ public slots:
 signals:
     void countChanged();
     void currentWeatherChanged();
-    void currentLocationIdChanged();
     void autoRefreshChanged();
 
 protected:
     QHash<int, QByteArray> roleNames() const;
-
+    QJsonObject convertToJson(const Weather *weather);
 private:
-    int m_currentIndex;
+    Weather* m_currentWeather;
     QList <Weather *> m_savedWeathers;
     bool m_autoRefresh;
     QFileSystemWatcher *m_fileWatcher;
