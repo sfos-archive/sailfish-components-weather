@@ -15,7 +15,7 @@ BackgroundItem {
     }
 
     visible: enabled
-    height: enabled ? Theme.itemSizeMedium : 0
+    height: enabled ? temperatureLabel.height + 2*Theme.paddingLarge : 0
     enabled: weather && weather.status == Weather.Ready
     onClicked: pageStack.push("WeatherPage.qml", { "weather": weather, "weatherModel": weatherModel, "inEventsView": true })
 
@@ -27,8 +27,8 @@ BackgroundItem {
             pixelSize: Theme.fontSizeHuge
             family: Theme.fontFamilyHeading
         }
+        y: Theme.paddingLarge
         anchors {
-            verticalCenter: parent.verticalCenter
             left: parent.left
             leftMargin: Theme.paddingLarge
         }
@@ -42,7 +42,7 @@ BackgroundItem {
         }
         truncationMode: TruncationMode.Fade
         anchors {
-            verticalCenter: parent.verticalCenter
+            verticalCenter: temperatureLabel.verticalCenter
             left: temperatureLabel.right
             leftMargin: Theme.paddingLarge
             right: parent.right
@@ -58,7 +58,7 @@ BackgroundItem {
             id: image
             opacity: 0.3
             anchors {
-                verticalCenter: parent.verticalCenter
+                verticalCenter: temperatureLabel.verticalCenter
                 right: parent.right
                 rightMargin: -width/3
             }
