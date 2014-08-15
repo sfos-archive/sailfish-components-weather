@@ -17,14 +17,14 @@ SavedWeathersModel::SavedWeathersModel(QObject *parent)
     : QAbstractListModel(parent), m_currentIndex(-1), m_autoRefresh(false),
       m_fileWatcher(0)
 {
-    loadWeather();
+    load();
 }
 
 SavedWeathersModel::~SavedWeathersModel()
 {
 }
 
-void SavedWeathersModel::loadWeather()
+void SavedWeathersModel::load()
 {
     QFile file(weatherStoragePath() + QStringLiteral("/weather.json"));
     if (!file.exists())
@@ -43,7 +43,7 @@ void SavedWeathersModel::loadWeather()
 
     QJsonObject root = json.object();
 
-    QJsonObject locations = root.value("locations").toObject();
+    QJsonArray locations = root.value("locations").toArray();
     foreach (const QJsonValue &value, locations) {
         QJsonObject location = value.toObject();
 
@@ -82,6 +82,17 @@ void SavedWeathersModel::loadWeather()
     }
 }
 
+Q_INVOKABLE void SavedWeathersModel::moveToTop(int index)
+{
+    if (index > 0) {
+        beginMoveRows(QModelIndex(), index, index, QModelIndex(), 0);
+        m_savedWeathers.move(index, 0);
+        endMoveRows();
+        save();
+    }
+}
+
+
 void SavedWeathersModel::save()
 {
     QDir dir(weatherStoragePath());
@@ -96,9 +107,10 @@ void SavedWeathersModel::save()
         return;
     }
 
-    QJsonObject locations;
-    foreach (Weather *weather, m_savedWeathers) {
-        QJsonObject location = locations.value(QString::number(weather->locationId())).toObject();
+    QJsonArray locations;
+    for (int i = 0; i < m_savedWeathers.count(); i++) {
+        Weather *weather = m_savedWeathers[i];
+        QJsonObject location;
         if (location.isEmpty()) {
             location["locationId"] = weather->locationId();
             location["city"] = weather->city();
@@ -118,7 +130,7 @@ void SavedWeathersModel::save()
         weatherDatas.append(weatherData);
         location["weather"] = weatherDatas;
 
-        locations.insert(QString::number(weather->locationId()), location);
+        locations.append(location);
     }
 
     QJsonObject root;
@@ -343,7 +355,7 @@ void SavedWeathersModel::setAutoRefresh(bool enabled)
 
         m_fileWatcher = new QFileSystemWatcher(this);
         connect(m_fileWatcher, &QFileSystemWatcher::fileChanged,
-                this, &SavedWeathersModel::loadWeather);
+                this, &SavedWeathersModel::load);
         m_fileWatcher->addPath(filePath);
     } else {
         delete m_fileWatcher;

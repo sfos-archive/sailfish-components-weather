@@ -42,6 +42,7 @@ public:
     Q_INVOKABLE void update(const QVariantMap &weatherMap, Weather::Status status = Weather::Ready);
     Q_INVOKABLE void remove(int locationId);
     Q_INVOKABLE Weather *get(int locationId);
+    Q_INVOKABLE void moveToTop(int index);
     Q_INVOKABLE void save();
 
     int count() const;
@@ -56,7 +57,7 @@ public:
     void setAutoRefresh(bool enabled);
 
 public slots:
-    void loadWeather();
+    void load();
 
 signals:
     void countChanged();
