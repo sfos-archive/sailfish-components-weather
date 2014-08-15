@@ -22,7 +22,7 @@ BackgroundItem {
     Label {
         id: temperatureLabel
         text: weather ? TemperatureConverter.format(weather.temperature) + "\u00B0" : ""
-        color: Theme.highlightColor
+        color: highlighted ? Theme.highlightColor : Theme.primaryColor
         font {
             pixelSize: Theme.fontSizeHuge
             family: Theme.fontFamilyHeading
@@ -35,16 +35,16 @@ BackgroundItem {
     }
     Label {
         text: weather ? weather.city : ""
-        color: Theme.secondaryHighlightColor
+        color: highlighted ? Theme.secondaryHighlightColor : Theme.secondaryColor
         font {
             pixelSize: Theme.fontSizeHuge
             family: Theme.fontFamilyHeading
         }
         truncationMode: TruncationMode.Fade
         anchors {
-            verticalCenter: temperatureLabel.verticalCenter
             left: temperatureLabel.right
             leftMargin: Theme.paddingLarge
+            verticalCenter: temperatureLabel.verticalCenter
             right: parent.right
         }
     }
@@ -53,17 +53,16 @@ BackgroundItem {
         clip: true
         width: parent.width
         height: image.height
-        anchors.verticalCenter: parent.verticalCenter
+        anchors.verticalCenter: temperatureLabel.verticalCenter
         Image {
             id: image
             opacity: 0.3
             anchors {
-                verticalCenter: temperatureLabel.verticalCenter
                 right: parent.right
                 rightMargin: -width/3
             }
             source: weather && weather.weatherType.length > 0 ? "image://theme/graphic-weather-" + weather.weatherType
-                                                                + (highlighted ? "?" + Theme.highlightColor : "")
+                                                                + "?" + (highlighted ? Theme.highlightColor : Theme.primaryColor)
                                                               : ""
         }
     }
