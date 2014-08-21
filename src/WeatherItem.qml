@@ -19,7 +19,7 @@ MouseArea {
         x: Theme.paddingLarge
         y: 2*Theme.paddingLarge
         highlighted: root.highlighted
-        height: sourceSize.height > 0 ? sourceSize.height : 256*540/Screen.width
+        height: sourceSize.height > 0 ? sourceSize.height : 256*Screen.width/540
         weatherType: weather && weather.weatherType.length > 0 ? weather.weatherType : ""
     }
     PageHeader {

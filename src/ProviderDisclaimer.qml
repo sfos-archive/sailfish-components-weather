@@ -2,8 +2,9 @@ import QtQuick 2.0
 import Sailfish.Silica 1.0
 
 BackgroundItem {
+    property var weather
+    onClicked: if (weather) Qt.openUrlExternally("http://foreca.mobi/spot.php?l=" + weather.locationId)
     height: column.height + 3*Theme.paddingLarge
-    onClicked: Qt.openUrlExternally("http://foreca.mobi")
     Column {
         id: column
         width: parent.width

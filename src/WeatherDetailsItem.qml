@@ -184,6 +184,8 @@ Item {
             label: qsTrId("weather-la-precipitationType")
             value: model ? model.precipitationType : ""
         }
-        ProviderDisclaimer {}
+        ProviderDisclaimer {
+            weather: root.weather
+        }
     }
 }
