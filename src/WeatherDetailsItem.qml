@@ -8,6 +8,7 @@ Item {
     property var model
     property var weather
     property bool today
+    property bool current
     property int status
 
     width: parent.width
@@ -38,7 +39,7 @@ Item {
 
         Item {
             width: parent.width
-            height: windDirectionIcon.height
+            height: windDirectionIcon.height - windDirectionIcon.y
 
             Label {
                 id: temperatureHighLabel
@@ -62,7 +63,10 @@ Item {
             Image {
                 id: windDirectionIcon
                 source: "image://theme/graphic-weather-wind-direction?" + Theme.highlightColor
-                anchors.centerIn: parent
+                anchors {
+                    centerIn: parent
+                    verticalCenterOffset: -Theme.paddingMedium
+                }
                 rotation: model ? model.windDirection : 0
                 Behavior on rotation {
                     RotationAnimator {
@@ -132,7 +136,7 @@ Item {
                 text: qsTrId("weather-la-precipitation")
             }
         }
-        Item { width: 1; height: Theme.paddingLarge }
+        Item { width: 1; height: Theme.paddingMedium }
         Label {
             color: Theme.highlightColor
             anchors {
@@ -152,6 +156,7 @@ Item {
             //% "Weather station"
             label: qsTrId("weather-la-weather_station")
             value: weather ? (weather.state.length > 0 ? weather.state + ", " : "") + weather.country : ""
+            visible: !current
         }
         DetailItem {
             //% "Date"

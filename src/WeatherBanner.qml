@@ -17,7 +17,7 @@ BackgroundItem {
     visible: enabled
     height: enabled ? temperatureLabel.height + 2*Theme.paddingLarge : 0
     enabled: weather && weather.status == Weather.Ready
-    onClicked: pageStack.push("WeatherPage.qml", { "weather": weather, "weatherModel": weatherModel, "inEventsView": true })
+    onClicked: pageStack.push("WeatherPage.qml", { "weather": weather, "weatherModel": weatherModel, "inEventsView": true, "current": true })
 
     Label {
         id: temperatureLabel

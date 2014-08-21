@@ -9,6 +9,7 @@ Page {
     property var weatherModel
     property int currentIndex
     property bool inEventsView
+    property bool current
 
     SilicaFlickable {
         anchors {
@@ -45,6 +46,7 @@ Page {
         WeatherDetailsItem {
             id: weatherItem
 
+            current: root.current
             today: root.currentIndex === 0
             opacity: weatherModel.count > 0 ? 1.0 : 0.0
             weather: root.weather
@@ -65,7 +67,7 @@ Page {
         opacity: weatherModel.count > 0 ? 1.0 : 0.0
         Behavior on opacity { FadeAnimation {} }
 
-        clip: true
+        interactive: false
         width: parent.width
         model: weatherModel
         orientation: ListView.Horizontal
@@ -74,7 +76,7 @@ Page {
         delegate: MouseArea {
             property bool highlighted: (pressed && containsMouse) || root.currentIndex == model.index
 
-            width: root.width/5.5
+            width: root.width/5
             height: weatherForecastList.height
 
             Rectangle {
