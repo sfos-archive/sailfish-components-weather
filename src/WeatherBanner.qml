@@ -66,7 +66,22 @@ BackgroundItem {
                                                               : ""
         }
     }
-
+    Connections {
+        target: LocationDetection
+        onReadyChanged: updateLocation()
+        onLocationIdChanged: updateLocation()
+        function updateLocation() {
+            if (LocationDetection.ready && LocationDetection.locationId.length > 0) {
+                savedWeathersModel.setCurrentWeather({
+                                                          "locationId": LocationDetection.locationId,
+                                                          "city": LocationDetection.city,
+                                                          "state": "",
+                                                          "country": ""
+                                                      })
+                TemperatureConverter.metric = LocationDetection.metric
+            }
+        }
+    }
     SavedWeathersModel { id: savedWeathersModel }
     WeatherModel {
         id: weatherModel

@@ -3,10 +3,12 @@ import QtQuick 2.2
 import org.nemomobile.configuration 1.0
 
 ConfigurationValue {
+    // TODO: if no position fall back to Qt.locale().measurementSystem === Locale.MetricSystem
+    property bool metric: true
     property bool celsius: {
         switch (value) {
-        case "BasedOnLocale":
-            return Qt.locale().measurementSystem === Locale.MetricSystem
+        case "BasedOnLocation":
+            return metric
         case "Celsius":
             return true
         case "Fahrenheit":
@@ -20,5 +22,5 @@ ConfigurationValue {
         return celsius ? temperature : Math.round(9/5*parseInt(temperature)+32).toString()
     }
     key: "/sailfish/weather/temperature_unit"
-    defaultValue: "BasedOnLocale"
+    defaultValue: "BasedOnLocation"
 }

@@ -6,9 +6,10 @@ XmlListModel {
     id: model
 
     property bool ready
-    property alias active: positionSource.active
-    property string locationId
     property string city
+    property string locationId
+    property bool metric: true
+    property alias active: positionSource.active
     property var coordinate: positionSource.position.coordinate
     property QtObject positionSource: PositionSource { id: positionSource }
 
@@ -21,6 +22,7 @@ XmlListModel {
             var location = get(0)
             locationId = location.locationId
             city = location.city
+            metric = (location.locale !== "gb" && location.locale !== "us")
             ready = true
         }
     }
@@ -32,5 +34,9 @@ XmlListModel {
     XmlRole {
         name: "city"
         query: "name/string()"
+    }
+    XmlRole {
+        name: "locale"
+        query: "land/string()"
     }
 }
