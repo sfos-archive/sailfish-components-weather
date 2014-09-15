@@ -36,7 +36,7 @@ XmlListModel {
     }
 
     query: "/searchdata/location"
-    source: positionSource.active && positionSource.valid ? "http://fnw2.foreca.com/findloc.php?lon="
+    source: positionSource.active && positionSource.valid ? "http://fnw-jll.foreca.com/findloc.php?lon="
                                                             + longitude +"&lat=" + latitude + "&format=xml/jolla-sep13fi&radius=" + searchRadius
                                                           :  ""
     onStatusChanged: {
