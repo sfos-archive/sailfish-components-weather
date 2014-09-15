@@ -74,12 +74,13 @@ BackgroundItem {
         onLocationIdChanged: updateLocation()
         function updateLocation() {
             if (LocationDetection.ready && LocationDetection.locationId.length > 0) {
-                savedWeathersModel.setCurrentWeather({
-                                                          "locationId": LocationDetection.locationId,
-                                                          "city": LocationDetection.city,
-                                                          "state": "",
-                                                          "country": ""
-                                                      })
+                var weather = {
+                    "locationId": LocationDetection.locationId,
+                    "city": LocationDetection.city,
+                    "state": "",
+                    "country": ""
+                }
+                savedWeathersModel.setCurrentWeather(weather)
                 TemperatureConverter.metric = LocationDetection.metric
             }
         }
