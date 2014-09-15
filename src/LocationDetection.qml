@@ -23,8 +23,8 @@ Item {
                 var modelComponent = Qt.createComponent("CurrentLocationModel.qml")
                 if (modelComponent.status === Component.Ready) {
                     model = modelComponent.createObject(root)
-                    model.active = Qt.binding(function() {
-                        return positioningAllowed && Qt.application.active
+                    model.positioningAllowed = Qt.binding(function() {
+                        return positioningAllowed
                     })
                 } else {
                     console.log(modelComponent.errorString())
