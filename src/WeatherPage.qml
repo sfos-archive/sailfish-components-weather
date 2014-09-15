@@ -40,7 +40,7 @@ Page {
             MenuItem {
                 //% "Update"
                 text: qsTrId("weather-me-update")
-                onClicked: weatherModel.reload()
+                onClicked: forecastModel.reload()
             }
         }
         WeatherDetailsItem {
@@ -48,28 +48,34 @@ Page {
 
             current: root.current
             today: root.currentIndex === 0
-            opacity: weatherModel.count > 0 ? 1.0 : 0.0
+            opacity: forecastModel.count > 0 ? 1.0 : 0.0
             weather: root.weather
-            status: weatherModel.status
-            model: weatherModel.count > 0 ? weatherModel.get(currentIndex) : null
+            status: forecastModel.status
+            model: forecastModel.count > 0 ? forecastModel.get(currentIndex) : null
             Behavior on opacity { FadeAnimation {} }
         }
         PlaceholderItem {
             y: Theme.itemSizeSmall + Theme.itemSizeLarge*2
-            status: weatherModel.status
-            enabled: weatherModel.count === 0
-            onReload: weatherModel.reload()
+            status: forecastModel.status
+            enabled: forecastModel.count === 0
+            onReload: forecastModel.reload()
         }
     }
     SilicaListView {
         id: weatherForecastList
 
-        opacity: weatherModel.count > 0 ? 1.0 : 0.0
+        opacity: forecastModel.count > 0 ? 1.0 : 0.0
         Behavior on opacity { FadeAnimation {} }
 
         interactive: false
         width: parent.width
-        model: weatherModel
+        model: WeatherForecastModel {
+            id: forecastModel
+            weather: root.weather
+            timestamp: weatherModel.timestamp
+            active: root.status == PageStatus.Active
+        }
+
         orientation: ListView.Horizontal
         height: 2*Theme.itemSizeLarge
         anchors.bottom: parent.bottom
