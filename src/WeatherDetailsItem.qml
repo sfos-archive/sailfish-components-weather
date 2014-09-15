@@ -66,7 +66,10 @@ Item {
                 source: "image://theme/graphic-weather-wind-direction?" + Theme.highlightColor
                 anchors.horizontalCenter: parent.horizontalCenter
                 rotation: model ? model.windDirection : 0
+                onRotationChanged: rotationBehavior.enabled = true
                 Behavior on rotation {
+                    id: rotationBehavior
+                    enabled: false
                     RotationAnimator {
                         duration: 200
                         easing.type: Easing.InOutQuad
