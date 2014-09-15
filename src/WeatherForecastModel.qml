@@ -45,11 +45,11 @@ ListModel {
                     }
                     weatherData[weatherData.length] = weather
                 }
-                while (count > weatherData.length) {
+                while (root.count > weatherData.length) {
                     root.remove(weatherData.length)
                 }
                 for (var i = 0; i < weatherData.length; i++) {
-                    if (i < count) {
+                    if (i < root.count) {
                         root.set(i, weatherData[i])
                     } else {
                         root.append(weatherData[i])
