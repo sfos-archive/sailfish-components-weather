@@ -39,7 +39,7 @@ Item {
 
         Item {
             width: parent.width
-            height: windDirectionIcon.height - windDirectionIcon.y
+            height: windDirectionIcon.height + windDirectionIcon.y
 
             Label {
                 id: temperatureHighLabel
@@ -62,11 +62,9 @@ Item {
             }
             Image {
                 id: windDirectionIcon
+                y: -Theme.paddingLarge
                 source: "image://theme/graphic-weather-wind-direction?" + Theme.highlightColor
-                anchors {
-                    centerIn: parent
-                    verticalCenterOffset: -Theme.paddingMedium
-                }
+                anchors.horizontalCenter: parent.horizontalCenter
                 rotation: model ? model.windDirection : 0
                 Behavior on rotation {
                     RotationAnimator {
