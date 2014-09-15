@@ -5,9 +5,11 @@ import Sailfish.Weather 1.0
 BackgroundItem {
     property alias weather: savedWeathersModel.currentWeather
     property alias autoRefresh: savedWeathersModel.autoRefresh
+    property alias active: weatherModel.active
 
-    function update() {
-        weatherModel.active = true
+    onActiveChanged: if (!active) save()
+
+    function reload() {
         weatherModel.reload()
     }
     function save() {
@@ -87,6 +89,5 @@ BackgroundItem {
         id: weatherModel
         weather: savedWeathersModel.currentWeather
         savedWeathers: savedWeathersModel
-        active: false
     }
 }

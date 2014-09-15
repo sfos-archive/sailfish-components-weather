@@ -9,8 +9,11 @@ ListModel {
     property var weather
     property var savedWeathers
     property bool active: true
+
     property int locationId
     property int status: Weather.Loading
+    property date lastUpdate: new Date()
+    property date lastUpdate: new Date()
 
     signal loaded
     signal error
@@ -27,15 +30,22 @@ ListModel {
                                       "timestamp": weatherConditions.timestamp
                                   })
     }
-
-
-    function reload() {
+    onActiveChanged: {
         if (active) {
-            forecastModel.reload()
-            weatherConditionsModel.reload()
+            var now = new Date()
+            // only update automatically if more than 10 minutes has
+            // passed since the last update (10*60*1000)
+            if (now - 600000 > lastUpdate) {
+                reload()
+                lastUpdate = now
+            }
         }
     }
 
+    function reload() {
+        forecastModel.reload()
+        weatherConditionsModel.reload()
+    }
     function getWeatherData(weather, forecast) {
         var dateArray
         if (forecast) {
@@ -329,7 +339,7 @@ ListModel {
 
         // see http://developer.yahoo.com/weather for more info
         query: "/xml/weather/obs"
-        source: root.active && root.locationId > 0 ? "http://feed-jll.foreca.com/jolla-jan14fi/data.php?l=" + root.locationId + "&products=cc" : ""
+        source: root.locationId > 0 ? "http://feed-jll.foreca.com/jolla-jan14fi/data.php?l=" + root.locationId + "&products=cc" : ""
 
         XmlRole {
             name: "description"
@@ -370,7 +380,7 @@ ListModel {
 
         // see http://developer.yahoo.com/weather for more info
         query: "/xml/weather/fc"
-        source: root.active && root.locationId > 0 ? "http://feed-jll.foreca.com/jolla-jan14fi/data.php?l=" + root.locationId + "&products=daily" : ""
+        source: root.locationId > 0 ? "http://feed-jll.foreca.com/jolla-jan14fi/data.php?l=" + root.locationId + "&products=daily" : ""
 
         XmlRole {
             name: "description"
