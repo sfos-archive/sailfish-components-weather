@@ -25,7 +25,7 @@ Item {
             leftMargin: Theme.paddingMedium
         }
         font {
-            pixelSize: 120*Screen.width/540
+            pixelSize: 3*Theme.fontSizeLarge
             family: Theme.fontFamilyHeading
         }
     }
