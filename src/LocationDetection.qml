@@ -2,7 +2,6 @@ pragma Singleton
 import QtQuick 2.2
 import Sailfish.Weather 1.0
 import com.jolla.settings.system 1.0
-import MeeGo.Connman 0.2
 
 Item {
     id: root
