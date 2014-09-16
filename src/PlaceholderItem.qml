@@ -1,4 +1,4 @@
-import QtQuick 2.0
+import QtQuick 2.2
 import Sailfish.Silica 1.0
 import Sailfish.Weather 1.0
 
@@ -13,7 +13,7 @@ Item {
     height: mainLabel.height + Theme.paddingLarge
             + (status == Weather.Error ? button.height : busyIndicator.height)
     opacity: enabled ? 1.0 : 0.0
-    Behavior on opacity { FadeAnimation {} }
+    Behavior on opacity { OpacityAnimator { easing.type: Easing.InOutQuad;  duration: 400 } }
     Label {
         id: mainLabel
 
@@ -39,7 +39,7 @@ Item {
     }
     BusyIndicator {
         id: busyIndicator
-        running: parent.status == Weather.Loading
+        running: parent.opacity > 0
         size: BusyIndicatorSize.Large
         anchors {
             top: mainLabel.bottom

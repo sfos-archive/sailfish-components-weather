@@ -1,4 +1,4 @@
-import QtQuick 2.0
+import QtQuick 2.2
 import Sailfish.Silica 1.0
 import Sailfish.Weather 1.0
 
@@ -52,7 +52,7 @@ Page {
             weather: root.weather
             status: forecastModel.status
             model: forecastModel.count > 0 ? forecastModel.get(currentIndex) : null
-            Behavior on opacity { FadeAnimation {} }
+            Behavior on opacity { OpacityAnimator { easing.type: Easing.InOutQuad;  duration: 400 } }
         }
         PlaceholderItem {
             y: Theme.itemSizeSmall + Theme.itemSizeLarge*2
@@ -65,7 +65,7 @@ Page {
         id: weatherForecastList
 
         opacity: forecastModel.count > 0 ? 1.0 : 0.0
-        Behavior on opacity { FadeAnimation {} }
+        Behavior on opacity { OpacityAnimator { easing.type: Easing.InOutQuad;  duration: 400 } }
 
         interactive: false
         width: parent.width
