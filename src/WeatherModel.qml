@@ -57,8 +57,6 @@ XmlListModel {
             }
         } else if (status == XmlListModel.Error){
             error()
-        } else if (status == XmlListModel.Loading) {
-            console.log("WeatherModel reload")
         }
     }
 

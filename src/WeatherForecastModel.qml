@@ -15,7 +15,6 @@ ListModel {
     property date lastUpdate: new Date()
 
     function reload() {
-        console.log("WeatherForecastModel reload")
         forecast.reload()
     }
     onActiveChanged: {
