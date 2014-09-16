@@ -10,6 +10,7 @@ XmlListModel {
     property string locationId
     property bool metric: true
     property bool positioningAllowed
+    property bool locationObtained
     property bool active: true
     property real searchRadius: 10 // find biggest city in specified kilometers
     property var coordinate: positionSource.position.coordinate
@@ -19,8 +20,11 @@ XmlListModel {
     property QtObject positionSource: PositionSource {
         active: model.positioningAllowed && model.active
         onPositionChanged: {
-            model.active = false
-            positionCheckTimer.start()
+            if (valid) {
+                locationObtained = true
+                model.active = false
+                positionCheckTimer.start()
+            }
         }
     }
     property QtObject positionCheckTimer: Timer {
@@ -47,7 +51,7 @@ XmlListModel {
     }
 
     query: "/searchdata/location"
-    source: positionSource.active && positionSource.valid ? "http://fnw-jll.foreca.com/findloc.php"
+    source: locationObtained ? "http://fnw-jll.foreca.com/findloc.php"
                                                             + "?lon=" + longitude
                                                             + "&lat=" + latitude
                                                             + "&format=xml/jolla-sep13fi"

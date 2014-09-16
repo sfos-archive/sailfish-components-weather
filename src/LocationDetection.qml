@@ -10,7 +10,7 @@ Item {
     property bool ready: model && model.ready
     property string city: ready ? model.city : true
     property string locationId: ready ? model.locationId : ""
-    property bool positioningAllowed: locationSettings.locationEnabled && gpsTechModel.powered
+    property bool positioningAllowed: locationSettings.locationEnabled
     property bool metric: ready ? model.metric : true
     property QtObject model
 
@@ -34,9 +34,5 @@ Item {
     }
     LocationSettings {
         id: locationSettings
-    }
-    TechnologyModel {
-        id: gpsTechModel
-        name: "gps"
     }
 }

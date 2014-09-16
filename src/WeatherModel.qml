@@ -11,7 +11,7 @@ XmlListModel {
     property bool active: true
     property int locationId: weather ? weather.locationId : -1
     property date lastUpdate: new Date()
-    property date timestamp: count > 0 ? get(0).timestamp : Date()
+    property date timestamp: new Date()
 
     signal error
 
@@ -52,6 +52,7 @@ XmlListModel {
                     "description": data.description,
                     "timestamp": data.timestamp
                 }
+                root.timestamp = data.timestamp
                 savedWeathersModel.update(locationId, json)
             }
         } else if (status == XmlListModel.Error){
