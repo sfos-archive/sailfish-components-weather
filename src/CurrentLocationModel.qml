@@ -1,8 +1,9 @@
 import QtQuick 2.0
 import QtPositioning 5.2
 import QtQuick.XmlListModel 2.0
+import MeeGo.Connman 0.2
 
-XmlListModel {
+Item {
     id: model
 
     property bool ready
@@ -15,22 +16,10 @@ XmlListModel {
     property real searchRadius: 10 // find biggest city in specified kilometers
     property var coordinate: positionSource.position.coordinate
 
+    property NetworkTechnology gpsTech
+    property bool gpsPowered: gpsTech && gpsTech.powered
     property string longitude: format(coordinate.longitude)
     property string latitude: format(coordinate.latitude)
-    property QtObject positionSource: PositionSource {
-        active: model.positioningAllowed && model.active
-        onPositionChanged: {
-            if (valid) {
-                locationObtained = true
-                model.active = false
-                positionCheckTimer.start()
-            }
-        }
-    }
-    property QtObject positionCheckTimer: Timer {
-        interval: 30*60*1000
-        onTriggered: model.active = true
-    }
 
     function format(value) {
         // optimize Foreca backend caching by
@@ -50,33 +39,56 @@ XmlListModel {
         }
     }
 
-    query: "/searchdata/location"
-    source: locationObtained ? "http://fnw-jll.foreca.com/findloc.php"
-                                                            + "?lon=" + longitude
-                                                            + "&lat=" + latitude
-                                                            + "&format=xml/jolla-sep13fi"
-                                                            + "&radius=" + searchRadius
-                                                          :  ""
-    onStatusChanged: {
-        if (XmlListModel.Ready && count > 0) {
-            var location = get(0)
-            locationId = location.locationId
-            city = location.city
-            metric = (location.locale !== "gb" && location.locale !== "us")
-            ready = true
+    XmlListModel {
+        query: "/searchdata/location"
+        source: locationObtained ? "http://fnw-jll.foreca.com/findloc.php"
+                                   + "?lon=" + longitude
+                                   + "&lat=" + latitude
+                                   + "&format=xml/jolla-sep13fi"
+                                   + "&radius=" + searchRadius
+                                 :  ""
+        onStatusChanged: {
+            if (XmlListModel.Ready && count > 0) {
+                var location = get(0)
+                locationId = location.locationId
+                city = location.city
+                metric = (location.locale !== "gb" && location.locale !== "us")
+                ready = true
+            }
+        }
+
+        XmlRole {
+            name: "locationId"
+            query: "id/string()"
+        }
+        XmlRole {
+            name: "city"
+            query: "name/string()"
+        }
+        XmlRole {
+            name: "locale"
+            query: "land/string()"
         }
     }
-
-    XmlRole {
-        name: "locationId"
-        query: "id/string()"
+    PositionSource {
+        id: positionSource
+        active: model.positioningAllowed && model.active
+        onPositionChanged: {
+            locationObtained = true
+            if (gpsPowered) {
+                model.active = false
+                positionCheckTimer.start()
+            }
+        }
     }
-    XmlRole {
-        name: "city"
-        query: "name/string()"
+    Timer {
+        id: positionCheckTimer
+        interval: 30*60*1000 // check position every half hour
+        onTriggered: model.active = true
     }
-    XmlRole {
-        name: "locale"
-        query: "land/string()"
+    NetworkManagerFactory { id: networkManager }
+    Connections {
+        target: networkManager.instance
+        onTechnologiesChanged: gpsTech = networkManager.instance.getTechnology("gps")
     }
 }

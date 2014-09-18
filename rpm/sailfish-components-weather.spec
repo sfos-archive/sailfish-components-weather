@@ -20,6 +20,7 @@ Requires: jolla-theme >= 0.4.9
 Requires: ambient-icons-closed >= 0.3.2
 Requires: qt5-qtpositioning
 Requires: qt5-qtdeclarative-import-positioning
+Requires:  connman-qt5-declarative
 
 %description
 Sailfish weather UI components
