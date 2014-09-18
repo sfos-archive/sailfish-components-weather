@@ -163,8 +163,9 @@ void SavedWeathersModel::addLocation(const QVariantMap &locationMap)
 
 void SavedWeathersModel::setCurrentWeather(const QVariantMap &map, bool internal)
 {
-    int locationId = map["locationId"].toInt();
-    if (!m_currentWeather || m_currentWeather->locationId() != locationId) {
+    if (!m_currentWeather || m_currentWeather->locationId() != map["locationId"].toInt()
+            // location API can return different place names, but the same weather station location id
+            || m_currentWeather->city() != map["city"].toString()) {
         Weather *weather = new Weather(this, map);
         if (map.contains("temperature")) {
             weather->update(map);

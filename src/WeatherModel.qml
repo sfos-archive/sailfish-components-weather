@@ -18,8 +18,8 @@ XmlListModel {
     onError: {
         if (savedWeathersModel && weather) {
             savedWeathersModel.reportError(locationId)
+            console.log("WeatherModel - could not obtain weather data", weather.city, weather.locationId)
         }
-        console.log("WeatherModel - could not obtain weather data")
     }
 
     query: "/xml/weather/obs"
