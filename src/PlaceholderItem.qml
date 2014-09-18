@@ -39,7 +39,7 @@ Item {
     }
     BusyIndicator {
         id: busyIndicator
-        running: parent.opacity > 0
+        running: parent.opacity > 0 && status !== Weather.Error
         size: BusyIndicatorSize.Large
         anchors {
             top: mainLabel.bottom
