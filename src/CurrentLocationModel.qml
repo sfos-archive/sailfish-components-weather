@@ -20,6 +20,7 @@ Item {
     property bool gpsPowered: gpsTech && gpsTech.powered
     property string longitude: format(coordinate.longitude)
     property string latitude: format(coordinate.latitude)
+    property bool waitForSecondUpdate
 
     function format(value) {
         // optimize Foreca backend caching by
@@ -37,6 +38,11 @@ Item {
         } else {
             return "0.0"
         }
+    }
+    function update() {
+        active = true
+        // first update returns cached location, wait for real position fix
+        waitForSecondUpdate = true
     }
 
     XmlListModel {
@@ -75,16 +81,17 @@ Item {
         active: model.positioningAllowed && model.active
         onPositionChanged: {
             locationObtained = true
-            if (gpsPowered) {
+            if (gpsPowered && !waitForSecondUpdate) {
                 model.active = false
                 positionCheckTimer.start()
             }
+            waitForSecondUpdate = false
         }
     }
     Timer {
         id: positionCheckTimer
         interval: 30*60*1000 // check position every half hour
-        onTriggered: model.active = true
+        onTriggered: model.update()
     }
     NetworkManagerFactory { id: networkManager }
     Connections {

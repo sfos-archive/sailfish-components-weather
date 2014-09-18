@@ -16,6 +16,12 @@ Item {
     onPositioningAllowedChanged: handleLocationSetting()
     Component.onCompleted: handleLocationSetting()
 
+    function update() {
+        if (positioningAllowed && model) {
+            model.update()
+        }
+    }
+
     function handleLocationSetting() {
         if (positioningAllowed) {
             if (!model) {
