@@ -1,6 +1,7 @@
 import QtQuick 2.0
 import QtPositioning 5.2
 import QtQuick.XmlListModel 2.0
+import org.nemomobile.keepalive 1.0
 import MeeGo.Connman 0.2
 
 Item {
@@ -60,12 +61,17 @@ Item {
                                    + "&radius=" + searchRadius
                                  :  ""
         onStatusChanged: {
-            if (XmlListModel.Ready && count > 0) {
+            if (status === XmlListModel.Ready && count > 0) {
                 var location = get(0)
                 locationId = location.locationId
                 city = location.city
                 metric = (location.locale !== "gb" && location.locale !== "us")
                 ready = true
+            }
+            if (status !== XmlListModel.Loading) {
+                if (backgroundJob.running) {
+                    backgroundJob.finished()
+                }
             }
             error = (status === XmlListModel.Error)
         }
@@ -89,16 +95,16 @@ Item {
         onPositionChanged: {
             locationObtained = true
             if (gpsPowered && !waitForSecondUpdate) {
-                console.log("location obtained")
                 model.active = false
-                positionCheckTimer.start()
             }
             waitForSecondUpdate = false
         }
     }
-    Timer {
-        id: positionCheckTimer
-        interval: 30*60*1000 // check position every half hour
+    BackgroundJob {
+        id: backgroundJob
+
+        enabled: true
+        frequency: BackgroundJob.ThirtyMinutes
         onTriggered: model.updateLocation()
     }
     NetworkManagerFactory { id: networkManager }
