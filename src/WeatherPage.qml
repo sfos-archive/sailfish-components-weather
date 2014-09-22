@@ -22,8 +22,8 @@ Page {
         VerticalScrollDecorator {}
 
         PullDownMenu {
-            visible: weatherModel.count > 0
-            busy: weatherModel.status === Weather.Loading
+            visible: forecastModel.count > 0
+            busy: forecastModel.status === Weather.Loading
 
             MenuItem {
                 visible: inEventsView
@@ -56,7 +56,7 @@ Page {
         }
         PlaceholderItem {
             y: Theme.itemSizeSmall + Theme.itemSizeLarge*2
-            status: forecastModel.status
+            error: forecastModel.status === Weather.Error
             enabled: forecastModel.count === 0
             onReload: forecastModel.reload()
         }

@@ -20,6 +20,7 @@ class Weather : public QObject
     Q_PROPERTY(QString weatherType READ weatherType NOTIFY weatherTypeChanged)
     Q_PROPERTY(QString description READ description NOTIFY descriptionChanged)
     Q_PROPERTY(QDateTime timestamp READ timestamp NOTIFY timestampChanged)
+    Q_PROPERTY(bool populated READ populated NOTIFY populatedChanged)
 
 public:
     Weather(QObject *parent, const QVariantMap &locationMap)
@@ -30,7 +31,8 @@ public:
           m_state(locationMap["state"].toString()),
           m_country(locationMap["country"].toString()),
           m_temperature(0),
-          m_temperatureFeel(0)
+          m_temperatureFeel(0),
+          m_populated(false)
     {
     }
 
@@ -47,6 +49,7 @@ public:
     QString weatherType() const { return m_weatherType; }
     QString description() const { return m_description; }
     QDateTime timestamp() const { return m_timestamp; }
+    bool populated() const { return m_populated; }
 
     void setStatus(Status status) {
         if (m_status != status) {
@@ -90,6 +93,10 @@ public:
         setWeatherType(weatherMap["weatherType"].toString());
         setDescription(weatherMap["description"].toString());
         setTimestamp(weatherMap["timestamp"].toDateTime());
+        if (!m_populated) {
+            m_populated = true;
+            emit populatedChanged();
+        }
     }
 
 signals:
@@ -99,6 +106,7 @@ signals:
     void weatherTypeChanged();
     void descriptionChanged();
     void timestampChanged();
+    void populatedChanged();
 
 private:
     Status m_status;
@@ -111,6 +119,7 @@ private:
     QString m_weatherType;
     QString m_description;
     QDateTime m_timestamp;
+    bool m_populated;
 };
 
 QML_DECLARE_TYPE(Weather)

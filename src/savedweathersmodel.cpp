@@ -283,6 +283,8 @@ QVariant SavedWeathersModel::data(const QModelIndex &index, int role) const
         return weather->description();
     case Timestamp:
         return weather->timestamp();
+    case Populated:
+        return weather->populated();
     }
 
     return QVariant();
@@ -301,6 +303,7 @@ QHash<int, QByteArray> SavedWeathersModel::roleNames() const
     roles.insert(WeatherType, "weatherType");
     roles.insert(Description, "description");
     roles.insert(Timestamp, "timestamp");
+    roles.insert(Populated, "populated");
 
     return roles;
 }

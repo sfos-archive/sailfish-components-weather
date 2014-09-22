@@ -7,6 +7,7 @@ Item {
     id: model
 
     property bool ready
+    property bool error
     property string city
     property string locationId
     property bool metric: true
@@ -39,13 +40,18 @@ Item {
             return "0.0"
         }
     }
-    function update() {
+    function updateLocation() {
         active = true
         // first update returns cached location, wait for real position fix
         waitForSecondUpdate = true
     }
+    function reloadModel() {
+        locationModel.reload()
+    }
 
     XmlListModel {
+        id: locationModel
+
         query: "/searchdata/location"
         source: locationObtained ? "http://fnw-jll.foreca.com/findloc.php"
                                    + "?lon=" + longitude
@@ -61,6 +67,7 @@ Item {
                 metric = (location.locale !== "gb" && location.locale !== "us")
                 ready = true
             }
+            error = (status === XmlListModel.Error)
         }
 
         XmlRole {
@@ -82,6 +89,7 @@ Item {
         onPositionChanged: {
             locationObtained = true
             if (gpsPowered && !waitForSecondUpdate) {
+                console.log("location obtained")
                 model.active = false
                 positionCheckTimer.start()
             }
@@ -91,7 +99,7 @@ Item {
     Timer {
         id: positionCheckTimer
         interval: 30*60*1000 // check position every half hour
-        onTriggered: model.update()
+        onTriggered: model.updateLocation()
     }
     NetworkManagerFactory { id: networkManager }
     Connections {

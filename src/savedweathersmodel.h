@@ -28,7 +28,8 @@ public:
         TemperatureFeel,
         WeatherType,
         Description,
-        Timestamp
+        Timestamp,
+        Populated
     };
 
     SavedWeathersModel(QObject *parent = 0);

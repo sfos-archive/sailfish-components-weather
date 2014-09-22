@@ -7,6 +7,7 @@ Item {
     id: root
 
     property bool ready: model && model.ready
+    property bool error: model && model.error
     property string city: ready ? model.city : true
     property string locationId: ready ? model.locationId : ""
     property bool positioningAllowed: locationSettings.locationEnabled
@@ -16,9 +17,14 @@ Item {
     onPositioningAllowedChanged: handleLocationSetting()
     Component.onCompleted: handleLocationSetting()
 
-    function update() {
+    function updateLocation() {
         if (positioningAllowed && model) {
-            model.update()
+            model.updateLocation()
+        }
+    }
+    function reloadModel() {
+        if (positioningAllowed && model) {
+            model.reloadModel()
         }
     }
 
@@ -37,7 +43,5 @@ Item {
             }
         }
     }
-    LocationSettings {
-        id: locationSettings
-    }
+    LocationSettings { id: locationSettings }
 }
