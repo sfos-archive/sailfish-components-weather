@@ -81,11 +81,18 @@ BackgroundItem {
                     "country": ""
                 }
                 savedWeathersModel.setCurrentWeather(weather)
-                TemperatureConverter.metric = LocationDetection.metric
+                savedWeathersModel.metric = LocationDetection.metric
             }
         }
     }
-    SavedWeathersModel { id: savedWeathersModel }
+    SavedWeathersModel {
+        id: savedWeathersModel
+    }
+    Binding {
+        target:	TemperatureConverter
+        property: "metric"
+        value: savedWeathersModel.metric
+    }
     WeatherModel {
         id: weatherModel
         weather: savedWeathersModel.currentWeather
