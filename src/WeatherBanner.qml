@@ -87,6 +87,7 @@ BackgroundItem {
     }
     SavedWeathersModel {
         id: savedWeathersModel
+        autoRefresh: true
     }
     Binding {
         target:	TemperatureConverter
