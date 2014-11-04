@@ -19,16 +19,12 @@ ListModel {
     }
     onActiveChanged: {
         if (active) {
-            ready = true
-            var now = new Date()
-            // only update automatically if more than 10 minutes has
-            // passed since the last update (10*60*1000)
-            if (now - 600000 > lastUpdate) {
+            if (WeatherModel.updateAllowed()) {
                 reload()
-                lastUpdate = now
             }
         }
     }
+
     property var forecast: XmlListModel {
         onStatusChanged: {
             if (status == XmlListModel.Ready) {

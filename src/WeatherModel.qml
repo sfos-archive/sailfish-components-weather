@@ -10,7 +10,6 @@ XmlListModel {
     property var savedWeathers
     property bool active: true
     property int locationId: weather ? weather.locationId : -1
-    property date lastUpdate: new Date()
     property date timestamp: new Date()
 
     signal error
@@ -27,12 +26,8 @@ XmlListModel {
 
     onActiveChanged: {
         if (active) {
-            var now = new Date()
-            // only update automatically if more than 10 minutes has
-            // passed since the last update (10*60*1000)
-            if (now - 600000 > lastUpdate) {
+            if (WeatherModel.updateAllowed()) {
                 reload()
-                lastUpdate = now
             }
         }
     }
