@@ -12,13 +12,13 @@ ListModel {
     property date timestamp
     property int locationId: weather ? weather.locationId : -1
     property int status: Weather.Loading
-    property date lastUpdate: new Date()
 
     function reload() {
         forecast.reload()
     }
     onActiveChanged: {
         if (active) {
+            ready = true
             if (WeatherModel.updateAllowed()) {
                 reload()
             }

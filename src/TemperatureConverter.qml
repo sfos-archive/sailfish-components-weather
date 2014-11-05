@@ -7,8 +7,6 @@ ConfigurationValue {
     property bool metric: true
     property bool celsius: {
         switch (value) {
-        case "BasedOnLocation":
-            return metric
         case "Celsius":
             return true
         case "Fahrenheit":
@@ -22,5 +20,5 @@ ConfigurationValue {
         return celsius ? temperature : Math.round(9/5*parseInt(temperature)+32).toString()
     }
     key: "/sailfish/weather/temperature_unit"
-    defaultValue: "BasedOnLocation"
+    defaultValue: "Celsius"
 }

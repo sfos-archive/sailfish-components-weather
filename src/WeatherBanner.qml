@@ -18,7 +18,7 @@ BackgroundItem {
 
     visible: enabled
     height: enabled ? temperatureLabel.height + 2*(isPortrait ? Theme.paddingLarge : Theme.paddingMedium) : 0
-    enabled: weather && weather.status == Weather.Ready
+    enabled: weather && weather.populated
     onClicked: pageStack.push("WeatherPage.qml", { "weather": weather, "weatherModel": weatherModel, "inEventsView": true, "current": true })
 
     Label {
@@ -68,31 +68,9 @@ BackgroundItem {
                                                               : ""
         }
     }
-    Connections {
-        target: LocationDetection
-        onReadyChanged: updateLocation()
-        onLocationIdChanged: updateLocation()
-        function updateLocation() {
-            if (LocationDetection.ready && LocationDetection.locationId.length > 0) {
-                var weather = {
-                    "locationId": LocationDetection.locationId,
-                    "city": LocationDetection.city,
-                    "state": "",
-                    "country": ""
-                }
-                savedWeathersModel.setCurrentWeather(weather)
-                savedWeathersModel.metric = LocationDetection.metric
-            }
-        }
-    }
     SavedWeathersModel {
         id: savedWeathersModel
         autoRefresh: true
-    }
-    Binding {
-        target:	TemperatureConverter
-        property: "metric"
-        value: savedWeathersModel.metric
     }
     WeatherModel {
         id: weatherModel

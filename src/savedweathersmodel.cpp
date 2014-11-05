@@ -15,7 +15,7 @@ static QString weatherStoragePath()
 
 SavedWeathersModel::SavedWeathersModel(QObject *parent)
     : QAbstractListModel(parent), m_currentWeather(0), m_autoRefresh(false),
-      m_metric(true), m_fileWatcher(0)
+      m_fileWatcher(0)
 {
     load();
 }
@@ -42,11 +42,6 @@ void SavedWeathersModel::load()
     QJsonDocument json = QJsonDocument::fromJson(data);
 
     QJsonObject root = json.object();
-
-    QJsonValue metricValue = root.value("metric");
-    if (metricValue.type() != QJsonValue::Undefined) {
-        setMetric(metricValue.toBool());
-    }
 
     // update current weather locations
     QJsonObject currentLocation = root.value("currentLocation").toObject();
@@ -105,7 +100,6 @@ void SavedWeathersModel::save()
     }
 
     QJsonObject root;
-    root.insert("metric", QJsonValue(m_metric));
     if (m_currentWeather) {
         root.insert("currentLocation", convertToJson(m_currentWeather));
     }
@@ -345,18 +339,5 @@ void SavedWeathersModel::setAutoRefresh(bool enabled)
     } else {
         delete m_fileWatcher;
         m_fileWatcher = 0;
-    }
-}
-
-bool SavedWeathersModel::metric() const
-{
-    return m_metric;
-}
-
-void SavedWeathersModel::setMetric(bool metric)
-{
-    if (m_metric != metric) {
-        m_metric = metric;
-        emit metricChanged();
     }
 }

@@ -73,7 +73,7 @@ Page {
             id: forecastModel
             weather: root.weather
             timestamp: weatherModel.timestamp
-            active: root.status == PageStatus.Active
+            active: root.status == PageStatus.Active && Qt.application.active
         }
 
         orientation: ListView.Horizontal

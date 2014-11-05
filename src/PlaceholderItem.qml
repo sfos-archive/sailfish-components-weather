@@ -3,9 +3,9 @@ import Sailfish.Silica 1.0
 
 Item {
     property bool error
+    property bool empty
     property bool enabled
     property alias text: mainLabel.text
-    property alias showButton: button.enabled
 
     signal reload
 
@@ -36,7 +36,7 @@ Item {
     }
     BusyIndicator {
         id: busyIndicator
-        running: parent.opacity > 0 && !error
+        running: parent.opacity > 0 && !error && !empty
         size: BusyIndicatorSize.Large
         anchors {
             top: mainLabel.bottom

@@ -15,7 +15,6 @@ class SavedWeathersModel: public QAbstractListModel
     Q_PROPERTY(int count READ count NOTIFY countChanged)
     Q_PROPERTY(Weather *currentWeather READ currentWeather NOTIFY currentWeatherChanged)
     Q_PROPERTY(bool autoRefresh READ autoRefresh WRITE setAutoRefresh NOTIFY autoRefreshChanged)
-    Q_PROPERTY(bool metric READ metric WRITE setMetric NOTIFY metricChanged)
 
 public:
     enum Roles {
@@ -48,9 +47,6 @@ public:
 
     int count() const;
 
-    bool metric() const;
-    void setMetric(bool metric);
-
     Weather *currentWeather() const;
     Q_INVOKABLE void setCurrentWeather(const QVariantMap &locationMap, bool internal = false);
 
@@ -66,7 +62,6 @@ signals:
     void countChanged();
     void currentWeatherChanged();
     void autoRefreshChanged();
-    void metricChanged();
 
 protected:
     QHash<int, QByteArray> roleNames() const;
@@ -75,7 +70,6 @@ private:
     Weather* m_currentWeather;
     QList <Weather *> m_savedWeathers;
     bool m_autoRefresh;
-    bool m_metric;
     QFileSystemWatcher *m_fileWatcher;
 
     int getWeatherIndex(int locationId);
