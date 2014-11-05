@@ -65,8 +65,8 @@ Item {
                 y: -Theme.paddingLarge
                 source: "image://theme/graphic-weather-wind-direction?" + Theme.highlightColor
                 anchors.horizontalCenter: parent.horizontalCenter
-                rotation: model ? model.windDirection : 0
-                onRotationChanged: rotationBehavior.enabled = true
+                rotation: model ? model.windDirection : -1
+                onRotationChanged: if (rotation !== -1) rotationBehavior.enabled = true
                 Behavior on rotation {
                     id: rotationBehavior
                     enabled: false
