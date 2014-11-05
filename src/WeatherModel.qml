@@ -12,6 +12,10 @@ XmlListModel {
     property int locationId: weather ? weather.locationId : -1
     property date timestamp: new Date()
 
+    function updateAllowed() {
+        return WeatherModel.updateAllowed()
+    }
+
     signal error
 
     onError: {
