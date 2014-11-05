@@ -1,10 +1,10 @@
-var lastUpdate
+var lastUpdate = new Date()
 
 function updateAllowed() {
     // only update automatically if more than 30 minutes has
     // passed since the last update (30*60*1000)
     var now = new Date()
-    var updateAllowed = !lastUpdate || (now - 1800000 > lastUpdate)
+    var updateAllowed = (now - 1800000 > lastUpdate)
     lastUpdate = now
     return updateAllowed
 }
