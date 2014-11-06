@@ -5,7 +5,9 @@ function updateAllowed() {
     // passed since the last update (30*60*1000)
     var now = new Date()
     var updateAllowed = (now - 1800000 > lastUpdate)
-    lastUpdate = now
+    if (updateAllowed) {
+        lastUpdate = now
+    }
     return updateAllowed
 }
 
@@ -32,23 +34,23 @@ function getWeatherData(weather, forecast) {
     switch (precipirationRateCode) {
     case '0':
         //% "No precipitation"
-        precipirationRate = qsTrId("weather-la-no_precipitation")
+        precipirationRate = qsTrId("weather-la-precipitation_none")
         break
     case '1':
         //% "Slight precipitation"
-        precipirationRate = qsTrId("weather-la-slight_precipitation")
+        precipirationRate = qsTrId("weather-la-precipitation_slight")
         break
     case '2':
         //% "Showers"
-        precipirationRate = qsTrId("weather-la-showers")
+        precipirationRate = qsTrId("weather-la-precipitation_showers")
         break
     case '3':
         //% "Precipitation"
-        precipirationRate = qsTrId("weather-la-precipitation")
+        precipirationRate = qsTrId("weather-la-precipitation_normal")
         break
     case '4':
         //% "Thunder"
-        precipirationRate = qsTrId("weather-la-thunder")
+        precipirationRate = qsTrId("weather-la-precipitation_thunder")
         break
     default:
         console.log("WeatherModel warning: invalid precipiration rate code", precipirationRateCode)
@@ -58,21 +60,21 @@ function getWeatherData(weather, forecast) {
     var precipirationType = ""
     if (precipirationRateCode === '0') { // no rain
         //% "None"
-        precipirationType = qsTrId("weather-la-none")
+        precipirationType = qsTrId("weather-la-precipirationtype_none")
     } else {
         var precipirationTypeCode = weather.code.charAt(3)
         switch (precipirationTypeCode) {
         case '0':
             //% "Rain"
-            precipirationType = qsTrId("weather-la-rain")
+            precipirationType = qsTrId("weather-la-precipitationtype_rain")
             break
         case '1':
             //% "Sleet"
-            precipirationType = qsTrId("weather-la-sleet")
+            precipirationType = qsTrId("weather-la-precipitationtype_sleet")
             break
         case '2':
             //% "Snow"
-            precipirationType = qsTrId("weather-la-snow")
+            precipirationType = qsTrId("weather-la-precipitationtype_snow")
             break
         default:
             console.log("WeatherModel warning: invalid precipiration type code", precipirationTypeCode)
@@ -84,25 +86,25 @@ function getWeatherData(weather, forecast) {
     case 'N':
         windDirection = 0
         break
-    case 'NW':
+    case 'NE':
         windDirection = 45
         break
-    case 'W':
+    case 'E':
         windDirection = 90
         break
-    case 'SW':
+    case 'SE':
         windDirection = 135
         break
     case 'S':
         windDirection = 180
         break
-    case 'SE':
+    case 'SW':
         windDirection = 225
         break
-    case 'E':
+    case 'W':
         windDirection = 270
         break
-    case 'NE':
+    case 'NW':
         windDirection = 315
         break
     }
@@ -111,7 +113,7 @@ function getWeatherData(weather, forecast) {
         "description": description(weather.code),
         "weatherType": weatherType(weather.code),
         "timestamp": timestamp,
-        "cloudiness": (100*parseInt(weather.code.charAt(1))/4) + "%",
+        "cloudiness": (100*parseInt(weather.code.charAt(1))/4),
         "precipitationRate": precipirationRate,
         "precipitationType": precipirationType,
         "windSpeed": Math.round(weather.windSpeed),
@@ -186,63 +188,63 @@ function weatherType(code) {
 function description(code) {
     var localizations = {
         //% "Clear"
-        "000": qsTrId("weather-la-clear"),
+        "000": qsTrId("weather-la-description_clear"),
         //% "Mostly clear"
-        "100": qsTrId("weather-la-mostly_clear"),
+        "100": qsTrId("weather-la-description_mostly_clear"),
         //% "Partly cloudy"
-        "200": qsTrId("weather-la-Partly cloudy"),
+        "200": qsTrId("weather-la-description_partly_cloudy"),
         //% "Cloudy"
-        "300": qsTrId("weather-la-cloudy"),
+        "300": qsTrId("weather-la-description_cloudy"),
         //% "Overcast"
-        "400": qsTrId("weather-la-overcast"),
+        "400": qsTrId("weather-la-description_overcast"),
         //% "Partly cloudy and light rain"
-        "210": qsTrId("weather-la-partly_cloudy_and_light_rain"),
+        "210": qsTrId("weather-la-description_partly_cloudy_and_light_rain"),
         //% "Cloudy and light rain"
-        "310": qsTrId("weather-la-cloudy_and_light_rain"),
+        "310": qsTrId("weather-la-description_cloudy_and_light_rain"),
         //% "Overcast and light rain"
-        "410": qsTrId("weather-la-overcast_and_light_rain"),
+        "410": qsTrId("weather-la-description_overcast_and_light_rain"),
         //% "Partly cloudy and showers"
-        "220": qsTrId("weather-la-partly_cloudy_and_showers"),
+        "220": qsTrId("weather-la-description_partly_cloudy_and_showers"),
         //% "Cloudy and showers"
-        "320": qsTrId("weather-la-cloudy_and_showers"),
+        "320": qsTrId("weather-la-description_cloudy_and_showers"),
         //% "Overcast and showers"
-        "420": qsTrId("weather-la-overcast_and_showers"),
+        "420": qsTrId("weather-la-description_overcast_and_showers"),
         //% "Overcast and rain"
-        "430": qsTrId("weather-la-overcast_and-rain"),
+        "430": qsTrId("weather-la-description_overcast_and_rain"),
         //% "Partly cloudy, possible thunderstorms with rain"
-        "240": qsTrId("weather-la-partly_cloudy_possible_thunderstorms_with_rain"),
+        "240": qsTrId("weather-la-description_partly_cloudy_possible_thunderstorms_with_rain"),
         //% "Cloudy, thunderstorms with rain"
-        "340": qsTrId("weather-la-cloudy_thunderstorms_with_rain"),
+        "340": qsTrId("weather-la-description_cloudy_thunderstorms_with_rain"),
         //% "Overcast, thunderstorms with rain"
-        "440": qsTrId("weather-la-overcast_thunderstorms_with_rain"),
+        "440": qsTrId("weather-la-description_overcast_thunderstorms_with_rain"),
         //% "Partly cloudy and light wet snow"
-        "211": qsTrId("weather-la-partly_cloudy_and_light_wet_snow"),
+        "211": qsTrId("weather-la-description_partly_cloudy_and_light_wet_snow"),
         //% "Cloudy and light wet snow"
-        "311": qsTrId("weather-la-cloudy_and_light_wet_snow"),
+        "311": qsTrId("weather-la-description_cloudy_and_light_wet_snow"),
         //% "Overcast and light wet snow"
-        "411": qsTrId("weather-la-overcast_and_light_wet_snow"),
+        "411": qsTrId("weather-la-description_overcast_and_light_wet_snow"),
         //% "Partly cloudy and wet snow showers"
-        "221": qsTrId("weather-la-partly_cloudy_and_wet_snow_showers"),
+        "221": qsTrId("weather-la-description_partly_cloudy_and_wet_snow_showers"),
         //% "Cloudy and wet snow showers"
-        "321": qsTrId("weather-la-cloudy_and_wet_snow_showers"),
+        "321": qsTrId("weather-la-description_cloudy_and_wet_snow_showers"),
         //% "Overcast and wet snow showers"
-        "421": qsTrId("weather-la-overcast_and_wet_snow_showers"),
+        "421": qsTrId("weather-la-description_overcast_and_wet_snow_showers"),
         //% "Overcast and wet snow"
-        "431": qsTrId("weather-la-overcast_and_wet_snow"),
+        "431": qsTrId("weather-la-description_overcast_and_wet_snow"),
         //% "Partly cloudy and light snow"
-        "212": qsTrId("weather-la-partly_cloudy_and_light_snow"),
+        "212": qsTrId("weather-la-description_partly_cloudy_and_light_snow"),
         //% "Cloudy and light snow"
-        "312": qsTrId("weather-la-cloudy_and_light_snow"),
+        "312": qsTrId("weather-la-description_cloudy_and_light_snow"),
         //% "Overcast and light snow"
-        "412": qsTrId("weather-la-overcast_and_light_snow"),
+        "412": qsTrId("weather-la-description_overcast_and_light_snow"),
         //% "Partly cloudy and snow showers"
-        "222": qsTrId("weather-la-partly_cloudy_and_snow_showers"),
+        "222": qsTrId("weather-la-description_partly_cloudy_and_snow_showers"),
         //% "Cloudy and snow showers"
-        "322": qsTrId("weather-la-cloudy_and_snow_showers"),
+        "322": qsTrId("weather-la-description_cloudy_and_snow_showers"),
         //% "Overcast and snow showers"
-        "422": qsTrId("weather-la-overcast_and_snow_showers"),
+        "422": qsTrId("weather-la-description_overcast_and_snow_showers"),
         //% "Overcast and snow"
-        "432": qsTrId("weather-la-overcast_and_snow")
+        "432": qsTrId("weather-la-description_overcast_and_snow")
     }
 
     return localizations[code.substr(1,3)]

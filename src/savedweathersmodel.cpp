@@ -171,9 +171,7 @@ void SavedWeathersModel::setCurrentWeather(const QVariantMap &map, bool internal
             weather->update(map);
             weather->setStatus(Weather::Ready);
         }
-        if (m_currentWeather) {
-            delete m_currentWeather;
-        }
+        delete m_currentWeather;
         m_currentWeather = weather;
         emit currentWeatherChanged();
         if (!internal) {

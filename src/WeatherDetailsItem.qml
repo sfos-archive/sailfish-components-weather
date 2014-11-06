@@ -46,7 +46,7 @@ Item {
                 x: Theme.paddingLarge
                 color: Theme.highlightColor
                 font.pixelSize: Theme.fontSizeHuge
-                text: model ? TemperatureConverter.format(model.high) + "\u00B0" : ""
+                text: model ? TemperatureConverter.format(model.high) : ""
                 anchors.verticalCenter: windDirectionIcon.verticalCenter
             }
             Label {
@@ -57,14 +57,17 @@ Item {
                     top: temperatureHighLabel.baseline
                     topMargin: Theme.paddingSmall
                 }
+                //: Shows daily low temperature as label, e.g. "Low -3°". Degree symbol comes from outside.
                 //% "Low %1"
-                text: model ? qsTrId("weather-la-low").arg(TemperatureConverter.format(model.low) + "\u00B0") : ""
+                text: model ? qsTrId("weather-la-daily_low_temperature").arg(TemperatureConverter.format(model.low)) : ""
             }
             Image {
                 id: windDirectionIcon
                 y: -Theme.paddingLarge
                 source: "image://theme/graphic-weather-wind-direction?" + Theme.highlightColor
                 anchors.horizontalCenter: parent.horizontalCenter
+                // possible rotation values are 0 and multiplies of 45 degrees
+                // once valid value is obtained enable animation on further changes
                 rotation: model ? model.windDirection : -1
                 onRotationChanged: if (rotation !== -1) rotationBehavior.enabled = true
                 Behavior on rotation {
@@ -156,7 +159,9 @@ Item {
         DetailItem {
             //% "Weather station"
             label: qsTrId("weather-la-weather_station")
-            value: weather ? (weather.state.length > 0 ? weather.state + ", " : "") + weather.country : ""
+            //: Order of weather location string, "State, Country", e.g. "Finland, Helsinki"
+            //% "%0, %1"
+            value: weather ? (weather.state.length > 0 ? qsTrId("weather-la-weather_station_order").arg(weather.state).arg(weather.country) : weather.country) : ""
             visible: !current
         }
         DetailItem {
@@ -173,16 +178,16 @@ Item {
         DetailItem {
             //% "Cloudiness"
             label: qsTrId("weather-la-cloudiness")
-            value: model ? model.cloudiness : ""
+            value: model ? model.cloudiness + Qt.locale().percent : ""
         }
         DetailItem {
             //% "Precipitation rate"
-            label: qsTrId("weather-la-precipitationRate")
+            label: qsTrId("weather-la-precipitationrate")
             value: model ? model.precipitationRate : ""
         }
         DetailItem {
             //% "Precipitation type"
-            label: qsTrId("weather-la-precipitationType")
+            label: qsTrId("weather-la-precipitationtype")
             value: model ? model.precipitationType : ""
         }
         ProviderDisclaimer {

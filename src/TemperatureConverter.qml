@@ -7,18 +7,21 @@ ConfigurationValue {
     property bool metric: true
     property bool celsius: {
         switch (value) {
-        case "Celsius":
+        case "celsius":
             return true
-        case "Fahrenheit":
+        case "fahrenheit":
             return false
         default:
             console.log("TemperatureConverter: Invalid temperature unit value", value)
             return true
         }
     }
-    function format(temperature) {
+    function formatWithoutUnit(temperature) {
         return celsius ? temperature : Math.round(9/5*parseInt(temperature)+32).toString()
     }
+    function format(temperature) {
+        return formatWithoutUnit(temperature) + "\u00B0"
+    }
     key: "/sailfish/weather/temperature_unit"
-    defaultValue: "Celsius"
+    defaultValue: "celsius"
 }

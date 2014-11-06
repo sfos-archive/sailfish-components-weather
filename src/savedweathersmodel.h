@@ -67,7 +67,7 @@ protected:
     QHash<int, QByteArray> roleNames() const;
     QJsonObject convertToJson(const Weather *weather);
 private:
-    Weather* m_currentWeather;
+    Weather *m_currentWeather;
     QList <Weather *> m_savedWeathers;
     bool m_autoRefresh;
     QFileSystemWatcher *m_fileWatcher;

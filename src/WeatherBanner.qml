@@ -23,7 +23,7 @@ BackgroundItem {
 
     Label {
         id: temperatureLabel
-        text: weather ? TemperatureConverter.format(weather.temperature) + "\u00B0" : ""
+        text: weather ? TemperatureConverter.format(weather.temperature) : ""
         color: highlighted ? Theme.highlightColor : Theme.primaryColor
         font {
             pixelSize: isPortrait ? Theme.fontSizeHuge : Theme.fontSizeExtraLarge
