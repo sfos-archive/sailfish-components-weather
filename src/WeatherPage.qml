@@ -18,7 +18,7 @@ Page {
         }
         clip: true
         width: parent.width
-        contentHeight: weatherItem.height
+        contentHeight: weatherHeader.height
         VerticalScrollDecorator {}
 
         PullDownMenu {
@@ -43,8 +43,8 @@ Page {
                 onClicked: forecastModel.reload()
             }
         }
-        WeatherDetailsItem {
-            id: weatherItem
+        WeatherDetailsHeader {
+            id: weatherHeader
 
             current: root.current
             today: root.currentIndex === 0
