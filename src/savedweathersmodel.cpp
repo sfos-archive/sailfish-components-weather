@@ -321,6 +321,7 @@ void SavedWeathersModel::setAutoRefresh(bool enabled)
         return;
 
     m_autoRefresh = enabled;
+    emit autoRefreshChanged();
 
     if (m_autoRefresh) {
         QString filePath = weatherStoragePath() + QStringLiteral("weather.json");
