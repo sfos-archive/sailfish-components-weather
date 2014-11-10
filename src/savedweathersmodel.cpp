@@ -48,7 +48,9 @@ void SavedWeathersModel::load()
     if (!currentLocation.empty()) {
         setCurrentWeather(currentLocation.toVariantMap(), true /* internal */);
         QVariantMap weatherMap = currentLocation.value("weather").toObject().toVariantMap();
-        m_currentWeather->update(weatherMap);
+        if (weatherMap.value("populated").toBool()) {
+            m_currentWeather->update(weatherMap);
+        }
         m_currentWeather->setStatus(Weather::Status(weatherMap["status"].toInt()));
     }
 
@@ -65,7 +67,9 @@ void SavedWeathersModel::load()
         }
         QVariantMap weatherMap = location.value("weather").toObject().toVariantMap();
         // update existing weather locations
-        update(locationId, weatherMap, Weather::Status(weatherMap["status"].toInt()));
+        if (weatherMap.value("populated").toBool()) {
+            update(locationId, weatherMap, Weather::Status(weatherMap["status"].toInt()));
+        }
     }
 
     // remove old weather locations
@@ -133,6 +137,7 @@ QJsonObject SavedWeathersModel::convertToJson(const Weather *weather)
     location["country"] = weather->country();
 
     QJsonObject weatherData;
+    weatherData["populated"] = weather->populated();
     weatherData["status"] = weather->status();
     weatherData["temperature"] = weather->temperature();
     weatherData["temperatureFeel"] = weather->temperatureFeel();
@@ -171,7 +176,7 @@ void SavedWeathersModel::setCurrentWeather(const QVariantMap &map, bool internal
             // location API can return different place names, but the same weather station location id
             || m_currentWeather->city() != map["city"].toString()) {
         Weather *weather = new Weather(this, map);
-        if (map.contains("temperature")) {
+        if (map.contains("populated")) {
             weather->update(map);
             weather->setStatus(Weather::Ready);
         }

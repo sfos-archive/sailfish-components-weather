@@ -38,12 +38,11 @@ XmlListModel {
 
     onStatusChanged: {
         if (status == XmlListModel.Ready) {
-            var modelItem = get(0)
-            if (modelItem.temperature === "") {
+            // Foreca can return an empty item for old weather stations
+            if (count === 0 || get(0).temperature === "") {
                 error()
-            }
-            if (count > 0) {
-                var data = WeatherModel.getWeatherData(modelItem, false)
+            } else {
+                var data = WeatherModel.getWeatherData(get(0), false)
                 var json = {
                     "temperature": data.temperature,
                     "temperatureFeel": data.temperatureFeel,
@@ -54,7 +53,7 @@ XmlListModel {
                 root.timestamp = data.timestamp
                 savedWeathersModel.update(locationId, json)
             }
-        } else if (status == XmlListModel.Error){
+        } else if (status == XmlListModel.Error) {
             error()
         }
     }

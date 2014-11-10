@@ -22,7 +22,7 @@ function getWeatherData(weather, forecast) {
                               parseInt(dateArray[1] - 1),
                               parseInt(dateArray[2]))
 
-    if (!forecast) {
+    if (!forecast && weather.timestamp.length > 0) {
         var timeArray = weather.timestamp.split(" ")[1].split(":")
         timestamp.setHours(timeArray[0])
         timestamp.setMinutes(timeArray[1])
