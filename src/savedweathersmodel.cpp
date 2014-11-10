@@ -86,9 +86,9 @@ void SavedWeathersModel::load()
     }
 }
 
-Q_INVOKABLE void SavedWeathersModel::moveToTop(int index)
+void SavedWeathersModel::moveToTop(int index)
 {
-    if (index > 0) {
+    if (index > 0 && index < count()) {
         beginMoveRows(QModelIndex(), index, index, QModelIndex(), 0);
         m_savedWeathers.move(index, 0);
         endMoveRows();
@@ -128,6 +128,7 @@ void SavedWeathersModel::save()
         return;
     }
 }
+
 QJsonObject SavedWeathersModel::convertToJson(const Weather *weather)
 {
     QJsonObject location;
@@ -192,7 +193,7 @@ void SavedWeathersModel::setCurrentWeather(const QVariantMap &map, bool internal
     }
 }
 
-void SavedWeathersModel::reportError(int locationId)
+void SavedWeathersModel::setErrorStatus(int locationId)
 {
     if (m_currentWeather && m_currentWeather->locationId() == locationId) {
         m_currentWeather->setStatus(Weather::Error);

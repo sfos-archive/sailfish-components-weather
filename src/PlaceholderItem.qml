@@ -8,15 +8,18 @@ Item {
     property bool empty
     property bool enabled
     property Flickable flickable
+    property Item _animationHint
     property alias text: mainLabel.text
 
     signal reload
 
-    onEnabledChanged: {
-        if (enabled && flickable) {
-            animationHint.createObject(root)
+    function update() {
+        if (enabled && flickable && !_animationHint) {
+            _animationHint = animationHint.createObject(root)
         }
     }
+    Component.onCompleted: update()
+    onEnabledChanged: update()
 
     width: parent.width
     height: mainLabel.height + Theme.paddingLarge + (error ? button.height : busyIndicator.height)

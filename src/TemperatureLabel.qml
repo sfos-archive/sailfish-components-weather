@@ -3,7 +3,7 @@ import Sailfish.Silica 1.0
 
 Item {
     property alias temperature: temperatureLabel.text
-    property string temperatureFeel
+    property alias temperatureFeel: temperatureFeelLabel.text
     property alias color: temperatureLabel.color
 
     height: temperatureLabel.height
@@ -33,7 +33,6 @@ Item {
         id: temperatureFeelLabel
         opacity: 0.6
         color: parent.color
-        text: temperatureFeel
         font.pixelSize: Theme.fontSizeLarge
         anchors {
             baseline: temperatureLabel.baseline

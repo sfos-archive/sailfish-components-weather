@@ -10,13 +10,13 @@ ListModel {
     property bool ready
     property bool active: true
     property date timestamp
-    property int locationId: weather ? weather.locationId : -1
+    readonly property int locationId: weather ? weather.locationId : -1
     property int status: Weather.Loading
 
     function reload() {
         forecast.reload()
     }
-    onActiveChanged: {
+    function update() {
         if (active) {
             ready = true
             if (WeatherModel.updateAllowed()) {
@@ -24,6 +24,9 @@ ListModel {
             }
         }
     }
+
+    onActiveChanged: update()
+    Component.onCompleted: update()
 
     property var forecast: XmlListModel {
         onStatusChanged: {

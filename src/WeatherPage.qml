@@ -112,7 +112,8 @@ Page {
                               //% "Today"
                               qsTrId("weather-la-today")
                             :
-                              Qt.formatDateTime(model.timestamp, "ddd")
+                              //% "ddd"
+                              Qt.formatDateTime(timestamp, qsTrId("weather-la-date_pattern_shortweekdays"))
                     anchors.horizontalCenter: parent.horizontalCenter
                     color: highlighted ? Theme.secondaryHighlightColor : Theme.secondaryColor
                     font.pixelSize: Theme.fontSizeSmall

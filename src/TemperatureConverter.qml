@@ -3,8 +3,6 @@ import QtQuick 2.2
 import org.nemomobile.configuration 1.0
 
 ConfigurationValue {
-    // TODO: if no position fall back to Qt.locale().measurementSystem === Locale.MetricSystem
-    property bool metric: true
     property bool celsius: {
         switch (value) {
         case "celsius":

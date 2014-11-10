@@ -9,7 +9,7 @@ XmlListModel {
     property var weather
     property var savedWeathers
     property bool active: true
-    property int locationId: weather ? weather.locationId : -1
+    readonly property int locationId: weather ? weather.locationId : -1
     property date timestamp: new Date()
 
     function updateAllowed() {
@@ -20,7 +20,7 @@ XmlListModel {
 
     onError: {
         if (savedWeathersModel && weather) {
-            savedWeathersModel.reportError(locationId)
+            savedWeathersModel.setErrorStatus(locationId)
             console.log("WeatherModel - could not obtain weather data", weather.city, weather.locationId)
         }
     }

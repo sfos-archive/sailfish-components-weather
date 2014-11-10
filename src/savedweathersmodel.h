@@ -37,7 +37,7 @@ public:
     virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
     virtual QVariant data(const QModelIndex &index, int role) const;
 
-    Q_INVOKABLE void reportError(int locationId);
+    Q_INVOKABLE void setErrorStatus(int locationId);
     Q_INVOKABLE void addLocation(const QVariantMap &locationMap);
     Q_INVOKABLE void update(int locationId, const QVariantMap &weatherMap, Weather::Status status = Weather::Ready);
     Q_INVOKABLE void remove(int locationId);
@@ -56,7 +56,6 @@ public:
     void setAutoRefresh(bool enabled);
 
     void addLocation(Weather * weather);
-public slots:
     void load();
 
 signals:
