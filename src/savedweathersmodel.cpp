@@ -148,14 +148,17 @@ void SavedWeathersModel::addLocation(const QVariantMap &locationMap)
 {
     int locationId = locationMap["locationId"].toInt();
     int i = getWeatherIndex(locationId);
-    if (i >= 0) {
+    if (i >= 0 || (m_currentWeather && m_currentWeather->locationId() == locationId)) {
         qmlInfo(this) << "Location already exists " << locationId;
         return;
     }
 
-    beginInsertRows(QModelIndex(), m_savedWeathers.count(), m_savedWeathers.count());
+    addLocation(new Weather(this, locationMap));
+}
 
-    Weather *weather = new Weather(this, locationMap);
+void SavedWeathersModel::addLocation(Weather *weather)
+{
+    beginInsertRows(QModelIndex(), m_savedWeathers.count(), m_savedWeathers.count());
     m_savedWeathers.append(weather);
     endInsertRows();
     emit countChanged();
@@ -163,7 +166,8 @@ void SavedWeathersModel::addLocation(const QVariantMap &locationMap)
 
 void SavedWeathersModel::setCurrentWeather(const QVariantMap &map, bool internal)
 {
-    if (!m_currentWeather || m_currentWeather->locationId() != map["locationId"].toInt()
+    int locationId = map["locationId"].toInt();
+    if (!m_currentWeather || m_currentWeather->locationId() != locationId
             // location API can return different place names, but the same weather station location id
             || m_currentWeather->city() != map["city"].toString()) {
         Weather *weather = new Weather(this, map);
@@ -171,7 +175,10 @@ void SavedWeathersModel::setCurrentWeather(const QVariantMap &map, bool internal
             weather->update(map);
             weather->setStatus(Weather::Ready);
         }
-        delete m_currentWeather;
+        if (m_currentWeather) {
+            addLocation(m_currentWeather);
+        }
+        remove(locationId);
         m_currentWeather = weather;
         emit currentWeatherChanged();
         if (!internal) {

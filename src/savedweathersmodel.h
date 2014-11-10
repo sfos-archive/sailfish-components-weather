@@ -55,6 +55,7 @@ public:
     bool autoRefresh() const;
     void setAutoRefresh(bool enabled);
 
+    void addLocation(Weather * weather);
 public slots:
     void load();
 
