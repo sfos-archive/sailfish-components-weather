@@ -78,6 +78,7 @@ void SavedWeathersModel::load()
         if (!locationIds.contains(weather->locationId())) {
             beginRemoveRows(QModelIndex(), i, i);
             m_savedWeathers.removeAt(i);
+            i--;
             endRemoveRows();
         }
     }
