@@ -2,12 +2,21 @@ import QtQuick 2.2
 import Sailfish.Silica 1.0
 
 Item {
+    id: root
+
     property bool error
     property bool empty
     property bool enabled
+    property Flickable flickable
     property alias text: mainLabel.text
 
     signal reload
+
+    onEnabledChanged: {
+        if (enabled && flickable) {
+            animationHint.createObject(root)
+        }
+    }
 
     width: parent.width
     height: mainLabel.height + Theme.paddingLarge + (error ? button.height : busyIndicator.height)
@@ -57,5 +66,14 @@ Item {
             horizontalCenter: parent.horizontalCenter
         }
         onClicked: reload()
+    }
+    Component {
+        id: animationHint
+        PulleyAnimationHint {
+            flickable: placeholder.flickable
+            width: parent.width
+            height: width
+            anchors.centerIn: parent
+        }
     }
 }
