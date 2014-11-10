@@ -194,14 +194,18 @@ void SavedWeathersModel::setCurrentWeather(const QVariantMap &map, bool internal
 
 void SavedWeathersModel::reportError(int locationId)
 {
-    int i = getWeatherIndex(locationId);
-    if (i < 0) {
-        qmlInfo(this) << "No location with id " << locationId << " exists";
-        return;
+    if (m_currentWeather && m_currentWeather->locationId() == locationId) {
+        m_currentWeather->setStatus(Weather::Error);
+    } else {
+        int i = getWeatherIndex(locationId);
+        if (i < 0) {
+            qmlInfo(this) << "No location with id " << locationId << " exists";
+            return;
+        }
+        Weather *weather = m_savedWeathers[i];
+        weather->setStatus(Weather::Error);
+        dataChanged(index(i), index(i));
     }
-    Weather *weather = m_savedWeathers[i];
-    weather->setStatus(Weather::Error);
-    dataChanged(index(i), index(i));
 }
 
 void SavedWeathersModel::update(int locationId, const QVariantMap &weatherMap, Weather::Status status)

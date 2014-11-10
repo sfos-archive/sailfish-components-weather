@@ -70,6 +70,7 @@ Item {
     Component {
         id: animationHint
         PulleyAnimationHint {
+            enabled: !error
             flickable: placeholder.flickable
             width: parent.width
             height: width
