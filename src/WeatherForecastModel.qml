@@ -68,10 +68,6 @@ ListModel {
         source: ready && root.locationId > 0 ? "http://feed-jll.foreca.com/jolla-jan14fi/data.php?l=" + root.locationId + "&products=daily" : ""
 
         XmlRole {
-            name: "description"
-            query: "@sT/string()"
-        }
-        XmlRole {
             name: "code"
             query: "@s/string()"
         }

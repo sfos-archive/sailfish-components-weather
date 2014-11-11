@@ -59,10 +59,6 @@ XmlListModel {
     }
 
     XmlRole {
-        name: "description"
-        query: "@sT/string()"
-    }
-    XmlRole {
         name: "code"
         query: "@s/string()"
     }
