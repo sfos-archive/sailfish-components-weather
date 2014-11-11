@@ -264,13 +264,16 @@ Weather *SavedWeathersModel::get(int locationId)
 }
 
 
-int SavedWeathersModel::rowCount(const QModelIndex &) const
+int SavedWeathersModel::rowCount(const QModelIndex &parent) const
 {
-    return m_savedWeathers.count();
+    return parent.isValid() ? 0 : m_savedWeathers.count();
 }
 
 QVariant SavedWeathersModel::data(const QModelIndex &index, int role) const
 {
+    if (!index.isValid())
+        return QVariant();
+
     const Weather *weather = m_savedWeathers.at(index.row());
     switch (role) {
     case LocationId:
