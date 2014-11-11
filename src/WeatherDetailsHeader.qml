@@ -161,7 +161,9 @@ Item {
             label: qsTrId("weather-la-weather_station")
             //: Order of weather location string, "State, Country", e.g. "Finland, Helsinki"
             //% "%0, %1"
-            value: weather ? (weather.state.length > 0 ? qsTrId("weather-la-weather_station_order").arg(weather.state).arg(weather.country) : weather.country) : ""
+            value: weather ? (weather.state.length > 0 ? qsTrId("weather-la-weather_station_order")
+                                                         .arg(weather.state).arg(weather.country)
+                                                       : weather.country) : ""
             visible: !current
         }
         DetailItem {
