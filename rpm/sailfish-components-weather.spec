@@ -13,9 +13,15 @@ BuildRequires:  pkgconfig(Qt5Quick)
 BuildRequires:  pkgconfig(Qt5Sql)
 BuildRequires:  qt5-qttools
 BuildRequires:  qt5-qttools-linguist
+BuildRequires:  pkgconfig(contentaction5)
 
-Requires:  sailfishsilica-qt5
-Requires: jolla-theme >= 0.4.8
+Requires: sailfishsilica-qt5 >= 0.12.29
+Requires: jolla-theme >= 0.4.9
+Requires: ambient-icons-closed >= 0.3.2
+Requires: qt5-qtpositioning
+Requires: qt5-qtdeclarative-import-positioning
+Requires: connman-qt5-declarative
+Requires: libkeepalive
 
 %description
 Sailfish weather UI components

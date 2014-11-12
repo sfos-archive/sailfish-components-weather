@@ -2,6 +2,7 @@
 #define WEATHER_H
 
 #include <QObject>
+#include <QDebug>
 #include <QDateTime>
 #include <qqml.h>
 
@@ -15,20 +16,26 @@ class Weather : public QObject
     Q_PROPERTY(QString state READ state CONSTANT)
     Q_PROPERTY(QString country READ country CONSTANT)
     Q_PROPERTY(int temperature READ temperature NOTIFY temperatureChanged)
+    Q_PROPERTY(int temperatureFeel READ temperatureFeel NOTIFY temperatureFeelChanged)
     Q_PROPERTY(QString weatherType READ weatherType NOTIFY weatherTypeChanged)
     Q_PROPERTY(QString description READ description NOTIFY descriptionChanged)
     Q_PROPERTY(QDateTime timestamp READ timestamp NOTIFY timestampChanged)
+    Q_PROPERTY(bool populated READ populated NOTIFY populatedChanged)
 
 public:
-    Weather(QObject *parent, int locationId, QString city, QString state, QString country)
+    Weather(QObject *parent, const QVariantMap &locationMap)
         : QObject(parent),
           m_status(Loading),
-          m_locationId(locationId),
-          m_city(city),
-          m_state(state),
-          m_country(country)
+          m_locationId(locationMap["locationId"].toInt()),
+          m_city(locationMap["city"].toString()),
+          m_state(locationMap["state"].toString()),
+          m_country(locationMap["country"].toString()),
+          m_temperature(0),
+          m_temperatureFeel(0),
+          m_populated(false)
     {
     }
+
     ~Weather() {}
     enum Status { Null, Ready, Loading, Error };
 
@@ -38,9 +45,11 @@ public:
     QString state() const { return m_state; }
     QString country() const { return m_country; }
     int temperature() const { return m_temperature; }
+    int temperatureFeel() const { return m_temperatureFeel; }
     QString weatherType() const { return m_weatherType; }
     QString description() const { return m_description; }
     QDateTime timestamp() const { return m_timestamp; }
+    bool populated() const { return m_populated; }
 
     void setStatus(Status status) {
         if (m_status != status) {
@@ -52,6 +61,12 @@ public:
         if (m_temperature != temperature) {
             m_temperature = temperature;
             emit temperatureChanged();
+        }
+    }
+    void setTemperatureFeel(int temperatureFeel) {
+        if (m_temperatureFeel != temperatureFeel) {
+            m_temperatureFeel = temperatureFeel;
+            emit temperatureFeelChanged();
         }
     }
     void setWeatherType(QString weatherType) {
@@ -72,12 +87,26 @@ public:
             emit timestampChanged();
         }
     }
+    Q_INVOKABLE void update(const QVariantMap &weatherMap) {
+        setTemperature(weatherMap["temperature"].toInt());
+        setTemperatureFeel(weatherMap["temperatureFeel"].toInt());
+        setWeatherType(weatherMap["weatherType"].toString());
+        setDescription(weatherMap["description"].toString());
+        setTimestamp(weatherMap["timestamp"].toDateTime());
+        if (!m_populated) {
+            m_populated = true;
+            emit populatedChanged();
+        }
+    }
+
 signals:
     void statusChanged();
     void temperatureChanged();
+    void temperatureFeelChanged();
     void weatherTypeChanged();
     void descriptionChanged();
     void timestampChanged();
+    void populatedChanged();
 
 private:
     Status m_status;
@@ -86,9 +115,11 @@ private:
     QString m_state;
     QString m_country;
     int m_temperature;
+    int m_temperatureFeel;
     QString m_weatherType;
     QString m_description;
     QDateTime m_timestamp;
+    bool m_populated;
 };
 
 QML_DECLARE_TYPE(Weather)

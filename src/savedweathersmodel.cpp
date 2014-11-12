@@ -14,17 +14,17 @@ static QString weatherStoragePath()
 }
 
 SavedWeathersModel::SavedWeathersModel(QObject *parent)
-    : QAbstractListModel(parent), m_currentIndex(-1), m_autoRefresh(false),
+    : QAbstractListModel(parent), m_currentWeather(0), m_autoRefresh(false),
       m_fileWatcher(0)
 {
-    loadWeather();
+    load();
 }
 
 SavedWeathersModel::~SavedWeathersModel()
 {
 }
 
-void SavedWeathersModel::loadWeather()
+void SavedWeathersModel::load()
 {
     QFile file(weatherStoragePath() + QStringLiteral("/weather.json"));
     if (!file.exists())
@@ -35,56 +35,83 @@ void SavedWeathersModel::loadWeather()
         return;
     }
 
-    beginResetModel();
-    qDeleteAll(m_savedWeathers);
-    m_savedWeathers.clear();
+    QList <int> locationIds;
+    int oldCount = m_savedWeathers.count();
 
     QByteArray data = file.readAll();
     QJsonDocument json = QJsonDocument::fromJson(data);
 
     QJsonObject root = json.object();
 
-    QJsonObject locations = root.value("locations").toObject();
-    foreach (const QJsonValue &value, locations) {
+    // update current weather locations
+    QJsonObject currentLocation = root.value("currentLocation").toObject();
+    if (!currentLocation.empty()) {
+        setCurrentWeather(currentLocation.toVariantMap(), true /* internal */);
+        QVariantMap weatherMap = currentLocation.value("weather").toObject().toVariantMap();
+        if (weatherMap.value("populated").toBool()) {
+            m_currentWeather->update(weatherMap);
+        }
+        m_currentWeather->setStatus(Weather::Status(weatherMap["status"].toInt()));
+    }
+
+    // update saved weather locations
+    QJsonArray savedLocations = root.value("savedLocations").toArray();
+    foreach (const QJsonValue &value, savedLocations) {
         QJsonObject location = value.toObject();
+        int locationId = location["locationId"].toInt();
 
-        QJsonArray forecasts = location.value("forecasts").toArray();
-        foreach (const QJsonValue &forecastValue, forecasts) {
-            QJsonObject forecast = forecastValue.toObject();
-
-            Weather *weather = new Weather(this, location["id"].toInt(),
-                                           location["city"].toString(),
-                                           location["state"].toString(),
-                                           location["country"].toString());
-
-            weather->setStatus(Weather::Status(forecast["status"].toInt()));
-            if (weather->status() == Weather::Ready) {
-                weather->setTemperature(forecast["temperature"].toInt());
-                weather->setWeatherType(forecast["weatherType"].toString());
-                weather->setDescription(forecast["description"].toString());
-                weather->setTimestamp(QDateTime::fromString(forecast["timestamp"].toString()));
-            }
-
-            m_savedWeathers.append(weather);
+        locationIds.append(locationId);
+        // add new weather locations
+        if (getWeatherIndex(locationId) < 0) {
+            addLocation(location.toVariantMap());
+        }
+        QVariantMap weatherMap = location.value("weather").toObject().toVariantMap();
+        // update existing weather locations
+        if (weatherMap.value("populated").toBool()) {
+            update(locationId, weatherMap, Weather::Status(weatherMap["status"].toInt()));
         }
     }
 
-    endResetModel();
-
-    int currentLocation = root.value("currentLocation").toInt();
-    if (currentLocation) {
-        m_currentIndex = getWeatherIndex(currentLocation);
-        emit currentLocationIdChanged();
-        emit currentWeatherChanged();
+    // remove old weather locations
+    for (int i = 0; i < m_savedWeathers.count(); i++) {
+        Weather *weather = m_savedWeathers[i];
+        if (!locationIds.contains(weather->locationId())) {
+            beginRemoveRows(QModelIndex(), i, i);
+            m_savedWeathers.removeAt(i);
+            i--;
+            endRemoveRows();
+        }
     }
-
-    if (m_savedWeathers.count() > 0) {
+    if (m_savedWeathers.count() != oldCount) {
         emit countChanged();
     }
 }
 
-void SavedWeathersModel::saveWeather()
+void SavedWeathersModel::moveToTop(int index)
 {
+    if (index > 0 && index < count()) {
+        beginMoveRows(QModelIndex(), index, index, QModelIndex(), 0);
+        m_savedWeathers.move(index, 0);
+        endMoveRows();
+        save();
+    }
+}
+
+void SavedWeathersModel::save()
+{
+    QJsonArray savedLocations;
+    foreach (Weather *weather, m_savedWeathers) {
+        savedLocations.append(convertToJson(weather));
+    }
+
+    QJsonObject root;
+    if (m_currentWeather) {
+        root.insert("currentLocation", convertToJson(m_currentWeather));
+    }
+    root.insert("savedLocations", savedLocations);
+
+    QJsonDocument json(root);
+
     QDir dir(weatherStoragePath());
     if (!dir.mkpath(QStringLiteral("."))) {
         qmlInfo(this) << "Could not create data directory!";
@@ -92,119 +119,126 @@ void SavedWeathersModel::saveWeather()
     }
 
     QFile file(dir.filePath(QStringLiteral("weather.json")));
-    if (!file.open(QIODevice::ReadWrite | QIODevice::Truncate)) {
+    if (!file.open(QIODevice::WriteOnly)) {
         qmlInfo(this) << "Could not open weather data file!";
         return;
     }
 
-    QJsonObject locations;
-    foreach (Weather *weather, m_savedWeathers) {
-        QJsonObject location = locations.value(QString::number(weather->locationId())).toObject();
-        if (location.isEmpty()) {
-            location["id"] = weather->locationId();
-            location["city"] = weather->city();
-            location["state"] = weather->state();
-            location["country"] = weather->country();
-        }
-
-        QJsonObject forecast;
-        forecast["status"] = weather->status();
-        forecast["temperature"] = weather->temperature();
-        forecast["weatherType"] = weather->weatherType();
-        forecast["description"] = weather->description();
-        forecast["timestamp"] = weather->timestamp().toUTC().toString(Qt::ISODate);
-
-        QJsonArray forecasts = location["forecasts"].toArray();
-        forecasts.append(forecast);
-        location["forecasts"] = forecasts;
-
-        locations.insert(QString::number(weather->locationId()), location);
-    }
-
-    QJsonObject root;
-    root.insert("locations", locations);
-    if (currentWeather())
-        root.insert("currentLocation", currentWeather()->locationId());
-
-    QJsonDocument json(root);
     if (!file.write(json.toJson()) < 0) {
         qmlInfo(this) << "Could not write weather data:" << file.errorString();
         return;
     }
 }
 
+QJsonObject SavedWeathersModel::convertToJson(const Weather *weather)
+{
+    QJsonObject location;
+    location["locationId"] = weather->locationId();
+    location["city"] = weather->city();
+    location["state"] = weather->state();
+    location["country"] = weather->country();
+
+    QJsonObject weatherData;
+    weatherData["populated"] = weather->populated();
+    weatherData["status"] = weather->status();
+    weatherData["temperature"] = weather->temperature();
+    weatherData["temperatureFeel"] = weather->temperatureFeel();
+    weatherData["weatherType"] = weather->weatherType();
+    weatherData["description"] = weather->description();
+    weatherData["timestamp"] = weather->timestamp().toUTC().toString(Qt::ISODate);
+
+    location["weather"] = weatherData;
+    return location;
+}
+
 void SavedWeathersModel::addLocation(const QVariantMap &locationMap)
 {
     int locationId = locationMap["locationId"].toInt();
     int i = getWeatherIndex(locationId);
-    if (i >= 0) {
+    if (i >= 0 || (m_currentWeather && m_currentWeather->locationId() == locationId)) {
         qmlInfo(this) << "Location already exists " << locationId;
         return;
     }
 
+    addLocation(new Weather(this, locationMap));
+}
+
+void SavedWeathersModel::addLocation(Weather *weather)
+{
     beginInsertRows(QModelIndex(), m_savedWeathers.count(), m_savedWeathers.count());
-
-    Weather *weather = new Weather(this,
-            locationId,
-            locationMap["city"].toString(),
-            locationMap["state"].toString(),
-            locationMap["country"].toString());
     m_savedWeathers.append(weather);
-    saveWeather();
-
     endInsertRows();
     emit countChanged();
 }
 
-void SavedWeathersModel::reportError(int locationId)
+void SavedWeathersModel::setCurrentWeather(const QVariantMap &map, bool internal)
 {
-    int i = getWeatherIndex(locationId);
-    if (i < 0) {
-        qmlInfo(this) << "No location with id " << locationId << " exists";
-        return;
+    int locationId = map["locationId"].toInt();
+    if (!m_currentWeather || m_currentWeather->locationId() != locationId
+            // location API can return different place names, but the same weather station location id
+            || m_currentWeather->city() != map["city"].toString()) {
+        Weather *weather = new Weather(this, map);
+        if (map.contains("populated")) {
+            weather->update(map);
+            weather->setStatus(Weather::Ready);
+        }
+        if (m_currentWeather) {
+            addLocation(m_currentWeather);
+        }
+        remove(locationId);
+        m_currentWeather = weather;
+        emit currentWeatherChanged();
+        if (!internal) {
+            save();
+        }
     }
-    Weather *weather = m_savedWeathers[i];
-    weather->setStatus(Weather::Error);
-    dataChanged(index(i), index(i));
 }
 
-void SavedWeathersModel::update(const QVariantMap &weatherMap)
+void SavedWeathersModel::setErrorStatus(int locationId)
 {
-    int locationId = weatherMap["locationId"].toInt();
+    if (m_currentWeather && m_currentWeather->locationId() == locationId) {
+        m_currentWeather->setStatus(Weather::Error);
+    } else {
+        int i = getWeatherIndex(locationId);
+        if (i < 0) {
+            qmlInfo(this) << "No location with id " << locationId << " exists";
+            return;
+        }
+        Weather *weather = m_savedWeathers[i];
+        weather->setStatus(Weather::Error);
+        dataChanged(index(i), index(i));
+    }
+}
+
+void SavedWeathersModel::update(int locationId, const QVariantMap &weatherMap, Weather::Status status)
+{
+    bool updatedCurrent = false;
+    if (m_currentWeather && locationId == m_currentWeather->locationId()) {
+        m_currentWeather->update(weatherMap);
+        m_currentWeather->setStatus(status);
+        updatedCurrent = true;
+    }
     int i = getWeatherIndex(locationId);
     if (i < 0) {
-        qmlInfo(this) << "Location hasn't been saved " << locationId;
+        if (!updatedCurrent) {
+            qmlInfo(this) << "Location hasn't been saved " << locationId;
+        }
         return;
     }
     Weather *weather = m_savedWeathers[i];
-    weather->setTemperature(weatherMap["temperature"].toInt());
-    weather->setWeatherType(weatherMap["weatherType"].toString());
-    weather->setDescription(weatherMap["description"].toString());
-    weather->setTimestamp(weatherMap["timestamp"].toDateTime());
-    weather->setStatus(Weather::Ready);
-    saveWeather();
+    weather->update(weatherMap);
+    weather->setStatus(status);
     dataChanged(index(i), index(i));
 }
 
 void SavedWeathersModel::remove(int locationId)
 {
-    bool currentRemoved = false;
     int i = getWeatherIndex(locationId);
     if (i >= 0) {
-        Weather *weather = m_savedWeathers[i];
-        currentRemoved = (weather == currentWeather());
-
         beginRemoveRows(QModelIndex(), i, i);
         m_savedWeathers.removeAt(i);
-        saveWeather();
         endRemoveRows();
         emit countChanged();
-    }
-
-    if (currentRemoved && m_savedWeathers.count() > 0) {
-        m_currentIndex = 0;
-        emit currentLocationIdChanged();
-        emit currentWeatherChanged();
     }
 }
 
@@ -215,11 +249,7 @@ int SavedWeathersModel::count() const
 
 Weather *SavedWeathersModel::currentWeather() const
 {
-    if (m_currentIndex >= 0 && m_currentIndex < m_savedWeathers.size()) {
-        return m_savedWeathers.at(m_currentIndex);
-    } else {
-        return 0;
-    }
+    return m_currentWeather;
 }
 
 Weather *SavedWeathersModel::get(int locationId)
@@ -233,31 +263,17 @@ Weather *SavedWeathersModel::get(int locationId)
     }
 }
 
-int SavedWeathersModel::currentLocationId() const
-{
-    if (currentWeather())
-        return currentWeather()->locationId();
-    return -1;
-}
 
-void SavedWeathersModel::setCurrentLocationId(int locationId)
+int SavedWeathersModel::rowCount(const QModelIndex &parent) const
 {
-    int index = getWeatherIndex(locationId);
-    if (index >= 0 && index != m_currentIndex) {
-        m_currentIndex = index;
-        saveWeather();
-        emit currentLocationIdChanged();
-        emit currentWeatherChanged();
-    }
-}
-
-int SavedWeathersModel::rowCount(const QModelIndex &) const
-{
-    return m_savedWeathers.count();
+    return parent.isValid() ? 0 : m_savedWeathers.count();
 }
 
 QVariant SavedWeathersModel::data(const QModelIndex &index, int role) const
 {
+    if (!index.isValid() || index.row() < 0 || index.row() >= m_savedWeathers.count())
+        return QVariant();
+
     const Weather *weather = m_savedWeathers.at(index.row());
     switch (role) {
     case LocationId:
@@ -272,12 +288,16 @@ QVariant SavedWeathersModel::data(const QModelIndex &index, int role) const
         return weather->country();
     case Temperature:
         return weather->temperature();
+    case TemperatureFeel:
+        return weather->temperatureFeel();
     case WeatherType:
         return weather->weatherType();
     case Description:
         return weather->description();
     case Timestamp:
         return weather->timestamp();
+    case Populated:
+        return weather->populated();
     }
 
     return QVariant();
@@ -292,9 +312,11 @@ QHash<int, QByteArray> SavedWeathersModel::roleNames() const
     roles.insert(State, "state");
     roles.insert(Country, "country");
     roles.insert(Temperature, "temperature");
+    roles.insert(TemperatureFeel, "temperatureFeel");
     roles.insert(WeatherType, "weatherType");
     roles.insert(Description, "description");
     roles.insert(Timestamp, "timestamp");
+    roles.insert(Populated, "populated");
 
     return roles;
 }
@@ -320,22 +342,22 @@ void SavedWeathersModel::setAutoRefresh(bool enabled)
         return;
 
     m_autoRefresh = enabled;
+    emit autoRefreshChanged();
 
     if (m_autoRefresh) {
         QString filePath = weatherStoragePath() + QStringLiteral("weather.json");
         if (!QFile::exists(filePath)) {
             // QFileSystemWatcher needs the file to exist, so write out an
             // empty file
-            saveWeather();
+            save();
         }
 
         m_fileWatcher = new QFileSystemWatcher(this);
         connect(m_fileWatcher, &QFileSystemWatcher::fileChanged,
-                this, &SavedWeathersModel::loadWeather);
+                this, &SavedWeathersModel::load);
         m_fileWatcher->addPath(filePath);
     } else {
         delete m_fileWatcher;
         m_fileWatcher = 0;
     }
 }
-

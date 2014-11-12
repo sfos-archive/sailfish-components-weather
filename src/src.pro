@@ -7,6 +7,7 @@ TARGETPATH = $$[QT_INSTALL_QML]/$$MODULENAME
 
 QT += qml sql
 CONFIG += plugin link_pkgconfig
+PKGCONFIG += contentaction5
 
 # C++ sources
 SOURCES += plugin.cpp \
@@ -14,7 +15,8 @@ SOURCES += plugin.cpp \
 
 # C++ headers
 HEADERS += weather.h \
-           savedweathersmodel.h
+           savedweathersmodel.h \
+           weatherlauncher.h
 
 import.files = *.qml *.js qmldir
 import.path = $$TARGETPATH

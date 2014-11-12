@@ -1,30 +1,40 @@
-import QtQuick 2.0
+import QtQuick 2.2
 import Sailfish.Silica 1.0
-import Sailfish.Weather 1.0
 
 Item {
-    property int status
-    property bool enabled: status != Weather.Ready
+    id: root
+
+    property bool error
+    property bool empty
+    property bool enabled
+    property Flickable flickable
+    property Item _animationHint
     property alias text: mainLabel.text
 
     signal reload
 
+    function update() {
+        if (!_animationHint && enabled && flickable) {
+            _animationHint = animationHint.createObject(root)
+        }
+    }
+    Component.onCompleted: update()
+    onEnabledChanged: update()
+    onFlickableChanged: update()
+
     width: parent.width
-    height: mainLabel.height + Theme.paddingLarge
-            + (status == Weather.Error ? button.height : busyIndicator.height)
+    height: mainLabel.height + Theme.paddingLarge + (error ? button.height : busyIndicator.height)
     opacity: enabled ? 1.0 : 0.0
-    Behavior on opacity { FadeAnimation {} }
+    Behavior on opacity { OpacityAnimator { easing.type: Easing.InOutQuad;  duration: 400 } }
     Label {
         id: mainLabel
 
         wrapMode: Text.Wrap
         horizontalAlignment: Text.AlignHCenter
-        text: status == Weather.Error ?
-                  //% "Loading failed"
-                  qsTrId("weather-la-loading_failed")
-                :
-                  //% "Loading"
-                  qsTrId("weather-la-loading")
+        //% "Loading failed"
+        text: error ? qsTrId("weather-la-loading_failed")
+                    //% "Loading"
+                    : qsTrId("weather-la-loading")
         font {
             pixelSize: Theme.fontSizeExtraLarge
             family: Theme.fontFamilyHeading
@@ -39,7 +49,7 @@ Item {
     }
     BusyIndicator {
         id: busyIndicator
-        running: parent.status == Weather.Loading
+        running: parent.opacity > 0 && !error && !empty
         size: BusyIndicatorSize.Large
         anchors {
             top: mainLabel.bottom
@@ -52,7 +62,7 @@ Item {
         //% "Try again"
         text: qsTrId("weather-la-try_again")
         opacity: enabled ? 1.0 : 0.0
-        enabled: status == Weather.Error
+        enabled: error
         Behavior on opacity { FadeAnimation {} }
         anchors {
             top: mainLabel.bottom
@@ -60,5 +70,15 @@ Item {
             horizontalCenter: parent.horizontalCenter
         }
         onClicked: reload()
+    }
+    Component {
+        id: animationHint
+        PulleyAnimationHint {
+            enabled: !error
+            flickable: placeholder.flickable
+            width: parent.width
+            height: width
+            anchors.centerIn: parent
+        }
     }
 }

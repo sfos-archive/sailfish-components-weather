@@ -1,4 +1,4 @@
-import QtQuick 2.0
+import QtQuick 2.2
 import Sailfish.Silica 1.0
 import Sailfish.Weather 1.0
 
@@ -6,12 +6,11 @@ Page {
     id: root
 
     property var weather
+    property var weatherModel
     property int currentIndex
+    property bool inEventsView
+    property bool current
 
-    WeatherModel {
-        id: weatherModel
-        locationId: weather ? weather.locationId : ""
-    }
     SilicaFlickable {
         anchors {
             top: parent.top
@@ -19,77 +18,87 @@ Page {
         }
         clip: true
         width: parent.width
-        contentHeight: column.height
+        contentHeight: weatherHeader.height
         VerticalScrollDecorator {}
-        Column {
-            id: column
-            width: parent.width
-            PageHeader {
-                id: pageHeader
-                title: weather ? weather.city : ""
-                Label {
-                    id: secondaryLabel
-                    font.pixelSize: Theme.fontSizeSmall
-                    color: Theme.secondaryHighlightColor
-                    text: weather ? weather.state + ", " + weather.country : ""
-                    horizontalAlignment: Text.AlignRight
-                    anchors {
-                        left: parent.left
-                        right: parent.right
-                        bottom: parent.bottom
-                        bottomMargin: -Theme.paddingSmall
-                        rightMargin: Theme.paddingLarge
-                    }
-                }
-                OpacityRampEffect {
-                    sourceItem: secondaryLabel
-                    direction: OpacityRamp.RightToLeft
-                    offset: 0.75
-                    slope: 4
-                }
+
+        PullDownMenu {
+            visible: forecastModel.count > 0
+            busy: forecastModel.status === Weather.Loading
+
+            MenuItem {
+                visible: inEventsView
+                //% "Open app"
+                text: qsTrId("weather-me-open_app")
+                onClicked: launcher.launch()
+                WeatherLauncher { id: launcher }
             }
-            Item {
-                width: parent.width
-                height: Theme.paddingLarge
+            MenuItem {
+                //% "More information"
+                text: qsTrId("weather-me-more_information")
+                onClicked: Qt.openUrlExternally("http://foreca.mobi/spot.php?l=" + root.weather.locationId)
             }
-            WeatherItem {
-                enabled: false
-                displayTime: false
-                opacity: weatherModel.status == Weather.Ready ? 1.0 : 0.0
-                weather: weatherModel.status == Weather.Ready ? weatherModel.get(currentIndex) : null
-                Behavior on opacity { FadeAnimation {} }
+            MenuItem {
+                //% "Update"
+                text: qsTrId("weather-me-update")
+                onClicked: forecastModel.reload()
             }
-            Item {
-                width: parent.width
-                height: 2*Theme.paddingLarge
-            }
+        }
+        WeatherDetailsHeader {
+            id: weatherHeader
+
+            current: root.current
+            today: root.currentIndex === 0
+            opacity: forecastModel.count > 0 ? 1.0 : 0.0
+            weather: root.weather
+            status: forecastModel.status
+            model: forecastModel.count > 0 ? forecastModel.get(currentIndex) : null
+            Behavior on opacity { OpacityAnimator { easing.type: Easing.InOutQuad;  duration: 400 } }
         }
         PlaceholderItem {
             y: Theme.itemSizeSmall + Theme.itemSizeLarge*2
-            status: weatherModel.status
-            onReload: weatherModel.reload()
+            error: forecastModel.status === Weather.Error
+            enabled: forecastModel.count === 0
+            onReload: forecastModel.reload()
         }
     }
     SilicaListView {
         id: weatherForecastList
 
-        opacity: weatherModel.status == Weather.Ready ? 1.0 : 0.0
-        Behavior on opacity { FadeAnimation {} }
+        opacity: forecastModel.count > 0 ? 1.0 : 0.0
+        Behavior on opacity { OpacityAnimator { easing.type: Easing.InOutQuad;  duration: 400 } }
 
-        Image {
-            width: parent.width
-            source: "image://theme/graphic-gradient-edge"
+        interactive: false
+        width: parent.width
+        model: WeatherForecastModel {
+            id: forecastModel
+            weather: root.weather
+            timestamp: weatherModel.timestamp
+            active: root.status == PageStatus.Active && Qt.application.active
         }
 
-        width: parent.width
-        model: weatherModel
         orientation: ListView.Horizontal
         height: 2*Theme.itemSizeLarge
         anchors.bottom: parent.bottom
-        delegate: BackgroundItem {
-            width: root.width/5.5
+        delegate: MouseArea {
+            property bool highlighted: (pressed && containsMouse) || root.currentIndex == model.index
+
+            width: root.width/5
             height: weatherForecastList.height
-            highlighted: down || root.currentIndex == model.index
+
+            Rectangle {
+                visible: highlighted
+                anchors.fill: parent
+                gradient: Gradient {
+                    GradientStop {
+                        position: 0.0
+                        color: "transparent"
+                    }
+                    GradientStop {
+                        position: 1.0
+                        color: Theme.rgba(Theme.highlightBackgroundColor, 0.3)
+                    }
+                }
+            }
             onClicked: root.currentIndex = model.index
             Column {
                 anchors.centerIn: parent
@@ -99,14 +108,20 @@ Page {
                     x: truncate ? Theme.paddingSmall : parent.width/2 - width/2
                     width: truncate ? parent.width - Theme.paddingSmall : implicitWidth
                     truncationMode: truncate ? TruncationMode.Fade : TruncationMode.None
-                    text: Qt.formatDateTime(model.timestamp, "MMM")
+                    text: model.index === 0 ?
+                              //% "Today"
+                              qsTrId("weather-la-today")
+                            :
+                              //% "ddd"
+                              Qt.formatDateTime(timestamp, qsTrId("weather-la-date_pattern_shortweekdays"))
                     anchors.horizontalCenter: parent.horizontalCenter
-                    color: highlighted ? Theme.highlightColor : Theme.secondaryColor
+                    color: highlighted ? Theme.secondaryHighlightColor : Theme.secondaryColor
+                    font.pixelSize: Theme.fontSizeSmall
                 }
                 Label {
-                    text: Qt.formatDateTime(model.timestamp, "d")
+                    text: TemperatureConverter.format(model.high)
                     anchors.horizontalCenter: parent.horizontalCenter
-                    color: highlighted ? Theme.highlightColor : Theme.secondaryColor
+                    color: highlighted ? Theme.highlightColor : Theme.primaryColor
                 }
                 Image {
                     sourceSize.width: width
@@ -119,20 +134,15 @@ Page {
                                                           : ""
                 }
                 Label {
-                    text: model.temperature
-                    font.pixelSize: Theme.fontSizeExtraSmall
+                    text: TemperatureConverter.format(model.low)
                     anchors.horizontalCenter: parent.horizontalCenter
-                    color: highlighted ? Theme.highlightColor : Theme.secondaryColor
-
-                    Label {
-                        // TODO: add support for Fahrenheit
-                        text: "\u00B0"
-                        anchors.left: parent.right
-                        font.pixelSize: Theme.fontSizeSmall
-                        color: highlighted ? Theme.highlightColor : Theme.secondaryColor
-                    }
+                    color: highlighted ? Theme.secondaryHighlightColor : Theme.secondaryColor
                 }
             }
+        }
+        PanelBackground {
+            z: -1
+            anchors.fill: parent
         }
     }
 }
