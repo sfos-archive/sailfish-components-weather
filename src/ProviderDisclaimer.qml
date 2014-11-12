@@ -2,9 +2,14 @@ import QtQuick 2.0
 import Sailfish.Silica 1.0
 
 BackgroundItem {
+    id: root
+
     property var weather
+    property int topMargin: Theme.paddingLarge
+    property int bottomMargin: 2*Theme.paddingLarge
+
     onClicked: if (weather) Qt.openUrlExternally("http://foreca.mobi/spot.php?l=" + weather.locationId)
-    height: column.height + 3*Theme.paddingLarge
+    height: column.height + topMargin + bottomMargin
     Column {
         id: column
         width: parent.width
@@ -22,7 +27,7 @@ BackgroundItem {
         }
         anchors {
             bottom: parent.bottom
-            bottomMargin: 2*Theme.paddingLarge
+            bottomMargin: root.bottomMargin
         }
     }
 }

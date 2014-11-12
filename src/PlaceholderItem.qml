@@ -14,12 +14,13 @@ Item {
     signal reload
 
     function update() {
-        if (enabled && flickable && !_animationHint) {
+        if (!_animationHint && enabled && flickable) {
             _animationHint = animationHint.createObject(root)
         }
     }
     Component.onCompleted: update()
     onEnabledChanged: update()
+    onFlickableChanged: update()
 
     width: parent.width
     height: mainLabel.height + Theme.paddingLarge + (error ? button.height : busyIndicator.height)

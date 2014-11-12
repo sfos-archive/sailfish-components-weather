@@ -164,7 +164,6 @@ Item {
             value: weather ? (weather.state.length > 0 ? qsTrId("weather-la-weather_station_order")
                                                          .arg(weather.state).arg(weather.country)
                                                        : weather.country) : ""
-            visible: !current
         }
         DetailItem {
             //% "Date"
@@ -194,6 +193,8 @@ Item {
         }
         ProviderDisclaimer {
             weather: root.weather
+            topMargin: Theme.paddingMedium
+            bottomMargin: Theme.paddingLarge
         }
     }
 }

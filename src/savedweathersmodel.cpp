@@ -271,7 +271,7 @@ int SavedWeathersModel::rowCount(const QModelIndex &parent) const
 
 QVariant SavedWeathersModel::data(const QModelIndex &index, int role) const
 {
-    if (!index.isValid())
+    if (!index.isValid() || index.row() < 0 || index.row() >= m_savedWeathers.count())
         return QVariant();
 
     const Weather *weather = m_savedWeathers.at(index.row());

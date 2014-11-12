@@ -59,9 +59,7 @@ MouseArea {
             font.pixelSize: Theme.fontSizeSmall
             horizontalAlignment: Text.AlignRight
             color: Theme.secondaryHighlightColor
-
-            //% "MMM d"
-            text: Format.formatDate(timestamp, Format.TimeValue) + " " + Qt.formatDateTime(timestamp, qsTrId("weather-la-date_pattern_month_year"))
+            text: Format.formatDate(timestamp, Format.TimeValue)
         }
     }
     TemperatureLabel {
