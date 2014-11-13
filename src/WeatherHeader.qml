@@ -9,7 +9,7 @@ MouseArea {
     property bool highlighted: pressed && containsMouse
     property date timestamp: weather ? weather.timestamp : new Date()
 
-    enabled: weather && weather.status == Weather.Ready
+    enabled: weather && weather.populated
     width: parent.width
     height: childrenRect.height
 
