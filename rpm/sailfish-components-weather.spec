@@ -1,6 +1,6 @@
 Name:       sailfish-components-weather-qt5
 Summary:    Sailfish weather UI components
-Version:    0.0.1
+Version:    0.0.7
 Release:    1
 Group:      System/Libraries
 License:    TBD
@@ -19,6 +19,7 @@ Requires: sailfishsilica-qt5 >= 0.12.29
 Requires: jolla-theme >= 0.4.9
 Requires: ambient-icons-closed >= 0.3.2
 Requires: qt5-qtpositioning
+Requires: sailfish-weather
 Requires: qt5-qtdeclarative-import-positioning
 Requires: connman-qt5-declarative
 Requires: libkeepalive
