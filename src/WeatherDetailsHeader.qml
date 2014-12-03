@@ -42,24 +42,39 @@ Item {
             height: windDirectionIcon.height + windDirectionIcon.y
 
             Label {
-                id: temperatureHighLabel
-                x: Theme.paddingLarge
+                id: accumulatedPrecipitationLabel
                 color: Theme.highlightColor
                 font.pixelSize: Theme.fontSizeHuge
-                text: model ? TemperatureConverter.format(model.high) : ""
+                text: model ? model.accumulatedPrecipitation : ""
                 anchors.verticalCenter: windDirectionIcon.verticalCenter
+                x: Theme.paddingLarge
+            }
+            Label {
+                id: precipitationMetricLabel
+
+                x: Theme.paddingLarge
+                anchors {
+                    left: accumulatedPrecipitationLabel.right
+                    baseline: accumulatedPrecipitationLabel.baseline
+                }
+                color: Theme.highlightColor
+                //: Millimeters, short form
+                //% "mm"
+                text: qsTrId("weather-la-mm")
+                font.pixelSize: Theme.fontSizeExtraSmall
             }
             Label {
                 x: Theme.paddingLarge
-                color: Theme.secondaryHighlightColor
-                font.pixelSize: Theme.fontSizeExtraSmall
                 anchors {
-                    top: temperatureHighLabel.baseline
+                    top: accumulatedPrecipitationLabel.baseline
                     topMargin: Theme.paddingSmall
                 }
-                //: Shows daily low temperature as label, e.g. "Low -3°". Degree symbol comes from outside.
-                //% "Low %1"
-                text: model ? qsTrId("weather-la-daily_low_temperature").arg(TemperatureConverter.format(model.low)) : ""
+                width: parent.width/3 - Theme.paddingLarge
+                wrapMode: Text.WordWrap
+                color: Theme.secondaryHighlightColor
+                font.pixelSize: Theme.fontSizeExtraSmall
+                //% "Precipitation"
+                text: qsTrId("weather-la-precipitation")
             }
             Image {
                 id: windDirectionIcon
@@ -102,42 +117,28 @@ Item {
                 font.pixelSize: Theme.fontSizeExtraSmall
             }
             Label {
-                id: accumulatedPrecipitationLabel
+                id: temperatureHighLabel
                 color: Theme.highlightColor
                 font.pixelSize: Theme.fontSizeHuge
-                text: model ? model.accumulatedPrecipitation : ""
+                text: model ? TemperatureConverter.format(model.high) : ""
                 anchors {
-                    right: precipitationMetricLabel.left
                     verticalCenter: windDirectionIcon.verticalCenter
-                }
-            }
-            Label {
-                id: precipitationMetricLabel
-                anchors {
-                    baseline: accumulatedPrecipitationLabel.baseline
                     right: parent.right
                     rightMargin: Theme.paddingLarge
                 }
-                color: Theme.highlightColor
-                //: Millimeters, short form
-                //% "mm"
-                text: qsTrId("weather-la-mm")
-                font.pixelSize: Theme.fontSizeExtraSmall
             }
             Label {
-                anchors {
-                    right: parent.right
-                    rightMargin: Theme.paddingLarge
-                    top: accumulatedPrecipitationLabel.baseline
-                    topMargin: Theme.paddingSmall
-                }
-                horizontalAlignment: Text.AlignRight
-                width: parent.width/3 - Theme.paddingLarge
-                wrapMode: Text.WordWrap
                 color: Theme.secondaryHighlightColor
                 font.pixelSize: Theme.fontSizeExtraSmall
-                //% "Precipitation"
-                text: qsTrId("weather-la-precipitation")
+                anchors {
+                    top: temperatureHighLabel.baseline
+                    topMargin: Theme.paddingSmall
+                    right: parent.right
+                    rightMargin: Theme.paddingLarge
+                }
+                //: Shows daily low temperature as label, e.g. "Low -3°". Degree symbol comes from outside.
+                //% "Low %1"
+                text: model ? qsTrId("weather-la-daily_low_temperature").arg(TemperatureConverter.format(model.low)) : ""
             }
         }
         Item { width: 1; height: Theme.paddingMedium }
