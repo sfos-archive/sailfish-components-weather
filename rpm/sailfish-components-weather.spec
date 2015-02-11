@@ -24,6 +24,7 @@ Requires: jolla-theme >= 0.4.9
 Requires: ambient-icons-closed >= 0.3.2
 Requires: qt5-qtpositioning
 Requires: sailfish-weather
+Requires: qt5-qtdeclarative-import-xmllistmodel
 Requires: qt5-qtdeclarative-import-positioning
 Requires: connman-qt5-declarative
 Requires: libkeepalive
