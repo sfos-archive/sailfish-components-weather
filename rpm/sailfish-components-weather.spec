@@ -21,7 +21,7 @@ Requires: %{name}-all-translations >= %{_all_translations_version}
 
 Requires: sailfishsilica-qt5 >= 0.12.29
 Requires: jolla-theme >= 0.4.9
-Requires: ambient-icons-closed >= 0.3.2
+Requires: ambient-icons-closed >= 0.5.0
 Requires: qt5-qtpositioning
 Requires: sailfish-weather
 Requires: qt5-qtdeclarative-import-xmllistmodel
