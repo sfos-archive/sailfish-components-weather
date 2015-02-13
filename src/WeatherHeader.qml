@@ -42,48 +42,50 @@ MouseArea {
             right: parent.right
             rightMargin: Theme.paddingLarge
         }
-        Label {
-            id: secondaryLabel
-            font.pixelSize: Theme.fontSizeSmall
-            color: Theme.secondaryHighlightColor
-            //% "Current location"
-            text: qsTrId("weather-la-current_location")
-            horizontalAlignment: Text.AlignRight
-            wrapMode: Text.Wrap
+
+        spacing: -Theme.paddingMedium
+        Column {
             width: parent.width
+            Label {
+                id: secondaryLabel
+                font.pixelSize: Theme.fontSizeSmall
+                color: Theme.secondaryHighlightColor
+                //% "Current location"
+                text: qsTrId("weather-la-current_location")
+                horizontalAlignment: Text.AlignRight
+                wrapMode: Text.Wrap
+                width: parent.width
+            }
+            Label {
+                id: timestampLabel
+                width: parent.width
+                wrapMode: Text.Wrap
+                font.pixelSize: Theme.fontSizeSmall
+                horizontalAlignment: Text.AlignRight
+                color: Theme.secondaryHighlightColor
+                text: Format.formatDate(timestamp, Format.TimeValue)
+            }
         }
-        Label {
-            id: timestampLabel
-            width: parent.width
-            wrapMode: Text.Wrap
-            font.pixelSize: Theme.fontSizeSmall
-            horizontalAlignment: Text.AlignRight
-            color: Theme.secondaryHighlightColor
-            text: Format.formatDate(timestamp, Format.TimeValue)
+        TemperatureLabel {
+            anchors.right: parent.right
+            temperature: weather ? TemperatureConverter.formatWithoutUnit(weather.temperature) : ""
+            temperatureFeel: weather ? TemperatureConverter.formatWithoutUnit(weather.temperatureFeel) : ""
+            color: highlighted ? Theme.highlightColor : Theme.primaryColor
         }
-    }
-    TemperatureLabel {
-        anchors {
-            right: parent.right
-            rightMargin: Theme.paddingLarge
-            bottom: weatherImage.bottom
-        }
-        temperature: weather ? TemperatureConverter.formatWithoutUnit(weather.temperature) : ""
-        temperatureFeel: weather ? TemperatureConverter.formatWithoutUnit(weather.temperatureFeel) : ""
-        color: highlighted ? Theme.highlightColor : Theme.primaryColor
     }
     Label {
-        color: highlighted ? Theme.secondaryHighlightColor : Theme.secondaryColor
-        anchors.top: weatherImage.bottom
-        font {
-            pixelSize: Theme.fontSizeExtraLarge
-            family: Theme.fontFamilyHeading
-        }
         anchors {
+            top: column.bottom
+            topMargin: -Theme.paddingMedium
             left: parent.left
             right: parent.right
             leftMargin: Theme.paddingLarge
             rightMargin: Theme.paddingLarge
+        }
+        color: highlighted ? Theme.secondaryHighlightColor : Theme.secondaryColor
+        font {
+            pixelSize: Theme.fontSizeExtraLarge
+            family: Theme.fontFamilyHeading
         }
         wrapMode: Text.Wrap
         horizontalAlignment: Text.AlignRight
