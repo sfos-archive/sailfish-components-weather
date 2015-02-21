@@ -29,7 +29,7 @@ BackgroundItem {
             topMargin: Theme.paddingMedium
             bottomMargin: Theme.paddingMedium
             left: parent.left
-            leftMargin: isPortrait ? 0 : Theme.paddingMedium + Theme.paddingSmall
+            leftMargin: Theme.horizontalPageMargin - (isPortrait ? Theme.paddingLarge : Theme.paddingSmall)
         }
         width: height
         source: weather && weather.weatherType.length > 0 ? "image://theme/graphic-weather-" + weather.weatherType
@@ -62,7 +62,7 @@ BackgroundItem {
         y: isPortrait ? Theme.paddingLarge : Theme.paddingMedium
         anchors {
             right: parent.right
-            rightMargin: Theme.paddingMedium
+            rightMargin: Theme.horizontalPageMargin - Theme.paddingMedium
         }
     }
     SavedWeathersModel {
