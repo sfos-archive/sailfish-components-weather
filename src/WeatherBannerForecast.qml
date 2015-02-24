@@ -13,7 +13,8 @@ Column {
 
         clip: true // limit to five day forecast
         currentIndex: -1
-        width: parent.width
+        x: Theme.horizontalPageMargin-Theme.paddingLarge
+        width: parent.width - 2*x
         height: parent.height - providerDisclaimer.height
         interactive: false
         orientation: ListView.Horizontal
@@ -38,7 +39,7 @@ Column {
 
         width: row.width
         height: row.height + Theme.paddingSmall
-        anchors { right: parent.right; rightMargin: Theme.paddingMedium }
+        anchors { right: parent.right; rightMargin: Theme.horizontalPageMargin }
         enabled: weatherBanner.expanded && savedWeathersModel.currentWeather && savedWeathersModel.currentWeather.populated
         Row {
             id: row
