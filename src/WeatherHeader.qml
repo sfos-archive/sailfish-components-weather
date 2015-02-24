@@ -16,8 +16,8 @@ MouseArea {
     Behavior on height { NumberAnimation { duration: 200; easing.type: Easing.InOutQuad } }
     WeatherImage {
         id: weatherImage
-        x: Theme.paddingLarge
-        y: 2*Theme.paddingLarge
+        x: Theme.horizontalPageMargin
+        y: 2*Theme.horizontalPageMargin
         highlighted: root.highlighted
         height: sourceSize.height > 0 ? sourceSize.height : 256*Screen.width/540
         weatherType: weather && weather.weatherType.length > 0 ? weather.weatherType : ""
@@ -40,7 +40,7 @@ MouseArea {
             topMargin: pageHeader.offset
             left: weatherImage.right
             right: parent.right
-            rightMargin: Theme.paddingLarge
+            rightMargin: Theme.horizontalPageMargin
         }
 
         spacing: -Theme.paddingMedium
@@ -79,8 +79,8 @@ MouseArea {
             topMargin: -Theme.paddingMedium
             left: parent.left
             right: parent.right
-            leftMargin: Theme.paddingLarge
-            rightMargin: Theme.paddingLarge
+            leftMargin: Theme.horizontalPageMargin
+            rightMargin: Theme.horizontalPageMargin
         }
         color: highlighted ? Theme.secondaryHighlightColor : Theme.secondaryColor
         font {

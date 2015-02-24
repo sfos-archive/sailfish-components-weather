@@ -47,12 +47,11 @@ Item {
                 font.pixelSize: Theme.fontSizeHuge
                 text: model ? model.accumulatedPrecipitation : ""
                 anchors.verticalCenter: windDirectionIcon.verticalCenter
-                x: Theme.paddingLarge
+                x: Theme.horizontalPageMargin
             }
             Label {
                 id: precipitationMetricLabel
 
-                x: Theme.paddingLarge
                 anchors {
                     left: accumulatedPrecipitationLabel.right
                     baseline: accumulatedPrecipitationLabel.baseline
@@ -64,7 +63,7 @@ Item {
                 font.pixelSize: Theme.fontSizeExtraSmall
             }
             Label {
-                x: Theme.paddingLarge
+                x: Theme.horizontalPageMargin
                 anchors {
                     top: accumulatedPrecipitationLabel.baseline
                     topMargin: Theme.paddingSmall
@@ -124,7 +123,7 @@ Item {
                 anchors {
                     verticalCenter: windDirectionIcon.verticalCenter
                     right: parent.right
-                    rightMargin: Theme.paddingLarge
+                    rightMargin: Theme.horizontalPageMargin
                 }
             }
             Label {
@@ -134,7 +133,7 @@ Item {
                     top: temperatureHighLabel.baseline
                     topMargin: Theme.paddingSmall
                     right: parent.right
-                    rightMargin: Theme.paddingLarge
+                    rightMargin: Theme.horizontalPageMargin
                 }
                 //: Shows daily low temperature as label, e.g. "Low -3°". Degree symbol comes from outside.
                 //% "Low %1"
@@ -147,8 +146,8 @@ Item {
             anchors {
                 left: parent.left
                 right: parent.right
-                leftMargin: Theme.paddingLarge
-                rightMargin: Theme.paddingLarge
+                leftMargin: Theme.horizontalPageMargin
+                rightMargin: Theme.horizontalPageMargin
             }
             wrapMode: Text.Wrap
             font.pixelSize: Theme.fontSizeLarge
