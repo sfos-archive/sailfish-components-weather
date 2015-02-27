@@ -5,31 +5,83 @@ import Sailfish.Weather 1.0
 Column {
     property bool loading: forecastModel.status == Weather.Loading && forecastModel.count === 0
 
-    height: parent.height
-    opacity: forecastModel.count > 0 ? 1.0 : 0.0
-    Behavior on opacity { FadeAnimation {} }
-    SilicaListView {
-        id: weatherForecastList
+    property real dataOpacity: forecastModel.count > 0 ? 1.0 : 0.0
+    Behavior on dataOpacity { FadeAnimation { property: "dataOpacity" } }
 
-        clip: true // limit to five day forecast
-        currentIndex: -1
+    height: parent.height
+
+    Item {
         x: Theme.horizontalPageMargin-Theme.paddingLarge
         width: parent.width - 2*x
         height: parent.height - providerDisclaimer.height
-        interactive: false
-        orientation: ListView.Horizontal
-        model: WeatherForecastModel {
-            id: forecastModel
-            active: weatherBanner.expanded
-            weather: weatherBanner.weather
-            timestamp: weatherModel.timestamp
+
+        Column {
+            id: contentArea
+
+            y: (parent.height - height) / 2
+            width: parent.width
+            spacing: Theme.paddingSmall
+
+            property bool retryLoad
+
+            visible: opacity > 0
+            opacity: !retryLoad && forecastModel.status == Weather.Error ? 1 : 0
+            Behavior on opacity {
+                FadeAnimation {
+                    onRunningChanged: {
+                        if (!running && contentArea.retryLoad) {
+                            forecastModel.reload()
+                            contentArea.retryLoad = false
+                        }
+                    }
+                }
+            }
+
+            Label {
+                anchors.horizontalCenter: parent.horizontalCenter
+                //% "No network"
+                text: qsTrId("weather-la-no_network")
+                color: Theme.highlightColor
+                font {
+                    pixelSize: Theme.fontSizeMedium
+                    family: Theme.fontFamilyHeading
+                }
+            }
+            BackgroundItem {
+                Label {
+                    anchors.centerIn: parent
+                    //% "Retry"
+                    text: qsTrId("weather-la-retry")
+                    color: parent.down ? Theme.highlightColor : Theme.primaryColor
+                    font.pixelSize: Theme.fontSizeMedium
+                }
+                onClicked: contentArea.retryLoad = true
+            }
         }
-        delegate: Item {
-            width: weatherForecastList.width/5
-            height: weatherForecastList.height
-            WeatherForecastItem { id: forecastItem }
+
+        SilicaListView {
+            id: weatherForecastList
+
+            anchors.fill: parent
+            clip: true // limit to five day forecast
+            currentIndex: -1
+            interactive: false
+            orientation: ListView.Horizontal
+            model: WeatherForecastModel {
+                id: forecastModel
+                active: weatherBanner.expanded
+                weather: weatherBanner.weather
+                timestamp: weatherModel.timestamp
+            }
+            delegate: Item {
+                width: weatherForecastList.width/5
+                height: weatherForecastList.height
+                WeatherForecastItem { id: forecastItem }
+            }
+            opacity: dataOpacity
         }
     }
+
     MouseArea {
         id: providerDisclaimer
 
@@ -58,6 +110,7 @@ Column {
                 source: "image://theme/graphic-foreca-small?" + (highlighted || providerDisclaimer.down ? Theme.highlightColor : Theme.primaryColor)
             }
         }
+        opacity: dataOpacity
     }
 }
 
