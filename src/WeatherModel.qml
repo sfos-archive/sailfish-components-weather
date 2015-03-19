@@ -13,7 +13,7 @@ XmlListModel {
     property date timestamp: new Date()
 
     function updateAllowed() {
-        return WeatherModel.updateAllowed()
+        return status == XmlListModel.Error || WeatherModel.updateAllowed()
     }
 
     signal error
