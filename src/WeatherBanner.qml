@@ -3,9 +3,12 @@ import Sailfish.Silica 1.0
 import Sailfish.Weather 1.0
 
 BackgroundItem {
+    id: weatherBanner
+
     property alias weather: savedWeathersModel.currentWeather
     property alias autoRefresh: savedWeathersModel.autoRefresh
     property alias active: weatherModel.active
+    property bool expanded
 
     onActiveChanged: if (!active) save()
 
@@ -17,52 +20,99 @@ BackgroundItem {
     }
 
     visible: enabled
-    height: enabled ? temperatureLabel.height + 2*(isPortrait ? Theme.paddingLarge : Theme.paddingMedium) : 0
+    height: enabled ? column.height : 0
     enabled: weather && weather.populated
-    onClicked: pageStack.push("WeatherPage.qml", { "weather": weather, "weatherModel": weatherModel, "inEventsView": true, "current": true })
 
-    Image {
-        id: image
-        anchors {
-            top: parent.top
-            bottom: parent.bottom
-            topMargin: Theme.paddingMedium
-            bottomMargin: Theme.paddingMedium
-            left: parent.left
-            leftMargin: Theme.horizontalPageMargin - (isPortrait ? Theme.paddingLarge : Theme.paddingSmall)
+    onClicked: expanded = !expanded
+
+    Column {
+        id: column
+        width: parent.width
+        Row {
+            id: row
+            spacing: Theme.paddingMedium
+            anchors.horizontalCenter: parent.horizontalCenter
+            height: Theme.itemSizeSmall
+            Image {
+                id: image
+                width: height
+                height: parent.height
+                source: weather && weather.weatherType.length > 0 ? "image://theme/graphic-weather-" + weather.weatherType
+                                                                    + "?" + (highlighted ? Theme.highlightColor : Theme.primaryColor)
+                                                                  : ""
+            }
+            Label {
+                text: weather ? weather.city : ""
+                color: highlighted ? Theme.highlightColor : Theme.primaryColor
+                font {
+                    pixelSize: Theme.fontSizeLarge
+                    family: Theme.fontFamilyHeading
+                }
+                anchors.verticalCenter: parent.verticalCenter
+                truncationMode: TruncationMode.Fade
+                width: Math.min(implicitWidth, column.width - 4*row.spacing - image.width - temperatureLabel.width)
+            }
+            Label {
+                id: temperatureLabel
+                text: weather ? TemperatureConverter.format(weather.temperature) : ""
+                color: highlighted ? Theme.highlightColor : Theme.primaryColor
+                font {
+                    pixelSize: Theme.fontSizeLarge
+                    family: Theme.fontFamilyHeading
+                }
+                anchors.verticalCenter: parent.verticalCenter
+            }
         }
-        width: height
-        source: weather && weather.weatherType.length > 0 ? "image://theme/graphic-weather-" + weather.weatherType
-                                                            + "?" + (highlighted ? Theme.highlightColor : Theme.primaryColor)
-                                                          : ""
-    }
-    Label {
-        text: weather ? weather.city : ""
-        color: highlighted ? Theme.highlightColor : Theme.primaryColor
-        font {
-            pixelSize: isPortrait ? Theme.fontSizeHuge : Theme.fontSizeExtraLarge
-            family: Theme.fontFamilyHeading
-        }
-        truncationMode: TruncationMode.Fade
-        anchors {
-            left: image.right
-            leftMargin: isPortrait ? Theme.paddingSmall : Theme.paddingLarge
-            verticalCenter: temperatureLabel.verticalCenter
-            right: temperatureLabel.left
-        }
-    }
-    Label {
-        id: temperatureLabel
-        text: weather ? TemperatureConverter.format(weather.temperature) : ""
-        color: highlighted ? Theme.highlightColor : Theme.primaryColor
-        font {
-            pixelSize: isPortrait ? Theme.fontSizeHuge : Theme.fontSizeExtraLarge
-            family: Theme.fontFamilyHeading
-        }
-        y: isPortrait ? Theme.paddingLarge : Theme.paddingMedium
-        anchors {
-            right: parent.right
-            rightMargin: Theme.horizontalPageMargin - Theme.paddingMedium
+        Loader {
+            id: forecastLoader
+            height: 0
+            opacity: 0.0
+            active: false
+            width: parent.width
+            asynchronous: true
+            source: "WeatherBannerForecast.qml"
+            states: State {
+                name: "expanded"
+                when: weatherBanner.expanded
+                PropertyChanges {
+                    target: forecastLoader
+                    opacity: 1.0
+                    height: 2*(Screen.sizeCategory >= Screen.Large ? Theme.itemSizeExtraLarge : Theme.itemSizeLarge)
+                }
+            }
+            transitions: [
+                Transition {
+                    to: "expanded"
+                    SequentialAnimation {
+                        NumberAnimation {
+                            property: "height"
+                            duration: 200
+                            easing.type: Easing.InOutQuad
+                        }
+                        FadeAnimation {}
+                        ScriptAction {
+                            script: forecastLoader.active = true
+                        }
+                    }
+                },
+                Transition {
+                    to: ""
+                    SequentialAnimation {
+                        FadeAnimation {}
+                        NumberAnimation {
+                            property: "height"
+                            duration: 200
+                            easing.type: Easing.InOutQuad
+                        }
+                    }
+                }
+
+            ]
+            BusyIndicator {
+                size: Screen.sizeCategory >= Screen.Large ? BusyIndicatorSize.Large : BusyIndicatorSize.Medium
+                anchors.centerIn: parent
+                running: forecastLoader.item && forecastLoader.item.loading
+            }
         }
     }
     SavedWeathersModel {

@@ -8,7 +8,6 @@ Page {
     property var weather
     property var weatherModel
     property int currentIndex
-    property bool inEventsView
     property bool current
 
     SilicaFlickable {
@@ -25,13 +24,6 @@ Page {
             visible: forecastModel.count > 0
             busy: forecastModel.status === Weather.Loading
 
-            MenuItem {
-                visible: inEventsView
-                //% "Open app"
-                text: qsTrId("weather-me-open_app")
-                onClicked: launcher.launch()
-                WeatherLauncher { id: launcher }
-            }
             MenuItem {
                 //% "More information"
                 text: qsTrId("weather-me-more_information")
@@ -77,7 +69,7 @@ Page {
         }
 
         orientation: ListView.Horizontal
-        height: 2*Theme.itemSizeLarge
+        height: 2*(Screen.sizeCategory >= Screen.Large ? Theme.itemSizeExtraLarge : Theme.itemSizeLarge)
         anchors.bottom: parent.bottom
         delegate: MouseArea {
             property bool highlighted: (pressed && containsMouse) || root.currentIndex == model.index
@@ -100,45 +92,7 @@ Page {
                 }
             }
             onClicked: root.currentIndex = model.index
-            Column {
-                anchors.centerIn: parent
-                Label {
-                    property bool truncate: implicitWidth > parent.width - Theme.paddingSmall
-
-                    x: truncate ? Theme.paddingSmall : parent.width/2 - width/2
-                    width: truncate ? parent.width - Theme.paddingSmall : implicitWidth
-                    truncationMode: truncate ? TruncationMode.Fade : TruncationMode.None
-                    text: model.index === 0 ?
-                              //% "Today"
-                              qsTrId("weather-la-today")
-                            :
-                              //% "ddd"
-                              Qt.formatDateTime(timestamp, qsTrId("weather-la-date_pattern_shortweekdays"))
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    color: highlighted ? Theme.secondaryHighlightColor : Theme.secondaryColor
-                    font.pixelSize: Theme.fontSizeSmall
-                }
-                Label {
-                    text: TemperatureConverter.format(model.high)
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    color: highlighted ? Theme.highlightColor : Theme.primaryColor
-                }
-                Image {
-                    sourceSize.width: width
-                    sourceSize.height: height
-                    width: Theme.iconSizeMedium
-                    height: Theme.iconSizeMedium
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    source: model.weatherType.length > 0 ? "image://theme/graphic-weather-" + model.weatherType
-                                                            + (highlighted ? "?" + Theme.highlightColor : "")
-                                                          : ""
-                }
-                Label {
-                    text: TemperatureConverter.format(model.low)
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    color: highlighted ? Theme.secondaryHighlightColor : Theme.secondaryColor
-                }
-            }
+            WeatherForecastItem {}
         }
         PanelBackground {
             z: -1
