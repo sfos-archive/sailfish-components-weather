@@ -15,10 +15,6 @@ BuildRequires:  qt5-qttools
 BuildRequires:  qt5-qttools-linguist
 BuildRequires:  pkgconfig(contentaction5)
 
-%define _all_translations_version %(rpm -q --queryformat "%%{version}-%%{release}" %{name}-all-translations)
-BuildRequires: %{name}-all-translations
-Requires: %{name}-all-translations >= %{_all_translations_version}
-
 Requires: sailfishsilica-qt5 >= 0.21.0
 Requires: jolla-theme >= 0.4.9
 Requires: ambient-icons-closed >= 0.5.0

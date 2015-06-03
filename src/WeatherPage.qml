@@ -53,14 +53,20 @@ Page {
             onReload: forecastModel.reload()
         }
     }
+
+    PanelBackground {
+        width: parent.width
+        height: weatherForecastList.height
+        anchors.bottom: parent.bottom
+    }
     SilicaListView {
         id: weatherForecastList
-
         opacity: forecastModel.count > 0 ? 1.0 : 0.0
         Behavior on opacity { OpacityAnimator { easing.type: Easing.InOutQuad;  duration: 400 } }
 
         interactive: false
-        width: parent.width
+        property int itemWidth: Screen.sizeCategory >= Screen.Large ? Screen.width/7 : Screen.width/5
+        width: 5*itemWidth
         model: WeatherForecastModel {
             id: forecastModel
             weather: root.weather
@@ -68,13 +74,17 @@ Page {
             active: root.status == PageStatus.Active && Qt.application.active
         }
 
+        clip: true
         orientation: ListView.Horizontal
         height: 2*(Screen.sizeCategory >= Screen.Large ? Theme.itemSizeExtraLarge : Theme.itemSizeLarge)
-        anchors.bottom: parent.bottom
+        anchors {
+            bottom: parent.bottom
+            horizontalCenter: parent.horizontalCenter
+        }
         delegate: MouseArea {
             property bool highlighted: (pressed && containsMouse) || root.currentIndex == model.index
 
-            width: root.width/5
+            width: weatherForecastList.itemWidth
             height: weatherForecastList.height
 
             Rectangle {
@@ -94,9 +104,6 @@ Page {
             onClicked: root.currentIndex = model.index
             WeatherForecastItem {}
         }
-        PanelBackground {
-            z: -1
-            anchors.fill: parent
-        }
     }
 }
+
