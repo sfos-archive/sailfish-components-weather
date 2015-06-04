@@ -46,8 +46,13 @@ Item {
                 color: Theme.highlightColor
                 font.pixelSize: Theme.fontSizeHuge
                 text: model ? model.accumulatedPrecipitation : ""
-                anchors.verticalCenter: windDirectionIcon.verticalCenter
-                x: Theme.horizontalPageMargin
+                anchors {
+                    verticalCenter: windDirectionIcon.verticalCenter
+                    left: Screen.sizeCategory >= Screen.Large ? undefined : parent.left
+                    horizontalCenter: Screen.sizeCategory >= Screen.Large ? windDirectionIcon.horizontalCenter : undefined
+                    leftMargin: Theme.horizontalPageMargin
+                    horizontalCenterOffset: -Screen.width/4
+                }
             }
             Label {
                 id: precipitationMetricLabel
@@ -63,8 +68,8 @@ Item {
                 font.pixelSize: Theme.fontSizeExtraSmall
             }
             Label {
-                x: Theme.horizontalPageMargin
                 anchors {
+                    left: accumulatedPrecipitationLabel.left
                     top: accumulatedPrecipitationLabel.baseline
                     topMargin: Theme.paddingSmall
                 }
@@ -77,7 +82,7 @@ Item {
             }
             Image {
                 id: windDirectionIcon
-                y: -Theme.paddingLarge
+                y: Screen.sizeCategory >= Screen.Large ? 0 : -Theme.paddingLarge
                 source: "image://theme/graphic-weather-wind-direction?" + Theme.highlightColor
                 anchors.horizontalCenter: parent.horizontalCenter
                 // possible rotation values are 0 and multiplies of 45 degrees
@@ -122,8 +127,10 @@ Item {
                 text: model ? TemperatureConverter.format(model.high) : ""
                 anchors {
                     verticalCenter: windDirectionIcon.verticalCenter
-                    right: parent.right
+                    right: Screen.sizeCategory >= Screen.Large ? undefined : parent.right
+                    horizontalCenter: Screen.sizeCategory >= Screen.Large ? windDirectionIcon.horizontalCenter : undefined
                     rightMargin: Theme.horizontalPageMargin
+                    horizontalCenterOffset: Screen.width/4
                 }
             }
             Label {
@@ -132,8 +139,7 @@ Item {
                 anchors {
                     top: temperatureHighLabel.baseline
                     topMargin: Theme.paddingSmall
-                    right: parent.right
-                    rightMargin: Theme.horizontalPageMargin
+                    right: temperatureHighLabel.right
                 }
                 //: Shows daily low temperature as label, e.g. "Low -3°". Degree symbol comes from outside.
                 //% "Low %1"
@@ -143,12 +149,9 @@ Item {
         Item { width: 1; height: Theme.paddingMedium }
         Label {
             color: Theme.highlightColor
-            anchors {
-                left: parent.left
-                right: parent.right
-                leftMargin: Theme.horizontalPageMargin
-                rightMargin: Theme.horizontalPageMargin
-            }
+            anchors.horizontalCenter: parent.horizontalCenter
+            width: Screen.sizeCategory >= Screen.Large ? Screen.width/2
+                                                       : parent.width - 2*Theme.horizontalPageMargin
             wrapMode: Text.Wrap
             font.pixelSize: Theme.fontSizeLarge
             horizontalAlignment: Text.AlignHCenter

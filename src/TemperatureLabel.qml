@@ -11,6 +11,9 @@ Item {
     Label {
         id: temperatureLabel
         color: Theme.primaryColor
+
+        // Glyphs larger than 100 or so look poorly in the default rendering mode
+        renderType: font.pixelSize > 100 ? Text.NativeRendering : Text.QtRendering
         font {
             pixelSize: 120*Screen.width/540
             family: Theme.fontFamilyHeading
