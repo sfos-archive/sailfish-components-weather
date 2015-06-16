@@ -58,6 +58,8 @@ Page {
         width: parent.width
         height: weatherForecastList.height
         anchors.bottom: parent.bottom
+        opacity: forecastModel.count > 0 ? 1.0 : 0.0
+        Behavior on opacity { OpacityAnimator { easing.type: Easing.InOutQuad;  duration: 400 } }
     }
     SilicaListView {
         id: weatherForecastList

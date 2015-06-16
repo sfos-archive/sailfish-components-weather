@@ -23,7 +23,7 @@ BackgroundItem {
         }
         Image {
             anchors.horizontalCenter: parent.horizontalCenter
-            source: "image://theme/graphic-foreca?" + (highlighted ? Theme.highlightColor : Theme.primaryColor)
+            source: "image://theme/graphic-foreca-large?" + (highlighted ? Theme.highlightColor : Theme.primaryColor)
         }
         anchors {
             bottom: parent.bottom

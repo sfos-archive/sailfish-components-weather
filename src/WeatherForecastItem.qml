@@ -26,12 +26,9 @@ Column {
         color: highlighted ? Theme.highlightColor : Theme.primaryColor
     }
     Image {
-        sourceSize.width: width
-        sourceSize.height: height
-        width: Screen.sizeCategory >= Screen.Large ? Theme.iconSizeLarge : Theme.iconSizeMedium
-        height: Screen.sizeCategory >= Screen.Large ? Theme.iconSizeLarge : Theme.iconSizeMedium
+        property string prefix: "image://theme/graphic-" + (Screen.sizeCategory >= Screen.Large ? "l" : "m")
         anchors.horizontalCenter: parent.horizontalCenter
-        source: model.weatherType.length > 0 ? "image://theme/graphic-weather-" + model.weatherType
+        source: model.weatherType.length > 0 ? prefix + "-weather-" + model.weatherType
                                                + (highlighted ? "?" + Theme.highlightColor : "")
                                              : ""
     }

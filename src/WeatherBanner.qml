@@ -37,7 +37,8 @@ BackgroundItem {
                 id: image
                 width: height
                 height: parent.height
-                source: weather && weather.weatherType.length > 0 ? "image://theme/graphic-weather-" + weather.weatherType
+                anchors.verticalCenter: parent.verticalCenter
+                source: weather && weather.weatherType.length > 0 ? "image://theme/graphic-l-weather-" + weather.weatherType
                                                                     + "?" + (highlighted ? Theme.highlightColor : Theme.primaryColor)
                                                                   : ""
             }
