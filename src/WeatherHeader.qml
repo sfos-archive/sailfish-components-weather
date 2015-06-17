@@ -19,7 +19,7 @@ MouseArea {
         x: Theme.horizontalPageMargin
         y: 2*Theme.horizontalPageMargin
         highlighted: root.highlighted
-        height: sourceSize.height > 0 ? sourceSize.height : 256*Screen.width/540
+        height: sourceSize.height > 0 ? sourceSize.height : 256*Theme.pixelRatio
         weatherType: weather && weather.weatherType.length > 0 ? weather.weatherType : ""
     }
     PageHeader {
@@ -44,8 +44,9 @@ MouseArea {
         }
 
         spacing: -Theme.paddingMedium
-        Column {
+        Item {
             width: parent.width
+            height: secondaryLabel.height + timestampLabel.height
             Label {
                 id: secondaryLabel
                 font.pixelSize: Theme.fontSizeSmall
@@ -60,6 +61,7 @@ MouseArea {
                 id: timestampLabel
                 width: parent.width
                 wrapMode: Text.Wrap
+                anchors.top: secondaryLabel.bottom
                 font.pixelSize: Theme.fontSizeSmall
                 horizontalAlignment: Text.AlignRight
                 color: Theme.secondaryHighlightColor
