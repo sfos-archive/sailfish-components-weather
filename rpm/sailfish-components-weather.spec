@@ -25,12 +25,9 @@ Requires: qt5-qtdeclarative-import-positioning
 Requires: connman-qt5-declarative
 Requires: libkeepalive
 
-%if %{with l10n}
 BuildRequires: %{name}-all-translations
-#!BuildIgnore: %{name}-all-translations-pack
 %define _all_translations_version %(rpm -q --queryformat "%%{version}-%%{release}" %{name}-all-translations)
 Requires: %{name}-all-translations >= %{_all_translations_version}
-%endif
 
 %description
 Sailfish weather UI components
