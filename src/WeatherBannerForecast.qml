@@ -5,7 +5,7 @@ import Sailfish.Weather 1.0
 Column {
     property bool loading: forecastModel.status == Weather.Loading && forecastModel.count === 0
 
-    property real dataOpacity: forecastModel.count > 0 ? 1.0 : 0.0
+    property real dataOpacity: forecastModel.status == Weather.Ready && forecastModel.count > 0 ? 1.0 : 0.0
     Behavior on dataOpacity { FadeAnimation { property: "dataOpacity" } }
 
     height: parent.height
