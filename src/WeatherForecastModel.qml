@@ -19,7 +19,7 @@ ListModel {
     function update() {
         if (active) {
             ready = true
-            if (WeatherModel.updateAllowed()) {
+            if (WeatherModel.updateAllowed(180*60*1000)) { // update allowed every 3 hours
                 reload()
             }
         }

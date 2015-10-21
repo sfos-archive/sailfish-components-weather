@@ -3,9 +3,11 @@ import Sailfish.Silica 1.0
 import Sailfish.Weather 1.0
 
 Column {
-    property bool loading: forecastModel.status == Weather.Loading && forecastModel.count === 0
+    property bool loading: forecastModel.status == Weather.Loading
 
-    property real dataOpacity: forecastModel.status == Weather.Ready && forecastModel.count > 0 ? 1.0 : 0.0
+    property real dataOpacity: forecastModel.status == Weather.Ready && forecastModel.count > 0
+                               ? 1.0
+                               : (forecastModel.status == Weather.Loading && forecastModel.count > 0) ? 0.4 : 0.0
     Behavior on dataOpacity { FadeAnimation { property: "dataOpacity" } }
 
     height: parent.height
@@ -69,7 +71,7 @@ Column {
             orientation: ListView.Horizontal
             model: WeatherForecastModel {
                 id: forecastModel
-                active: weatherBanner.expanded
+                active: weatherBanner.expanded && weatherBanner.active
                 weather: weatherBanner.weather
                 timestamp: weatherModel.timestamp
             }
