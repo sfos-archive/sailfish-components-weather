@@ -3,7 +3,7 @@ Summary:    Sailfish weather UI components
 Version:    0.2.4
 Release:    1
 Group:      System/Libraries
-License:    TBD
+License:    Proprietary
 URL:        https://bitbucket.org/jolla/ui-sailfish-weather
 Source0:    %{name}-%{version}.tar.bz2
 BuildRequires:  pkgconfig(Qt5Core)
@@ -34,7 +34,6 @@ Sailfish weather UI components
 
 %package ts-devel
 Summary:   Translation source for sailfish-weather
-License:   TBD
 Group:     System/Libraries
 
 %description ts-devel
