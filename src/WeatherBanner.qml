@@ -71,6 +71,9 @@ BackgroundItem {
             active: false
             width: parent.width
             asynchronous: true
+            property int contentHeight: Math.max(item ? item.contentHeight : 0, defaultHeight)
+            property int defaultHeight: 2*(Screen.sizeCategory >= Screen.Large ? Theme.itemSizeExtraLarge : Theme.itemSizeLarge)
+
             source: "WeatherBannerForecast.qml"
             states: State {
                 name: "expanded"
@@ -78,7 +81,7 @@ BackgroundItem {
                 PropertyChanges {
                     target: forecastLoader
                     opacity: 1.0
-                    height: 2*(Screen.sizeCategory >= Screen.Large ? Theme.itemSizeExtraLarge : Theme.itemSizeLarge)
+                    height: forecastLoader.contentHeight
                 }
             }
             transitions: [
