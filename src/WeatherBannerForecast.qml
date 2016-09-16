@@ -11,6 +11,8 @@ Column {
     Behavior on dataOpacity { FadeAnimation { property: "dataOpacity" } }
 
     height: parent.height
+    property int contentHeight: itemHeight + providerDisclaimer.height
+    property int itemHeight
 
     Item {
         x: Theme.horizontalPageMargin-Theme.paddingLarge
@@ -78,7 +80,9 @@ Column {
             delegate: Item {
                 width: weatherForecastList.width/5
                 height: weatherForecastList.height
-                WeatherForecastItem { id: forecastItem }
+                WeatherForecastItem {
+                    onHeightChanged: if (model.index == 0) itemHeight = height
+                }
             }
             opacity: dataOpacity
         }
