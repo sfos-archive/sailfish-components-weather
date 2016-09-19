@@ -83,6 +83,7 @@ function getWeatherData(weather, forecast) {
             break
         }
     }
+    // where wind is coming from
     var windDirection = 0
     switch (weather.windDirection) {
     case 'N':

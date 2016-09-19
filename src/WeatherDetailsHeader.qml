@@ -87,7 +87,7 @@ Item {
                 anchors.horizontalCenter: parent.horizontalCenter
                 // possible rotation values are 0 and multiplies of 45 degrees
                 // once valid value is obtained enable animation on further changes
-                rotation: model ? model.windDirection : -1
+                rotation: model ? model.windDirection + 180 : -1 // place opposite to indicate where wind is going to
                 onRotationChanged: if (rotation !== -1) rotationBehavior.enabled = true
                 Behavior on rotation {
                     id: rotationBehavior
