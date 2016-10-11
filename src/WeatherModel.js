@@ -206,6 +206,10 @@ function description(code) {
         "300": qsTrId("weather-la-description_cloudy"),
         //% "Overcast"
         "400": qsTrId("weather-la-description_overcast"),
+        //% "Thin high clouds"
+        "500": qsTrId("weather-la-description-thin_high_clouds"),
+        //% "Fog"
+        "600": qsTrId("weather-la-description-fog"),
         //% "Partly cloudy and light rain"
         "210": qsTrId("weather-la-description_partly_cloudy_and_light_rain"),
         //% "Cloudy and light rain"
