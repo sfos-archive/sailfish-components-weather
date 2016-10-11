@@ -75,7 +75,7 @@ Item {
         id: animationHint
         PulleyAnimationHint {
             enabled: !error
-            flickable: placeholder.flickable
+            flickable: root.flickable
             width: parent.width
             height: width
             anchors.centerIn: parent
