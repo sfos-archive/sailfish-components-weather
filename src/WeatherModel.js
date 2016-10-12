@@ -141,6 +141,11 @@ function weatherType(code) {
     var precipirationType = code.charAt(3)
 
     var type
+    // FIXME: need graphics for thin high clouds
+    if (cloudiness == '5') {
+        cloudiness = '1'
+    }
+
     switch(precipirationRate) {
     case '0':
         switch (cloudiness) {
@@ -153,6 +158,7 @@ function weatherType(code) {
             type = "cloud-3"
             break
         case '4':
+        case '6': // FIXME: need graphics for fog
             type = "cloud-4"
             break
         default:
@@ -200,6 +206,10 @@ function description(code) {
         "300": qsTrId("weather-la-description_cloudy"),
         //% "Overcast"
         "400": qsTrId("weather-la-description_overcast"),
+        //% "Thin high clouds"
+        "500": qsTrId("weather-la-description-thin_high_clouds"),
+        //% "Fog"
+        "600": qsTrId("weather-la-description-fog"),
         //% "Partly cloudy and light rain"
         "210": qsTrId("weather-la-description_partly_cloudy_and_light_rain"),
         //% "Cloudy and light rain"
