@@ -103,6 +103,7 @@ Item {
     BackgroundJob {
         id: backgroundJob
 
+        triggeredOnEnable: true
         enabled: true
         frequency: BackgroundJob.ThirtyMinutes
         onTriggered: model.updateLocation()
