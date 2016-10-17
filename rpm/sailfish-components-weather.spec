@@ -1,6 +1,6 @@
 Name:       sailfish-components-weather-qt5
 Summary:    Sailfish weather UI components
-Version:    0.2.4
+Version:    0.3.5
 Release:    1
 Group:      System/Libraries
 License:    Proprietary
