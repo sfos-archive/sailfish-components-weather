@@ -16,7 +16,7 @@ BuildRequires:  qt5-qttools-linguist
 BuildRequires:  pkgconfig(contentaction5)
 
 Requires: sailfishsilica-qt5 >= 0.21.0
-Requires: jolla-theme >= 0.7.8
+Requires: jolla-theme >= 0.8.17
 Requires: ambient-icons-closed >= 0.5.8
 Requires: qt5-qtpositioning
 Requires: sailfish-weather

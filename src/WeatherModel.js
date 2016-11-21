@@ -141,10 +141,6 @@ function weatherType(code) {
     var precipirationType = code.charAt(3)
 
     var type
-    // FIXME: need graphics for thin high clouds
-    if (cloudiness == '5') {
-        cloudiness = '1'
-    }
 
     switch(precipirationRate) {
     case '0':
@@ -158,8 +154,13 @@ function weatherType(code) {
             type = "cloud-3"
             break
         case '4':
-        case '6': // FIXME: need graphics for fog
             type = "cloud-4"
+            break
+        case '5':
+            type = dayTime + "-highcloud"
+            break
+        case '6':
+            type =  "fog"
             break
         default:
             console.log("WeatherModel warning: invalid cloudiness code", cloudiness)
