@@ -116,6 +116,7 @@ Column {
                 source: "image://theme/graphic-foreca-small?" + (highlighted || providerDisclaimer.down ? Theme.highlightColor : Theme.primaryColor)
             }
         }
+        visible: opacity > 0
         opacity: dataOpacity
     }
 }
