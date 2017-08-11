@@ -2,6 +2,7 @@ import QtQuick 2.0
 import QtQuick.XmlListModel 2.0
 import Sailfish.Weather 1.0
 import "WeatherModel.js" as WeatherModel
+import Nemo.Connectivity 1.0
 
 XmlListModel {
     id: root
@@ -9,14 +10,23 @@ XmlListModel {
     property var weather
     property var savedWeathers
     property bool active: true
+    property bool connectedToNetwork
     readonly property int locationId: weather ? weather.locationId : -1
     property date timestamp: new Date()
+
+    signal error
 
     function updateAllowed() {
         return status == XmlListModel.Error || WeatherModel.updateAllowed()
     }
 
-    signal error
+    function attemptReload() {
+        if (updateAllowed()) {
+            if (connectedToNetwork) {
+                reload()
+            }
+        }
+    }
 
     onError: {
         if (savedWeathersModel && weather) {
@@ -28,13 +38,8 @@ XmlListModel {
     query: "/xml/weather/obs"
     source: locationId > 0 ? "http://feed-jll.foreca.com/jolla-jan14fi/data.php?l=" + root.locationId + "&products=cc" : ""
 
-    onActiveChanged: {
-        if (active) {
-            if (WeatherModel.updateAllowed()) {
-                reload()
-            }
-        }
-    }
+
+    onActiveChanged: if (active) attemptReload()
 
     onStatusChanged: {
         if (status == XmlListModel.Ready) {
@@ -85,5 +90,15 @@ XmlListModel {
     XmlRole {
         name: "accumulatedPrecipitation"
         query: "@pr/string()"
+    }
+
+    property ConnectionHelper connectionHelper: ConnectionHelper {
+        onNetworkConnectivityEstablished: {
+            root.connectedToNetwork = true
+            if (updateAllowed()) {
+                root.reload()
+            }
+        }
+        onNetworkConnectivityUnavailable: root.connectedToNetwork = false
     }
 }

@@ -23,7 +23,10 @@ BackgroundItem {
     height: enabled ? column.height : 0
     enabled: weather && weather.populated
 
-    onClicked: expanded = !expanded
+    onClicked: {
+        expanded = !expanded
+        weatherModel.attemptReload()
+    }
 
     Column {
         id: column
