@@ -25,6 +25,7 @@ Requires: qt5-qtdeclarative-import-xmllistmodel
 Requires: qt5-qtdeclarative-import-positioning
 Requires: connman-qt5-declarative
 Requires: libkeepalive >= 1.4.0
+Requires: nemo-qml-plugin-connectivity
 
 BuildRequires: %{name}-all-translations
 %define _all_translations_version %(rpm -q --queryformat "%%{version}-%%{release}" %{name}-all-translations)
