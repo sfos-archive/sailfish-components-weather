@@ -24,8 +24,10 @@ BackgroundItem {
     enabled: weather && weather.populated
 
     onClicked: {
+        var alreadyOpened = !!forecastLoader.item
         expanded = !expanded
         weatherModel.attemptReload()
+        if (expanded && alreadyOpened) forecastLoader.item.attemptReload()
     }
 
     Column {

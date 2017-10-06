@@ -3,16 +3,19 @@ import Sailfish.Silica 1.0
 import Sailfish.Weather 1.0
 
 Column {
+    property int itemHeight
+    property int contentHeight: itemHeight + providerDisclaimer.height
     property bool loading: forecastModel.status == Weather.Loading
-
     property real dataOpacity: forecastModel.status == Weather.Ready && forecastModel.count > 0
                                ? 1.0
                                : (forecastModel.status == Weather.Loading && forecastModel.count > 0) ? 0.4 : 0.0
     Behavior on dataOpacity { FadeAnimation { property: "dataOpacity" } }
 
+    function attemptReload() {
+        forecastModel.attemptReload()
+    }
+
     height: parent.height
-    property int contentHeight: itemHeight + providerDisclaimer.height
-    property int itemHeight
 
     Item {
         x: Theme.horizontalPageMargin-Theme.paddingLarge
