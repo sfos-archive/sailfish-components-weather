@@ -77,7 +77,7 @@ XmlListModel {
     }
     XmlRole {
         name: "temperatureFeel"
-        query: "@t/string()"
+        query: "@tf/string()"
     }
     XmlRole {
         name: "windSpeed"
