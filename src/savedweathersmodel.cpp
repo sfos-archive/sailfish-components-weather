@@ -125,7 +125,7 @@ void SavedWeathersModel::save()
     }
 
     if (file.write(json.toJson()) < 0) {
-        qmlInfo(this) << "Could not write weather data:" << file.errorString();
+        qmlInfo(this) << "Could not write weather data: " << file.errorString();
         return;
     }
 }
