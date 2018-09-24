@@ -57,10 +57,10 @@ rm -rf %{buildroot}
 
 %files
 %defattr(-,root,root,-)
+%dir %{_libdir}/qt5/qml/Sailfish/Weather
 %{_libdir}/qt5/qml/Sailfish/Weather/*
 %{_datadir}/translations/sailfish_components_weather_qt5_eng_en.qm
 
 %files ts-devel
 %defattr(-,root,root,-)
 %{_datadir}/translations/source/sailfish_components_weather_qt5.ts
-
