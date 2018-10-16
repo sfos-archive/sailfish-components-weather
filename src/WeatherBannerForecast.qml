@@ -3,7 +3,10 @@ import Sailfish.Silica 1.0
 import Sailfish.Weather 1.0
 
 Column {
+    id: root
+
     property int itemHeight
+    property bool highlighted
     property int contentHeight: itemHeight + providerDisclaimer.height
     property bool loading: forecastModel.status == Weather.Loading
     property real dataOpacity: forecastModel.status == Weather.Ready && forecastModel.count > 0
@@ -84,6 +87,7 @@ Column {
                 width: weatherForecastList.width/5
                 height: weatherForecastList.height
                 WeatherForecastItem {
+                    highlighted: root.highlighted
                     onHeightChanged: if (model.index == 0) itemHeight = height
                 }
             }

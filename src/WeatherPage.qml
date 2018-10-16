@@ -84,13 +84,15 @@ Page {
             horizontalCenter: parent.horizontalCenter
         }
         delegate: MouseArea {
-            property bool highlighted: (pressed && containsMouse) || root.currentIndex == model.index
+            readonly property bool down: pressed && containsMouse
+
+            onClicked: root.currentIndex = model.index
 
             width: weatherForecastList.itemWidth
             height: weatherForecastList.height
 
             Rectangle {
-                visible: highlighted
+                visible: down || root.currentIndex == model.index
                 anchors.fill: parent
                 gradient: Gradient {
                     GradientStop {
@@ -99,13 +101,15 @@ Page {
                     }
                     GradientStop {
                         position: 1.0
-                        color: Theme.rgba(Theme.highlightBackgroundColor, 0.3)
+                        color: Theme.rgba(Theme.highlightBackgroundColor,
+                                          Theme.colorScheme === Theme.LightOnDark ? 0.3 : 0.5)
                     }
                 }
             }
-            onClicked: root.currentIndex = model.index
-            WeatherForecastItem {}
+
+            WeatherForecastItem {
+                highlighted: down
+            }
         }
     }
 }
-
