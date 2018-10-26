@@ -45,7 +45,7 @@ Item {
                 id: accumulatedPrecipitationLabel
                 color: Theme.highlightColor
                 font.pixelSize: Theme.fontSizeHuge
-                text: model ? model.accumulatedPrecipitation : ""
+                text: model ? parseFloat(model.accumulatedPrecipitation).toLocaleString(Qt.locale(), 'f', 1) : ""
                 anchors {
                     verticalCenter: windDirectionIcon.verticalCenter
                     left: Screen.sizeCategory >= Screen.Large ? undefined : parent.left
