@@ -15,3 +15,4 @@ WeatherDetailsHeader 1.0 WeatherDetailsHeader.qml
 PlaceholderItem 1.0 PlaceholderItem.qml
 ProviderDisclaimer 1.0 ProviderDisclaimer.qml
 WeatherBanner 1.0 WeatherBanner.qml
+WeatherIndicator 1.0 WeatherIndicator.qml
