@@ -63,17 +63,22 @@ Page {
     }
     SilicaListView {
         id: weatherForecastList
+
+        // Show 5 items on normal phones, 7 on larger screens
+        readonly property int availableWidth: Screen.sizeCategory >= Screen.Large ? Screen.width : root.width
+        readonly property int columnCount: Math.round(availableWidth / (540 * Theme.pixelRatio/5)) >= 7 ? 7 : 5
+        readonly property int itemWidth: availableWidth/columnCount
+
+        width: columnCount * itemWidth
         opacity: forecastModel.count > 0 ? 1.0 : 0.0
         Behavior on opacity { OpacityAnimator { easing.type: Easing.InOutQuad;  duration: 400 } }
 
         interactive: false
-        property int itemWidth: Screen.sizeCategory >= Screen.Large ? Screen.width/7 : Screen.width/5
-        width: 5*itemWidth
         model: WeatherForecastModel {
             id: forecastModel
             weather: root.weather
             timestamp: weatherModel.timestamp
-            active: root.status == PageStatus.Active && Qt.application.active
+            active: root.status === PageStatus.Active && Qt.application.active
         }
 
         clip: true

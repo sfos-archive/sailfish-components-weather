@@ -73,7 +73,7 @@ Column {
             id: weatherForecastList
 
             anchors.fill: parent
-            clip: true // limit to five day forecast
+            clip: true // limit to 5-7 day forecast
             currentIndex: -1
             interactive: false
             orientation: ListView.Horizontal
@@ -83,8 +83,13 @@ Column {
                 weather: weatherBanner.weather
                 timestamp: weatherModel.timestamp
             }
+
             delegate: Item {
-                width: weatherForecastList.width/5
+
+                // Show 5 items on normal phones, 7 on larger screens
+                readonly property int columnCount: Math.round(weatherForecastList.width / (540 * Theme.pixelRatio/5)) >= 7 ? 7 : 5
+
+                width: Math.round(weatherForecastList.width/columnCount)
                 height: weatherForecastList.height
                 WeatherForecastItem {
                     highlighted: root.highlighted
