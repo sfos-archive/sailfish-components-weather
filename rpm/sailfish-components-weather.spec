@@ -24,7 +24,7 @@ Requires: sailfish-weather
 Requires: qt5-qtdeclarative-import-xmllistmodel
 Requires: qt5-qtdeclarative-import-positioning
 Requires: connman-qt5-declarative
-Requires: libkeepalive >= 1.4.0
+Requires: libkeepalive >= 1.7.0
 Requires: nemo-qml-plugin-connectivity >= 0.1.0
 
 BuildRequires: %{name}-all-translations
