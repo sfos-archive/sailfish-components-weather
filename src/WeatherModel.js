@@ -135,65 +135,14 @@ function getWeatherData(weather, forecast) {
 }
 
 function weatherType(code) {
-    var dayTime = code.charAt(0) === "d" ? "day" : "night"
-    var cloudiness = code.charAt(1)
-    var precipitationRate = code.charAt(2)
-    var precipitationType = code.charAt(3)
-
-    var type
-
-    switch(precipitationRate) {
-    case '0':
-        switch (cloudiness) {
-        case '0':
-        case '1':
-        case '2':
-            type = "cloud-" + dayTime + "-" + cloudiness
-            break
-        case '3':
-            type = "cloud-3"
-            break
-        case '4':
-            type = "cloud-4"
-            break
-        case '5':
-            type = dayTime + "-highcloud"
-            break
-        case '6':
-            type =  "fog"
-            break
-        default:
-            console.log("WeatherModel warning: invalid cloudiness code", cloudiness)
-            break
-        }
-        break
-    case '1':
-    case '2':
-    case '3':
-    case '4':
-        switch (precipitationType) {
-        case '0':
-            type = "rain-water-" + precipitationRate
-            break
-        case '1':
-            type = "rain-sleet-" + precipitationRate
-            break
-        case '2':
-            type = "rain-snow-" + precipitationRate
-            break
-        default:
-            console.log("WeatherModel warning: invalid precipitation type code", precipitationType)
-            break
-        }
-        break
-    default:
-        type = "cloud-day-0"
-        console.log("WeatherModel warning: invalid precipitation rate code", precipitationRate)
-        break
+    // just direct mapping, but ensure we receive valid data
+    if (code.length === 4) {
+        return code
+    } else {
+        console.warn("Invalid weather code")
+        return ""
     }
-    return type
 }
-
 
 function description(code) {
     var localizations = {

@@ -1,6 +1,6 @@
 Name:       sailfish-components-weather-qt5
 Summary:    Sailfish weather UI components
-Version:    0.3.5
+Version:    1.0.7
 Release:    1
 Group:      System/Libraries
 License:    Proprietary
@@ -16,7 +16,7 @@ BuildRequires:  qt5-qttools-linguist
 BuildRequires:  pkgconfig(contentaction5)
 
 Requires: sailfishsilica-qt5 >= 0.21.0
-Requires: sailfish-content-graphics
+Requires: sailfish-content-graphics >= 1.0.42
 Requires: ambient-icons-closed >= 0.5.8
 Requires: qt5-qtpositioning
 Requires: nemo-qml-plugin-systemsettings >= 0.2.26
