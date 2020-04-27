@@ -2,7 +2,6 @@
 #define SAVEDWEATHERSMODEL_H
 
 #include <QAbstractListModel>
-#include <QSqlDatabase>
 
 #include "weather.h"
 
