@@ -5,7 +5,7 @@ TARGET = $$qtLibraryTarget($$TARGET)
 MODULENAME = Sailfish/Weather
 TARGETPATH = $$[QT_INSTALL_QML]/$$MODULENAME
 
-QT += qml sql
+QT += qml
 CONFIG += plugin link_pkgconfig
 PKGCONFIG += contentaction5
 
