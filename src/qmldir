@@ -1,13 +1,16 @@
 module Sailfish.Weather
-singleton WeatherConnectionHelper 1.0 WeatherConnectionHelper.qml
 plugin sailfishweatherplugin
 singleton TemperatureConverter 1.0 TemperatureConverter.qml
 singleton LocationDetection 1.0 LocationDetection.qml
+singleton WeatherConnectionHelper 1.0 WeatherConnectionHelper.qml
 CurrentLocationModel 1.0 CurrentLocationModel.qml
 LocationsModel 1.0 LocationsModel.qml
 WeatherPage 1.0 WeatherPage.qml
 WeatherModel 1.0 WeatherModel.qml
+WeatherRequest 1.0 WeatherRequest.qml
 WeatherForecastModel 1.0 WeatherForecastModel.qml
+WeatherForecastItem 1.0 WeatherForecastItem.qml
+WeatherDetailItem 1.0 WeatherDetailItem.qml
 TemperatureLabel 1.0 TemperatureLabel.qml
 WeatherImage 1.0 WeatherImage.qml
 WeatherHeader 1.0 WeatherHeader.qml

@@ -142,7 +142,7 @@ QJsonObject SavedWeathersModel::convertToJson(const Weather *weather)
     weatherData["populated"] = weather->populated();
     weatherData["status"] = weather->status();
     weatherData["temperature"] = weather->temperature();
-    weatherData["temperatureFeel"] = weather->temperatureFeel();
+    weatherData["feelsLikeTemperature"] = weather->feelsLikeTemperature();
     weatherData["weatherType"] = weather->weatherType();
     weatherData["description"] = weather->description();
     weatherData["timestamp"] = weather->timestamp().toUTC().toString(Qt::ISODate);
@@ -288,8 +288,8 @@ QVariant SavedWeathersModel::data(const QModelIndex &index, int role) const
         return weather->country();
     case Temperature:
         return weather->temperature();
-    case TemperatureFeel:
-        return weather->temperatureFeel();
+    case FeelsLikeTemperature:
+        return weather->feelsLikeTemperature();
     case WeatherType:
         return weather->weatherType();
     case Description:
@@ -312,7 +312,7 @@ QHash<int, QByteArray> SavedWeathersModel::roleNames() const
     roles.insert(State, "state");
     roles.insert(Country, "country");
     roles.insert(Temperature, "temperature");
-    roles.insert(TemperatureFeel, "temperatureFeel");
+    roles.insert(FeelsLikeTemperature, "feelsLikeTemperature");
     roles.insert(WeatherType, "weatherType");
     roles.insert(Description, "description");
     roles.insert(Timestamp, "timestamp");

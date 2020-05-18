@@ -23,7 +23,7 @@ public:
         State,
         Country,
         Temperature,
-        TemperatureFeel,
+        FeelsLikeTemperature,
         WeatherType,
         Description,
         Timestamp,
