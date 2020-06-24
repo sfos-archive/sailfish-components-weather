@@ -16,7 +16,7 @@ QtObject {
     onTokenChanged: sendRequest()
     onActiveChanged: if (active) attemptReload()
     onOnlineChanged: if (online) attemptReload()
-    onSourceChanged: if (source.length > 0) attemptReload()
+    onSourceChanged: if (source.length > 0) reload()
     Component.onCompleted: Token.fetchToken(this)
 
     function updateAllowed() {
