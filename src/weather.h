@@ -16,7 +16,7 @@ class Weather : public QObject
     Q_PROPERTY(QString state READ state CONSTANT)
     Q_PROPERTY(QString country READ country CONSTANT)
     Q_PROPERTY(int temperature READ temperature NOTIFY temperatureChanged)
-    Q_PROPERTY(int temperatureFeel READ temperatureFeel NOTIFY temperatureFeelChanged)
+    Q_PROPERTY(int feelsLikeTemperature READ feelsLikeTemperature NOTIFY feelsLikeTemperatureChanged)
     Q_PROPERTY(QString weatherType READ weatherType NOTIFY weatherTypeChanged)
     Q_PROPERTY(QString description READ description NOTIFY descriptionChanged)
     Q_PROPERTY(QDateTime timestamp READ timestamp NOTIFY timestampChanged)
@@ -31,7 +31,7 @@ public:
           m_state(locationMap["state"].toString()),
           m_country(locationMap["country"].toString()),
           m_temperature(0),
-          m_temperatureFeel(0),
+          m_feelsLikeTemperature(0),
           m_populated(false)
     {
     }
@@ -45,7 +45,7 @@ public:
     QString state() const { return m_state; }
     QString country() const { return m_country; }
     int temperature() const { return m_temperature; }
-    int temperatureFeel() const { return m_temperatureFeel; }
+    int feelsLikeTemperature() const { return m_feelsLikeTemperature; }
     QString weatherType() const { return m_weatherType; }
     QString description() const { return m_description; }
     QDateTime timestamp() const { return m_timestamp; }
@@ -63,10 +63,10 @@ public:
             emit temperatureChanged();
         }
     }
-    void setTemperatureFeel(int temperatureFeel) {
-        if (m_temperatureFeel != temperatureFeel) {
-            m_temperatureFeel = temperatureFeel;
-            emit temperatureFeelChanged();
+    void setfeelsLikeTemperature(int feelsLikeTemperature) {
+        if (m_feelsLikeTemperature != feelsLikeTemperature) {
+            m_feelsLikeTemperature = feelsLikeTemperature;
+            emit feelsLikeTemperatureChanged();
         }
     }
     void setWeatherType(QString weatherType) {
@@ -89,7 +89,7 @@ public:
     }
     Q_INVOKABLE void update(const QVariantMap &weatherMap) {
         setTemperature(weatherMap["temperature"].toInt());
-        setTemperatureFeel(weatherMap["temperatureFeel"].toInt());
+        setfeelsLikeTemperature(weatherMap["feelsLikeTemperature"].toInt());
         setWeatherType(weatherMap["weatherType"].toString());
         setDescription(weatherMap["description"].toString());
         setTimestamp(weatherMap["timestamp"].toDateTime());
@@ -102,7 +102,7 @@ public:
 signals:
     void statusChanged();
     void temperatureChanged();
-    void temperatureFeelChanged();
+    void feelsLikeTemperatureChanged();
     void weatherTypeChanged();
     void descriptionChanged();
     void timestampChanged();
@@ -115,7 +115,7 @@ private:
     QString m_state;
     QString m_country;
     int m_temperature;
-    int m_temperatureFeel;
+    int m_feelsLikeTemperature;
     QString m_weatherType;
     QString m_description;
     QDateTime m_timestamp;

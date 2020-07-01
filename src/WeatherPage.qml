@@ -73,7 +73,6 @@ Page {
         opacity: forecastModel.count > 0 ? 1.0 : 0.0
         Behavior on opacity { OpacityAnimator { easing.type: Easing.InOutQuad;  duration: 400 } }
 
-        interactive: false
         model: WeatherForecastModel {
             id: forecastModel
             weather: root.weather
