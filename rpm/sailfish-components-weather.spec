@@ -14,7 +14,7 @@ BuildRequires:  qt5-qttools
 BuildRequires:  qt5-qttools-linguist
 BuildRequires:  pkgconfig(contentaction5)
 
-Requires: sailfishsilica-qt5 >= 0.21.0
+Requires: sailfishsilica-qt5 >= 1.1.110
 Requires: sailfish-content-graphics >= 1.0.42
 Requires: ambient-icons-closed >= 0.5.8
 Requires: qt5-qtpositioning
