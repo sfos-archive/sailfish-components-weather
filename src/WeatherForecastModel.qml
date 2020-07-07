@@ -14,6 +14,8 @@ ListModel {
     readonly property bool loading: forecastModel.status == Weather.Loading
     readonly property int locationId: weather ? weather.locationId : -1
 
+    onLocationIdChanged: clear()
+
     function attemptReload() {
         model.attemptReload()
     }

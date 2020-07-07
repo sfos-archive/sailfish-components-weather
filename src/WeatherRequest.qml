@@ -20,7 +20,7 @@ QtObject {
     Component.onCompleted: Token.fetchToken(this)
 
     function updateAllowed() {
-        return true
+        return active
     }
 
     function attemptReload() {
@@ -35,8 +35,10 @@ QtObject {
             if (Token.fetchToken(root)) {
                 sendRequest()
             }
-        } else {
+        } else if (source.length === 0) {
             status = Weather.Null
+        } else {
+            status = Weather.Error
             WeatherConnectionHelper.requestNetwork()
         }
     }
@@ -45,23 +47,37 @@ QtObject {
         if (source.length > 0 && token.length > 0 && !request) {
             status = Weather.Loading
             request = new XMLHttpRequest()
+            timeout.restart()
 
             // Send the proper header information along with the request
             request.onreadystatechange = function() { // Call a function when the state changes.
                 if (request.readyState == XMLHttpRequest.DONE) {
+                    timeout.stop()
                     if (request.status === 200) {
                         var data = JSON.parse(request.responseText)
                         requestFinished(data)
-                        request = undefined
                         status = Weather.Ready
                     } else {
-                        console.warn("Failed to optain weather data. HTTP error code:" + request.status)
+                        console.warn("Failed to obtain weather data. HTTP error code: " + request.status)
                         status = Weather.Error
                     }
+                    request = undefined
                 }
             }
             request.open("GET", source + "&token=" + token)
             request.send()
+        }
+    }
+    property Timer timeout: Timer {
+        id: timeout
+        interval: 8000
+        onTriggered: {
+            if (request) {
+                request.abort()
+                request = undefined
+                console.warn("Failed to obtain weather data. The request timed out after 8 seconds")
+                status = Weather.Error
+            }
         }
     }
 }

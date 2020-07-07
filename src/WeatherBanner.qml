@@ -16,6 +16,7 @@ ListItem {
                                                      : (dailyForecastLoader.item ? dailyForecastLoader.item.model : null)
     readonly property bool loading: forecastModel && forecastModel.status === Weather.Loading
     readonly property bool _error: forecastModel && forecastModel.status === Weather.Error
+    readonly property int _forecastCount: forecastModel ? forecastModel.count : 0
 
     _backgroundColor: "transparent"
     onActiveChanged: if (!active) save()
@@ -28,15 +29,6 @@ ListItem {
 
     function save() {
         savedWeathersModel.save()
-    }
-
-    // providing translation placeholders for JB#50380
-    function qsTrIdString() {
-        //% "No network"
-        QT_TRID_NOOP("weather-la-no_network")
-
-        //% "Tap to retry"
-        QT_TRID_NOOP("weather-la-tap_to_retry")
     }
 
     onClicked: {
@@ -61,7 +53,7 @@ ListItem {
                 text: forecastModel ? qsTrId("weather-la-updated_time").arg(
                                           Format.formatDate(forecastModel.timestamp, Formatter.TimepointRelative))
                                     : ""
-                visible: !_error
+                visible: !_error && !loading
             }
 
             MenuItem {
@@ -72,10 +64,7 @@ ListItem {
             MenuItem {
                 //% "Reload"
                 text: qsTrId("weather-la-reload")
-                onClicked: {
-                    weatherModel.reload()
-                    forecastModel.reload()
-                }
+                onClicked: reload()
             }
         }
     }
@@ -173,7 +162,7 @@ ListItem {
                 Loader {
                     id: dailyForecastLoader
                     width: parent.width
-                    active: !weatherBanner.hourly
+                    active: !weatherBanner.hourly && expanded
                     anchors.verticalCenter: parent.verticalCenter
                     onActiveChanged: if (active) active = active // remove binding
 
@@ -202,7 +191,7 @@ ListItem {
                 Loader {
                     id: hourlyForecastLoader
                     width: parent.width
-                    active: weatherBanner.hourly
+                    active: weatherBanner.hourly && expanded
                     anchors.verticalCenter: parent.verticalCenter
                     onActiveChanged: if (active) active = active // remove binding
 
@@ -222,6 +211,7 @@ ListItem {
                         Item {
                             y: fontMetrics.height
 
+                            visible: hourlyForecastList.model.count > 0
                             width: hourlyForecastList.width - hourlyForecastList.itemWidth/2
                             height: temperatureGraph.height
                             anchors.horizontalCenter: parent.horizontalCenter
@@ -275,6 +265,29 @@ ListItem {
                     anchors.centerIn: parent
                     running: weatherBanner.loading && forecastModel.count === 0
                 }
+
+                Column {
+                    width: parent.width
+                    spacing: Theme.paddingSmall
+                    anchors.verticalCenter: parent.verticalCenter
+
+                    opacity: _error && _forecastCount === 0 ? 1 : 0
+                    Behavior on opacity { FadeAnimator {} }
+
+                    Label {
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        //% "No network"
+                        text: qsTrId("weather-la-no_network")
+                        font.pixelSize: Theme.fontSizeLarge
+                    }
+                    Label {
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        color: highlighted ? Theme.secondaryHighlightColor : Theme.secondaryColor
+
+                        //% "Tap to retry"
+                        text: qsTrId("weather-la-tap_to_retry")
+                    }
+                }
             }
 
             MouseArea {
@@ -287,7 +300,7 @@ ListItem {
                 width: footerRow.width
                 height: footerRow.height + Theme.paddingSmall
                 anchors { right: parent.right; rightMargin: Theme.horizontalPageMargin }
-                enabled: savedWeathersModel.currentWeather && savedWeathersModel.currentWeather.populated
+                enabled: savedWeathersModel.currentWeather && savedWeathersModel.currentWeather.populated && !_error && expanded
 
                 Row {
                     id: footerRow
@@ -321,7 +334,7 @@ ListItem {
                         font.pixelSize: Theme.fontSizeExtraSmall
                         highlighted: weatherBanner.highlighted || footer.down
 
-                        visible: _error
+                        visible: _error && _forecastCount > 0
                     }
                 }
             }
@@ -329,15 +342,16 @@ ListItem {
                 x: Theme.horizontalPageMargin
                 width: parent.width - 2*x
                 horizontalAlignment: Text.AlignRight
-                font.pixelSize: Theme.fontSizeSmall
+                font.pixelSize: Theme.fontSizeExtraSmall
                 wrapMode: Text.Wrap
 
                 //% "No network, tap to retry"
                 text: qsTrId("weather-la-no_network_tap_to_retry")
 
+                color: highlighted ? Theme.secondaryHighlightColor : Theme.secondaryColor
                 opacity: enabled ? 1 : 0
                 height: enabled ? implicitHeight : 0
-                enabled: _error
+                enabled: _error && _forecastCount > 0
                 Behavior on opacity { FadeAnimator {} }
                 Behavior on height {
                     NumberAnimation {
