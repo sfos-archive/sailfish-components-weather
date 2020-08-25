@@ -75,7 +75,7 @@ ListItem {
         Row {
             id: row
 
-            property int margin: (column.width - image.width - Theme.paddingMedium - temperatureLabel.width - cityLabel.width)/2
+            property int margin: (column.width - image.width - Theme.paddingMedium - temperatureLabel.width - Theme.paddingSmall - cityLabel.width)/2
 
             x: margin
             width: parent.width - x
@@ -107,6 +107,11 @@ ListItem {
                 anchors.verticalCenter: parent.verticalCenter
             }
 
+            Item {
+                width: Theme.paddingSmall
+                height: 1
+            }
+
             Label {
                 id: cityLabel
                 text: weather ? weather.city : ""
@@ -117,30 +122,24 @@ ListItem {
                 }
                 anchors.baseline: temperatureLabel.baseline
                 truncationMode: TruncationMode.Fade
-                width: Math.min(implicitWidth, column.width - image.width - Theme.paddingMedium - temperatureLabel.width - expandButton.width)
+                width: Math.min(implicitWidth, column.width - image.width - Theme.paddingMedium - Theme.paddingSmall - temperatureLabel.width - expandButton.width - Theme.horizontalPageMargin)
             }
 
             Item {
                 height: 1
-                width: parent.margin - expandButton.width
+                width: parent.margin - expandButton.width - Theme.horizontalPageMargin
             }
 
-            MouseArea {
+            IconButton {
                 id: expandButton
-                property bool down: pressed && containsMouse
-                onClicked: expanded = !expanded
-
-                width: Theme.itemSizeSmall
                 height: Math.max(parent.height, Theme.itemSizeSmall)
-
-                Icon {
-                    highlighted: parent.down
+                onClicked: expanded = !expanded
+                icon {
                     transformOrigin: Item.Center
-                    anchors.centerIn: parent
                     source: "image://theme/icon-m-change-type"
                     rotation: expanded ? 180 : 0
-                    Behavior on rotation { RotationAnimator { duration: 200 }}
                 }
+                Behavior on icon.rotation { RotationAnimator { duration: 200 }}
             }
         }
         Column {
