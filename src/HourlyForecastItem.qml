@@ -15,8 +15,8 @@ Column {
         Label {
             id: temperatureLabel
             text: TemperatureConverter.format(model.temperature)
-            color: highlighted ? Theme.highlightColor : Theme.primaryColor
             y: (1 - model.relativeTemperature) * temperatureGraph.height - parent.padding
+            font.bold: true
         }
     }
 

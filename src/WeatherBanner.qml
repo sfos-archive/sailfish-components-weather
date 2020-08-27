@@ -99,10 +99,10 @@ ListItem {
             Label {
                 id: temperatureLabel
                 text: weather ? TemperatureConverter.format(weather.temperature) : ""
-                color: highlighted ? Theme.highlightColor : Theme.primaryColor
                 font {
                     pixelSize: Theme.fontSizeExtraLarge
                     family: Theme.fontFamilyHeading
+                    bold: true
                 }
                 anchors.verticalCenter: parent.verticalCenter
             }
