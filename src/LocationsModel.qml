@@ -9,6 +9,10 @@ ListModel {
 
     onFilterChanged: if (filter.length === 0) clear()
 
+    function reload() {
+        model.reload()
+    }
+
     readonly property WeatherRequest model: WeatherRequest {
         id: model
 
