@@ -75,7 +75,8 @@ ListItem {
         Row {
             id: row
 
-            property int margin: (column.width - image.width - Theme.paddingMedium - temperatureLabel.width - Theme.paddingSmall - cityLabel.width)/2
+            property int margin: (column.width - image.width - Theme.paddingMedium - temperatureLabel.width
+                                  - Theme.paddingSmall - cityLabel.width)/2
 
             x: margin
             width: parent.width - x
@@ -122,21 +123,25 @@ ListItem {
                 }
                 anchors.baseline: temperatureLabel.baseline
                 truncationMode: TruncationMode.Fade
-                width: Math.min(implicitWidth, column.width - image.width - Theme.paddingMedium - Theme.paddingSmall - temperatureLabel.width - expandButton.width - Theme.horizontalPageMargin)
+                width: Math.min(implicitWidth,
+                                column.width - image.width - Theme.paddingMedium - Theme.paddingSmall
+                                - temperatureLabel.width - expandButton.width - Theme.horizontalPageMargin)
             }
 
             Item {
                 height: 1
-                width: parent.margin - expandButton.width - Theme.horizontalPageMargin
+                width: parent.margin - expandButton.width - Theme.horizontalPageMargin + Theme.paddingLarge
             }
 
             IconButton {
                 id: expandButton
+
                 height: Math.max(parent.height, Theme.itemSizeSmall)
+                width: icon.width + 2*Theme.paddingLarge
                 onClicked: expanded = !expanded
                 icon {
                     transformOrigin: Item.Center
-                    source: "image://theme/icon-m-change-type"
+                    source: "image://theme/icon-s-arrow"
                     rotation: expanded ? 180 : 0
                 }
                 Behavior on icon.rotation { RotationAnimator { duration: 200 }}
@@ -321,7 +326,8 @@ ListItem {
 
                     Image {
                         anchors.verticalCenter: parent.verticalCenter
-                        source: "image://theme/graphic-foreca-small?" + (highlighted || footer.down ? Theme.highlightColor : Theme.primaryColor)
+                        source: "image://theme/graphic-foreca-small?"
+                                + (highlighted || footer.down ? Theme.highlightColor : Theme.primaryColor)
                     }
                     Label {
                         //: Indicates when the shown forecast information was updated
