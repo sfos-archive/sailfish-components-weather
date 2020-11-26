@@ -16,7 +16,6 @@ Column {
             id: temperatureLabel
             text: TemperatureConverter.format(model.temperature)
             y: (1 - model.relativeTemperature) * temperatureGraph.height - parent.padding
-            font.bold: true
         }
     }
 

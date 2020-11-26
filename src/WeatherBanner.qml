@@ -100,11 +100,7 @@ ListItem {
             Label {
                 id: temperatureLabel
                 text: weather ? TemperatureConverter.format(weather.temperature) : ""
-                font {
-                    pixelSize: Theme.fontSizeExtraLarge
-                    family: Theme.fontFamilyHeading
-                    bold: true
-                }
+                font.pixelSize: Theme.fontSizeExtraLarge
                 anchors.verticalCenter: parent.verticalCenter
             }
 
