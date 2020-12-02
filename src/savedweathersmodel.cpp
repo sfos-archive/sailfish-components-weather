@@ -10,7 +10,7 @@
 static QString weatherStoragePath()
 {
     return QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation)
-           + QStringLiteral("/sailfish-weather/");
+           + QStringLiteral("/org.sailfishos/weather/");
 }
 
 SavedWeathersModel::SavedWeathersModel(QObject *parent)
