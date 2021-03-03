@@ -10,7 +10,10 @@ Column {
         property bool truncate: implicitWidth > parent.width - Theme.paddingSmall
 
         x: truncate ? Theme.paddingSmall : parent.width/2 - width/2
-        width: truncate ? parent.width - Theme.paddingSmall : implicitWidth
+        // Difficult layout due to limited horizontal space
+        // Fade truncation overflows slightly to the adjacent delegate,
+        // but should be ok since there is horizontal padding
+        width: truncate ? parent.width : implicitWidth
         truncationMode: truncate ? TruncationMode.Fade : TruncationMode.None
         text: model.index === 0
               ? //% "Today"
