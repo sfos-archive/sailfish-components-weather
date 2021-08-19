@@ -11,6 +11,7 @@ ListModel {
     property date timestamp
     property alias status: model.status
     property int visibleCount: 6
+    property int minimumHourlyRange: 4
     readonly property bool loading: forecastModel.status == Weather.Loading
     readonly property int locationId: weather ? weather.locationId : -1
 
@@ -74,10 +75,14 @@ ListModel {
                         maximumTemperature = Math.max(maximumTemperature, temperature)
                     }
                     var range = maximumTemperature - minimumTemperature
+                    if (range < minimumHourlyRange) {
+                        minimumTemperature -= Math.floor((minimumHourlyRange - range ) / 2)
+                        range = minimumHourlyRange
+                    }
 
                     var array = []
                     for (i = 0; i < visibleCount + 1; i++) {
-                        weatherData[i].relativeTemperature = range > 0 ? (weatherData[i].temperature - minimumTemperature) / range : 0.5
+                        weatherData[i].relativeTemperature = (weatherData[i].temperature - minimumTemperature) / range
                     }
                 }
 
