@@ -51,7 +51,7 @@ ListItem {
             MenuLabel {
                 //% "Updated %1"
                 text: forecastModel ? qsTrId("weather-la-updated_time").arg(
-                                          Format.formatDate(forecastModel.timestamp, Formatter.TimepointRelative))
+                                          Format.formatDate(forecastModel.timestamp, Formatter.Timepoint))
                                     : ""
                 visible: !_error && !loading
             }
@@ -327,10 +327,10 @@ ListItem {
                     }
                     Label {
                         //: Indicates when the shown forecast information was updated
-                        //: Displayed right after small Foreca logo, i.e. "FORECA, updated 12:59"
+                        //: Displayed right after small Foreca logo, i.e. "FORECA, updated 12:59, 1.3.2020"
                         //% ", updated %1"
                         text: forecastModel ? qsTrId("weather-la-comma_updated_time")
-                                              .arg(Format.formatDate(forecastModel.timestamp, Format.TimepointRelative)) : ""
+                                              .arg(Format.formatDate(forecastModel.timestamp, Format.Timepoint))
                         anchors.verticalCenter: parent.verticalCenter
                         font.pixelSize: Theme.fontSizeExtraSmall
                         highlighted: weatherBanner.highlighted || footer.down
