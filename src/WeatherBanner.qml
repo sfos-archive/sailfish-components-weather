@@ -331,6 +331,7 @@ ListItem {
                         //% ", updated %1"
                         text: forecastModel ? qsTrId("weather-la-comma_updated_time")
                                               .arg(Format.formatDate(forecastModel.timestamp, Format.Timepoint))
+                                            : ""
                         anchors.verticalCenter: parent.verticalCenter
                         font.pixelSize: Theme.fontSizeExtraSmall
                         highlighted: weatherBanner.highlighted || footer.down
