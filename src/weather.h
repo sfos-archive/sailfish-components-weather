@@ -15,6 +15,8 @@ class Weather : public QObject
     Q_PROPERTY(QString city READ city CONSTANT)
     Q_PROPERTY(QString state READ state CONSTANT)
     Q_PROPERTY(QString country READ country CONSTANT)
+    Q_PROPERTY(QString adminArea READ adminArea CONSTANT)
+    Q_PROPERTY(QString adminArea2 READ adminArea2 CONSTANT)
     Q_PROPERTY(int temperature READ temperature NOTIFY temperatureChanged)
     Q_PROPERTY(int feelsLikeTemperature READ feelsLikeTemperature NOTIFY feelsLikeTemperatureChanged)
     Q_PROPERTY(QString weatherType READ weatherType NOTIFY weatherTypeChanged)
@@ -30,6 +32,8 @@ public:
           m_city(locationMap["city"].toString()),
           m_state(locationMap["state"].toString()),
           m_country(locationMap["country"].toString()),
+          m_adminArea(locationMap["adminArea"].toString()),
+          m_adminArea2(locationMap["adminArea2"].toString()),
           m_temperature(0),
           m_feelsLikeTemperature(0),
           m_populated(false)
@@ -44,6 +48,8 @@ public:
     QString city() const { return m_city; }
     QString state() const { return m_state; }
     QString country() const { return m_country; }
+    QString adminArea() const { return m_adminArea; }
+    QString adminArea2() const { return m_adminArea2; }
     int temperature() const { return m_temperature; }
     int feelsLikeTemperature() const { return m_feelsLikeTemperature; }
     QString weatherType() const { return m_weatherType; }
@@ -114,6 +120,8 @@ private:
     QString m_city;
     QString m_state;
     QString m_country;
+    QString m_adminArea;
+    QString m_adminArea2;
     int m_temperature;
     int m_feelsLikeTemperature;
     QString m_weatherType;

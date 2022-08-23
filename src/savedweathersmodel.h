@@ -20,6 +20,8 @@ public:
         LocationId = Qt::UserRole,
         Status,
         City,
+        AdminArea,
+        AdminArea2,
         State,
         Country,
         Temperature,

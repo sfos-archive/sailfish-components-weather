@@ -137,6 +137,8 @@ QJsonObject SavedWeathersModel::convertToJson(const Weather *weather)
     location["city"] = weather->city();
     location["state"] = weather->state();
     location["country"] = weather->country();
+    location["adminArea"] = weather->adminArea();
+    location["adminArea2"] = weather->adminArea2();
 
     QJsonObject weatherData;
     weatherData["populated"] = weather->populated();
@@ -284,6 +286,10 @@ QVariant SavedWeathersModel::data(const QModelIndex &index, int role) const
         return weather->city();
     case State:
         return weather->state();
+    case AdminArea:
+        return weather->adminArea();
+    case AdminArea2:
+        return weather->adminArea2();
     case Country:
         return weather->country();
     case Temperature:
@@ -310,6 +316,9 @@ QHash<int, QByteArray> SavedWeathersModel::roleNames() const
     roles.insert(Status, "status");
     roles.insert(City, "city");
     roles.insert(State, "state");
+    // There roles are directly from Foreca API spec
+    roles.insert(AdminArea, "adminArea");
+    roles.insert(AdminArea2, "adminArea2");
     roles.insert(Country, "country");
     roles.insert(Temperature, "temperature");
     roles.insert(FeelsLikeTemperature, "feelsLikeTemperature");
