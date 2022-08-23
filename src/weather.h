@@ -22,6 +22,7 @@ class Weather : public QObject
     Q_PROPERTY(QString weatherType READ weatherType NOTIFY weatherTypeChanged)
     Q_PROPERTY(QString description READ description NOTIFY descriptionChanged)
     Q_PROPERTY(QDateTime timestamp READ timestamp NOTIFY timestampChanged)
+    Q_PROPERTY(QString station READ station NOTIFY stationChanged)
     Q_PROPERTY(bool populated READ populated NOTIFY populatedChanged)
 
 public:
@@ -34,6 +35,7 @@ public:
           m_country(locationMap["country"].toString()),
           m_adminArea(locationMap["adminArea"].toString()),
           m_adminArea2(locationMap["adminArea2"].toString()),
+          m_station(locationMap["station"].toString()),
           m_temperature(0),
           m_feelsLikeTemperature(0),
           m_populated(false)
@@ -55,6 +57,7 @@ public:
     QString weatherType() const { return m_weatherType; }
     QString description() const { return m_description; }
     QDateTime timestamp() const { return m_timestamp; }
+    QString station() const { return m_station; }
     bool populated() const { return m_populated; }
 
     void setStatus(Status status) {
@@ -93,12 +96,20 @@ public:
             emit timestampChanged();
         }
     }
+    void setStation(QString station) {
+        if (m_station != station) {
+            m_station = station;
+            emit stationChanged();
+        }
+    }
+
     Q_INVOKABLE void update(const QVariantMap &weatherMap) {
         setTemperature(weatherMap["temperature"].toInt());
         setfeelsLikeTemperature(weatherMap["feelsLikeTemperature"].toInt());
         setWeatherType(weatherMap["weatherType"].toString());
         setDescription(weatherMap["description"].toString());
         setTimestamp(weatherMap["timestamp"].toDateTime());
+        setStation(weatherMap["station"].toString());
         if (!m_populated) {
             m_populated = true;
             emit populatedChanged();
@@ -112,6 +123,7 @@ signals:
     void weatherTypeChanged();
     void descriptionChanged();
     void timestampChanged();
+    void stationChanged();
     void populatedChanged();
 
 private:
@@ -122,6 +134,7 @@ private:
     QString m_country;
     QString m_adminArea;
     QString m_adminArea2;
+    QString m_station;
     int m_temperature;
     int m_feelsLikeTemperature;
     QString m_weatherType;

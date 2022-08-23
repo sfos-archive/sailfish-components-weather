@@ -19,6 +19,7 @@ public:
     enum Roles {
         LocationId = Qt::UserRole,
         Status,
+        Station,
         City,
         AdminArea,
         AdminArea2,
