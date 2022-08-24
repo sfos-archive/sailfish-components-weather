@@ -31,7 +31,8 @@ MouseArea {
             leftMargin: -Theme.itemSizeMedium
             right: parent.right
         }
-        title: weather ? weather.city : ""
+        title: weather ? (weather.city + ", " + weather.country
+                          + (weather.adminArea ? (", " + weather.adminArea) : "")) : ""
     }
     Column {
         id: column
