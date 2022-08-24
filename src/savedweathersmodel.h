@@ -41,7 +41,7 @@ public:
 
     Q_INVOKABLE void setErrorStatus(int locationId);
     Q_INVOKABLE void addLocation(const QVariantMap &locationMap);
-    Q_INVOKABLE void update(int locationId, const QVariantMap &weatherMap, Weather::Status status = Weather::Ready);
+    Q_INVOKABLE void update(int locationId, const QVariantMap &weatherMap, Weather::Status status = Weather::Ready, bool internal = false);
     Q_INVOKABLE void remove(int locationId);
     Q_INVOKABLE Weather *get(int locationId);
     Q_INVOKABLE void moveToTop(int index);

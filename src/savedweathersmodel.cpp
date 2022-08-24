@@ -68,7 +68,8 @@ void SavedWeathersModel::load()
         QVariantMap weatherMap = location.value("weather").toObject().toVariantMap();
         // update existing weather locations
         if (weatherMap.value("populated").toBool()) {
-            update(locationId, weatherMap, Weather::Status(weatherMap["status"].toInt()));
+            update(locationId, weatherMap, Weather::Status(weatherMap["status"].toInt()),
+                    true /* internal */);
         }
     }
 
@@ -213,7 +214,7 @@ void SavedWeathersModel::setErrorStatus(int locationId)
     }
 }
 
-void SavedWeathersModel::update(int locationId, const QVariantMap &weatherMap, Weather::Status status)
+void SavedWeathersModel::update(int locationId, const QVariantMap &weatherMap, Weather::Status status, bool internal)
 {
     bool updatedCurrent = false;
     if (m_currentWeather && locationId == m_currentWeather->locationId()) {
@@ -226,12 +227,19 @@ void SavedWeathersModel::update(int locationId, const QVariantMap &weatherMap, W
         if (!updatedCurrent) {
             qmlInfo(this) << "Location hasn't been saved " << locationId;
         }
+
+        if (!internal) {
+            save();
+        }
         return;
     }
     Weather *weather = m_savedWeathers[i];
     weather->update(weatherMap);
     weather->setStatus(status);
     dataChanged(index(i), index(i));
+    if (!internal) {
+        save();
+    }
 }
 
 void SavedWeathersModel::remove(int locationId)
