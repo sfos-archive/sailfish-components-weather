@@ -68,7 +68,8 @@ void SavedWeathersModel::load()
         QVariantMap weatherMap = location.value("weather").toObject().toVariantMap();
         // update existing weather locations
         if (weatherMap.value("populated").toBool()) {
-            update(locationId, weatherMap, Weather::Status(weatherMap["status"].toInt()));
+            update(locationId, weatherMap, Weather::Status(weatherMap["status"].toInt()),
+                    true /* internal */);
         }
     }
 
@@ -136,7 +137,10 @@ QJsonObject SavedWeathersModel::convertToJson(const Weather *weather)
     location["locationId"] = weather->locationId();
     location["city"] = weather->city();
     location["state"] = weather->state();
+    location["station"] = weather->station();
     location["country"] = weather->country();
+    location["adminArea"] = weather->adminArea();
+    location["adminArea2"] = weather->adminArea2();
 
     QJsonObject weatherData;
     weatherData["populated"] = weather->populated();
@@ -210,7 +214,7 @@ void SavedWeathersModel::setErrorStatus(int locationId)
     }
 }
 
-void SavedWeathersModel::update(int locationId, const QVariantMap &weatherMap, Weather::Status status)
+void SavedWeathersModel::update(int locationId, const QVariantMap &weatherMap, Weather::Status status, bool internal)
 {
     bool updatedCurrent = false;
     if (m_currentWeather && locationId == m_currentWeather->locationId()) {
@@ -223,12 +227,19 @@ void SavedWeathersModel::update(int locationId, const QVariantMap &weatherMap, W
         if (!updatedCurrent) {
             qmlInfo(this) << "Location hasn't been saved " << locationId;
         }
+
+        if (!internal) {
+            save();
+        }
         return;
     }
     Weather *weather = m_savedWeathers[i];
     weather->update(weatherMap);
     weather->setStatus(status);
     dataChanged(index(i), index(i));
+    if (!internal) {
+        save();
+    }
 }
 
 void SavedWeathersModel::remove(int locationId)
@@ -280,10 +291,16 @@ QVariant SavedWeathersModel::data(const QModelIndex &index, int role) const
         return weather->locationId();
     case Status:
         return weather->status();
+    case Station:
+        return weather->station();
     case City:
         return weather->city();
     case State:
         return weather->state();
+    case AdminArea:
+        return weather->adminArea();
+    case AdminArea2:
+        return weather->adminArea2();
     case Country:
         return weather->country();
     case Temperature:
@@ -308,8 +325,12 @@ QHash<int, QByteArray> SavedWeathersModel::roleNames() const
     QHash<int,QByteArray> roles;
     roles.insert(LocationId, "locationId");
     roles.insert(Status, "status");
+    roles.insert(Station, "station");
     roles.insert(City, "city");
     roles.insert(State, "state");
+    // There roles are directly from Foreca API spec
+    roles.insert(AdminArea, "adminArea");
+    roles.insert(AdminArea2, "adminArea2");
     roles.insert(Country, "country");
     roles.insert(Temperature, "temperature");
     roles.insert(FeelsLikeTemperature, "feelsLikeTemperature");

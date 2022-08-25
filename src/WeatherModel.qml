@@ -8,6 +8,32 @@ WeatherRequest {
     property date timestamp: new Date()
     readonly property int locationId: !!weather ? weather.locationId : -1
 
+    readonly property WeatherRequest latestObservation: WeatherRequest {
+        property var weatherJson
+
+        active: false
+        source: locationId > 0 ? "https://pfa.foreca.com/api/v1/observation/latest/" + locationId : ""
+        onRequestFinished: {
+            if (!weatherJson) return
+
+            var observations = result["observations"]
+            if (observations.length > 0) {
+                weatherJson["station"] = observations[0].station
+            }
+            savedWeathersModel.update(locationId, weatherJson)
+        }
+
+        onStatusChanged: {
+            if (status === Weather.Error) {
+                if (savedWeathers) {
+                    savedWeathers.setErrorStatus(locationId)
+                }
+
+                console.log("WeatherModel - could not obtain weather station data", weather ? weather.city : "", weather ? weather.locationId : "")
+            }
+        }
+    }
+
     source: locationId > 0 ? "https://pfa.foreca.com/api/v1/current/" + locationId : ""
 
     function updateAllowed() {
@@ -32,7 +58,8 @@ WeatherRequest {
                 "description": weather.description,
                 "timestamp": weather.timestamp
             }
-            savedWeathersModel.update(locationId, json)
+            latestObservation.weatherJson = json
+            latestObservation.active = true
         }
     }
 
