@@ -22,9 +22,9 @@ ListItem {
     onActiveChanged: if (!active) save()
     onHourlyChanged: forecastMode.value = hourly ? "hourly" : "daily"
 
-    function reload() {
-        weatherModel.reload()
-        forecastModel.reload()
+    function reload(userRequested) {
+        weatherModel.reload(userRequested)
+        forecastModel.reload(userRequested)
     }
 
     function save() {
@@ -38,8 +38,8 @@ ListItem {
             hourly = !hourly
         }
 
-        weatherModel.attemptReload()
-        forecastModel.attemptReload()
+        weatherModel.attemptReload(true)
+        forecastModel.attemptReload(true)
     }
 
     visible: enabled
@@ -64,7 +64,7 @@ ListItem {
             MenuItem {
                 //% "Reload"
                 text: qsTrId("weather-la-reload")
-                onClicked: reload()
+                onClicked: reload(true)
             }
         }
     }

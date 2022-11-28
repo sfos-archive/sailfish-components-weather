@@ -23,13 +23,18 @@ QtObject {
         return active
     }
 
-    function attemptReload() {
+    function attemptReload(userRequested) {
         if (updateAllowed()) {
-            reload()
+            reload(userRequested)
+        } else if (userRequested) {
+            console.log("Weather update not allowed (not active)")
         }
     }
 
-    function reload() {
+    // userRequested: true to open a connection dialog in case
+    //                there's no currently available connection;
+    //                false for the request to fail silently
+    function reload(userRequested) {
         if (online && source.length > 0) {
             status = Weather.Loading
             if (Token.fetchToken(root)) {
@@ -39,7 +44,11 @@ QtObject {
             status = Weather.Null
         } else {
             status = Weather.Error
-            WeatherConnectionHelper.requestNetwork()
+            if (userRequested) {
+                WeatherConnectionHelper.attemptToConnectNetwork()
+            } else {
+                WeatherConnectionHelper.requestNetwork()
+            }
         }
     }
 

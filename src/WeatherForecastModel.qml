@@ -17,12 +17,12 @@ ListModel {
 
     onLocationIdChanged: clear()
 
-    function attemptReload() {
-        model.attemptReload()
+    function attemptReload(userRequested) {
+        model.attemptReload(userRequested)
     }
 
-    function reload() {
-        model.reload()
+    function reload(userRequested) {
+        model.reload(userRequested)
     }
 
     readonly property WeatherRequest model: WeatherRequest {

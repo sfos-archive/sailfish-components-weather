@@ -32,7 +32,7 @@ Page {
             MenuItem {
                 //% "Update"
                 text: qsTrId("weather-me-update")
-                onClicked: forecastModel.reload()
+                onClicked: forecastModel.reload(true)
             }
         }
         WeatherDetailsHeader {
@@ -50,7 +50,7 @@ Page {
             y: Theme.itemSizeSmall + Theme.itemSizeLarge*2
             error: forecastModel.status === Weather.Error
             enabled: forecastModel.count === 0
-            onReload: forecastModel.reload()
+            onReload: forecastModel.reload(true)
         }
     }
 
