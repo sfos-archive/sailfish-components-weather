@@ -15,7 +15,10 @@ ListModel {
     readonly property bool loading: forecastModel.status == Weather.Loading
     readonly property int locationId: weather ? weather.locationId : -1
 
-    onLocationIdChanged: clear()
+    onLocationIdChanged: {
+        model.status = Weather.Null
+        clear()
+    }
 
     function attemptReload(userRequested) {
         model.attemptReload(userRequested)
@@ -31,7 +34,6 @@ ListModel {
         source: root.locationId > 0 ?
                     "https://pfa.foreca.com/api/v1/forecast/"
                     + (hourly ? "hourly/" : "daily/") + root.locationId : ""
-
 
         // update allowed every half hour for hourly weather, every 3 hours for daily weather
         property int maxUpdateInterval: hourly ? 30*60*1000 : 180*60*1000
