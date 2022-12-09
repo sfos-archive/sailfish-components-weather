@@ -10,23 +10,28 @@ WeatherRequest {
 
     readonly property WeatherRequest latestObservation: WeatherRequest {
         property var weatherJson
+        // Store our own copy of locationId, since parent.locationId may change mid-fetch
+        property int requestedLocationId: -1
 
         active: false
-        source: locationId > 0 ? "https://pfa.foreca.com/api/v1/observation/latest/" + locationId : ""
+        source: requestedLocationId > 0
+                ? "https://pfa.foreca.com/api/v1/observation/latest/" + requestedLocationId
+                : ""
         onRequestFinished: {
             if (!weatherJson) return
 
+            active = false;
             var observations = result["observations"]
             if (observations.length > 0) {
                 weatherJson["station"] = observations[0].station
             }
-            savedWeathersModel.update(locationId, weatherJson)
+            savedWeathersModel.update(requestedLocationId, weatherJson)
         }
 
         onStatusChanged: {
             if (status === Weather.Error) {
                 if (savedWeathers) {
-                    savedWeathers.setErrorStatus(locationId)
+                    savedWeathers.setErrorStatus(requestedLocationId)
                 }
 
                 console.log("WeatherModel - could not obtain weather station data", weather ? weather.city : "", weather ? weather.locationId : "")
@@ -59,6 +64,7 @@ WeatherRequest {
                 "timestamp": weather.timestamp
             }
             latestObservation.weatherJson = json
+            latestObservation.requestedLocationId = locationId
             latestObservation.active = true
         }
     }

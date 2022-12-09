@@ -19,6 +19,7 @@ QtObject {
     onSourceChanged: if (source.length > 0) attemptReload()
     Component.onCompleted: Token.fetchToken(this)
 
+    // Note: this is overridden in WeatherModel and WeatherForecastModel
     function updateAllowed() {
         return active
     }
