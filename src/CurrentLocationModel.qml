@@ -2,7 +2,6 @@ import QtQuick 2.0
 import QtPositioning 5.2
 import QtQuick.XmlListModel 2.0
 import Nemo.KeepAlive 1.2
-import MeeGo.Connman 0.2
 
 Item {
     id: model
@@ -18,8 +17,6 @@ Item {
     property real searchRadius: 10 // find biggest city in specified kilometers
     property var coordinate: positionSource.position.coordinate
 
-    property NetworkTechnology gpsTech
-    property bool gpsPowered: gpsTech && gpsTech.powered
     property string longitude: format(coordinate.longitude)
     property string latitude: format(coordinate.latitude)
     property bool waitForSecondUpdate
@@ -94,7 +91,7 @@ Item {
         active: model.positioningAllowed && model.active
         onPositionChanged: {
             locationObtained = true
-            if (gpsPowered && !waitForSecondUpdate) {
+            if (!waitForSecondUpdate) {
                 model.active = false
             }
             waitForSecondUpdate = false
@@ -107,10 +104,5 @@ Item {
         enabled: true
         frequency: BackgroundJob.ThirtyMinutes
         onTriggered: model.updateLocation()
-    }
-    NetworkManagerFactory { id: networkManager }
-    Connections {
-        target: networkManager.instance
-        onTechnologiesChanged: gpsTech = networkManager.instance.getTechnology("gps")
     }
 }
