@@ -22,7 +22,6 @@ Requires: nemo-qml-plugin-systemsettings >= 0.2.26
 Requires: sailfish-weather
 Requires: qt5-qtdeclarative-import-xmllistmodel
 Requires: qt5-qtdeclarative-import-positioning
-Requires: connman-qt5-declarative
 Requires: libkeepalive >= 1.7.0
 Requires: nemo-qml-plugin-connectivity >= 0.1.0
 Requires: jolla-settings-accounts
