@@ -1,6 +1,6 @@
 pragma Singleton
 import QtQuick 2.2
-import org.nemomobile.configuration 1.0
+import Nemo.Configuration 1.0
 
 ConfigurationValue {
     property bool celsius: {
