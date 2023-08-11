@@ -53,7 +53,7 @@ function fetchToken(model) {
                     for (var i = 0; i < pendingTokenRequests.length; i++) {
                         pendingTokenRequests[i].token = token
                         if (tokenRequest.status !== 200) {
-                            pendingTokenRequests[i].status = Weather.Weather.Error
+                            pendingTokenRequests[i].status = (tokenRequest.status === 401) ? Weather.Weather.Unauthorized : Weather.Weather.Error
                         }
                     }
                     pendingTokenRequests = []

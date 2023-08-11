@@ -16,6 +16,7 @@ ListItem {
                                                      : (dailyForecastLoader.item ? dailyForecastLoader.item.model : null)
     readonly property bool loading: forecastModel && forecastModel.status === Weather.Loading
     readonly property bool _error: forecastModel && forecastModel.status === Weather.Error
+    readonly property bool _unauthorized: forecastModel && forecastModel.status === Weather.Unauthorized
     readonly property int _forecastCount: forecastModel ? forecastModel.count : 0
 
     _backgroundColor: "transparent"
@@ -34,12 +35,14 @@ ListItem {
     onClicked: {
         if (!expanded) {
             expanded = true
-        } else if (!_error) {
+        } else if (!_error && !_unauthorized) {
             hourly = !hourly
         }
 
-        weatherModel.attemptReload(true)
-        forecastModel.attemptReload(true)
+        if (!_unauthorized) {
+            weatherModel.attemptReload(true)
+            forecastModel.attemptReload(true)
+        }
     }
 
     visible: enabled
@@ -53,7 +56,7 @@ ListItem {
                 text: forecastModel ? qsTrId("weather-la-updated_time").arg(
                                           Format.formatDate(forecastModel.timestamp, Formatter.Timepoint))
                                     : ""
-                visible: !_error && !loading
+                visible: !_error && !_unauthorized && !loading
             }
 
             MenuItem {
@@ -62,6 +65,7 @@ ListItem {
                 onClicked: WeatherLauncher.launch()
             }
             MenuItem {
+                visible: !_unauthorized
                 //% "Reload"
                 text: qsTrId("weather-la-reload")
                 onClicked: reload(true)
@@ -271,16 +275,24 @@ ListItem {
                     spacing: Theme.paddingSmall
                     anchors.verticalCenter: parent.verticalCenter
 
-                    opacity: _error && _forecastCount === 0 ? 1 : 0
+                    opacity: (_error || _unauthorized) && _forecastCount === 0 ? 1 : 0
                     Behavior on opacity { FadeAnimator {} }
 
                     Label {
                         anchors.horizontalCenter: parent.horizontalCenter
-                        //% "No network"
-                        text: qsTrId("weather-la-no_network")
-                        font.pixelSize: Theme.fontSizeLarge
+                        text: {
+                            if (_error) {
+                                //% "No network"
+                                return qsTrId("weather-la-no_network")
+                            }
+
+                            //% "Invalid authentication credentials"
+                            return qsTrId("weather-la-unauthorized")
+                        }
+                        font.pixelSize: _error ? Theme.fontSizeLarge : Theme.fontSizeMedium
                     }
                     Label {
+                        visible: _error
                         anchors.horizontalCenter: parent.horizontalCenter
                         color: highlighted ? Theme.secondaryHighlightColor : Theme.secondaryColor
 

@@ -49,6 +49,7 @@ Page {
         PlaceholderItem {
             y: Theme.itemSizeSmall + Theme.itemSizeLarge*2
             error: forecastModel.status === Weather.Error
+            unauthorized: forecastModel.status === Weather.Unauthorized
             enabled: forecastModel.count === 0
             onReload: forecastModel.reload(true)
         }

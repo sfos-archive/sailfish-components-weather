@@ -43,7 +43,7 @@ public:
     }
 
     ~Weather() {}
-    enum Status { Null, Ready, Loading, Error };
+    enum Status { Null, Ready, Loading, Error, Unauthorized };
 
     int locationId() const { return m_locationId; }
     Status status() const { return m_status; }

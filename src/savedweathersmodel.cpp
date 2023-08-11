@@ -198,10 +198,10 @@ void SavedWeathersModel::setCurrentWeather(const QVariantMap &map, bool internal
     }
 }
 
-void SavedWeathersModel::setErrorStatus(int locationId)
+void SavedWeathersModel::setErrorStatus(int locationId, int status)
 {
     if (m_currentWeather && m_currentWeather->locationId() == locationId) {
-        m_currentWeather->setStatus(Weather::Error);
+        m_currentWeather->setStatus(static_cast<Weather::Status>(status));
     } else {
         int i = getWeatherIndex(locationId);
         if (i < 0) {
@@ -209,7 +209,7 @@ void SavedWeathersModel::setErrorStatus(int locationId)
             return;
         }
         Weather *weather = m_savedWeathers[i];
-        weather->setStatus(Weather::Error);
+        weather->setStatus(static_cast<Weather::Status>(status));
         dataChanged(index(i), index(i));
     }
 }
