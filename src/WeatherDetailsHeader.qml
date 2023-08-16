@@ -23,6 +23,9 @@ Item {
                 if (status === Weather.Error) {
                     //% "Loading failed"
                     return qsTrId("weather-la-weather_loading_failed")
+                } else if (status === Weather.Unauthorized) {
+                    //% "Invalid authentication credentials"
+                    return qsTrId("weather-la-weather_unauthorized")
                 } else if (status === Weather.Loading) {
                     //% "Loading"
                     return qsTrId("weather-la-weather_loading")

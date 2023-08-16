@@ -45,7 +45,7 @@ ListModel {
         }
 
         onStatusChanged: {
-            if (status === Weather.Error) {
+            if (status === Weather.Error || status === Weather.Unauthorized) {
                 root.clear()
                 console.log("LocationsModel - location search failed with query string", filter)
             }

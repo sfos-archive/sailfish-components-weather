@@ -29,9 +29,9 @@ WeatherRequest {
         }
 
         onStatusChanged: {
-            if (status === Weather.Error) {
+            if (status === Weather.Error || status == Weather.Unauthorized) {
                 if (savedWeathers) {
-                    savedWeathers.setErrorStatus(requestedLocationId)
+                    savedWeathers.setErrorStatus(requestedLocationId, status)
                 }
 
                 console.log("WeatherModel - could not obtain weather station data", weather ? weather.city : "", weather ? weather.locationId : "")
@@ -70,9 +70,9 @@ WeatherRequest {
     }
 
     onStatusChanged: {
-        if (status === Weather.Error) {
+        if (status === Weather.Error || status == Weather.Unauthorized) {
             if (savedWeathers) {
-                savedWeathers.setErrorStatus(locationId)
+                savedWeathers.setErrorStatus(locationId, status)
             }
 
             console.log("WeatherModel - could not obtain weather data", weather ? weather.city : "", weather ? weather.locationId : "")

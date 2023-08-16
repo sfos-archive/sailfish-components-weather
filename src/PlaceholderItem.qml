@@ -5,6 +5,7 @@ Item {
     id: root
 
     property bool error
+    property bool unauthorized
     property bool empty
     property bool enabled
     property Flickable flickable
@@ -23,7 +24,7 @@ Item {
     onFlickableChanged: update()
 
     width: parent.width
-    height: mainLabel.height + Theme.paddingLarge + (error ? button.height : busyIndicator.height)
+    height: mainLabel.height + Theme.paddingLarge + ((error || unauthorized) ? button.height : busyIndicator.height)
     opacity: enabled ? 1.0 : 0.0
     Behavior on opacity { OpacityAnimator { easing.type: Easing.InOutQuad;  duration: 400 } }
     Label {
@@ -31,10 +32,19 @@ Item {
 
         wrapMode: Text.Wrap
         horizontalAlignment: Text.AlignHCenter
-        //% "Loading failed"
-        text: error ? qsTrId("weather-la-loading_failed")
-                    //% "Loading"
-                    : qsTrId("weather-la-loading")
+
+        text: {
+            if (error) {
+                //% "Loading failed"
+                return qsTrId("weather-la-loading_failed")
+            } else if (unauthorized) {
+                //% "Invalid authentication credentials"
+                return qsTrId("weather-la-unauthorized")
+            }
+
+            //% "Loading"
+            return qsTrId("weather-la-loading")
+        }
         font {
             pixelSize: Theme.fontSizeExtraLarge
             family: Theme.fontFamilyHeading
@@ -49,7 +59,7 @@ Item {
     }
     BusyIndicator {
         id: busyIndicator
-        running: parent.opacity > 0 && !error && !empty
+        running: parent.opacity > 0 && !error && !unauthorized && !empty
         size: BusyIndicatorSize.Large
         anchors {
             top: mainLabel.bottom
@@ -74,7 +84,7 @@ Item {
     Component {
         id: animationHint
         PulleyAnimationHint {
-            enabled: !error
+            enabled: !error && !unauthorized
             flickable: root.flickable
             width: parent.width
             height: width

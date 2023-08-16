@@ -38,7 +38,7 @@ ListModel {
         // update allowed every half hour for hourly weather, every 3 hours for daily weather
         property int maxUpdateInterval: hourly ? 30*60*1000 : 180*60*1000
         function updateAllowed() {
-            return status === Weather.Error || status === Weather.Null || WeatherModel.updateAllowed(maxUpdateInterval)
+            return status !== Weather.Unauthorized && (status === Weather.Error || status === Weather.Null || WeatherModel.updateAllowed(maxUpdateInterval))
         }
 
         onRequestFinished: {
