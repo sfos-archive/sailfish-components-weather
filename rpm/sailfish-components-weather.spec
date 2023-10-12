@@ -2,8 +2,8 @@ Name:       sailfish-components-weather-qt5
 Summary:    Sailfish weather UI components
 Version:    1.0.7
 Release:    1
-License:    Proprietary
-URL:        https://bitbucket.org/jolla/ui-sailfish-weather
+License:    BSD
+URL:        https://github.com/sailfishos/sailfish-components-weather
 Source0:    %{name}-%{version}.tar.bz2
 BuildRequires:  pkgconfig(Qt5Core)
 BuildRequires:  pkgconfig(Qt5Qml)
@@ -54,6 +54,7 @@ rm -rf %{buildroot}
 
 %files
 %defattr(-,root,root,-)
+%license LICENSE.BSD
 %dir %{_libdir}/qt5/qml/Sailfish/Weather
 %{_libdir}/qt5/qml/Sailfish/Weather/*
 %{_datadir}/translations/sailfish_components_weather_qt5_eng_en.qm
